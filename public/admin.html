@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastIndexer - Admin Management</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #1e293b; padding-bottom: 15px; }
+        .logo-text { font-size: 24px; font-weight: bold; color: #eab308; display: flex; align-items: center; gap: 8px; margin: 0; }
+        h2 { color: #38bdf8; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #1e293b; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #334155; }
+        th { background-color: #334155; color: #38bdf8; font-weight: bold; }
+        tr:hover { background-color: #24334d; }
+        .status-pending { color: #eab308; font-weight: bold; background: #3e3214; padding: 4px 8px; border-radius: 4px; }
+        .status-approved { color: #22c55e; font-weight: bold; background: #143e21; padding: 4px 8px; border-radius: 4px; }
+        .btn-approve { background: #22c55e; color: #0f172a; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-approve:hover { background: #16a34a; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="navbar">
+        <h1 class="logo-text">🛡️ FastIndexer Admin Panel</h1>
+        <span style="color: #94a3b8; font-weight: bold;">Role: Super Admin</span>
+    </div>
+
+    <h2>💳 Customer Payment Verification Requests</h2>
+    <p style="color: #94a3b8; margin-top: -10px;">Review transactions from db.json and approve manually.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Plan</th>
+                <th>Gateway</th>
+                <th>Sender Number</th>
+                <th>Transaction ID (TxnID)</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="admin-requests-table">
+            <!-- ডেটা এখানে ডাইনামিকালি লোড হবে -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // পেজ লোড হওয়ার সাথে সাথে ডেটা ফেচ হবে
+    window.onload = function() {
+        loadAdminRequests();
+    };
+
+    // db.json থেকে সব রিকোয়েস্ট লোড করার ফাংশন
+    async function loadAdminRequests() {
+        const tableBody = document.getElementById('admin-requests-table');
+        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8;">Loading payment requests...</td></tr>`;
+
+        try {
+            const response = await fetch('/api/admin/requests');
+            const result = await response.json();
+
+            if (result.success && result.data.length > 0) {
+                tableBody.innerHTML = '';
+                
+                // লুপ চালিয়ে ডাটাবেসের সব ডেটা টেবিলে বসানো হচ্ছে
+                result.data.forEach(req => {
+                    const statusClass = req.status === 'approved' ? 'status-approved' : 'status-pending';
+                    const approveButton = req.status === 'pending' 
+                        ? `<button class="btn-approve" onclick="approvePayment('${req.id}')">Approve</button>` 
+                        : `<span style="color:#64748b; font-size:13px;">Verified ✓</span>`;
+
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td style="text-transform: capitalize; font-weight: bold; color: #f1f5f9;">${req.plan.replace('_', ' ')}</td>
+                            <td style="text-transform: uppercase;">${req.gateway || 'N/A'}</td>
+                            <td>${req.senderNumber || 'N/A'}</td>
+                            <td style="font-family: monospace; color: #eab308;">${req.txnid || 'N/A'}</td>
+                            <td><span class="${statusClass}">${req.status.toUpperCase()}</span></td>
+                            <td>${approveButton}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8;">No payment requests found in database.</td></tr>`;
+            }
+        } catch (err) {
+            tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444;">Failed to load data from server!</td></tr>`;
+        }
+    }
+
+    // পেমেন্ট অ্যাপ্রুভ করার ফাংশন
+    async function approvePayment(id) {
+        if (!confirm("Are you sure you want to approve this payment?")) return;
+
+        try {
+            const response = await fetch('/api/admin/approve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id })
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                alert(result.message);
+                loadAdminRequests(); // টেবিলটি রিয়েল-টাইম রিফ্রেশ করার জন্য
+            } else {
+                alert("Error: " + result.message);
+            }
+        } catch (err) {
+            alert("Critical connection error to server!");
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastIndexer - User Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        
+        .navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #1e293b; padding-bottom: 15px; }
+        .logo-text { font-size: 24px; font-weight: bold; color: #38bdf8; display: flex; align-items: center; gap: 8px; margin: 0; }
+        
+        h2 { color: #38bdf8; margin-top: 10px; }
+        .section { background: #1e293b; border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid #334155; }
+        
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #cbd5e1; }
+        input, textarea, select { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: white; box-sizing: border-box; margin-bottom: 15px; font-size: 14px; }
+        input:focus, textarea:focus, select:focus { border-color: #38bdf8; outline: none; }
+        
+        .btn-submit { background: #38bdf8; color: #0f172a; font-size: 16px; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; width: 100%; transition: 0.2s; }
+        .btn-submit:hover { background: #0ea5e9; }
+        .btn-submit:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
+        
+        .terminal-box { background: #020617; border: 1px solid #334155; font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #38bdf8; padding: 15px; border-radius: 6px; max-height: 300px; overflow-y: auto; margin-top: 20px; box-sizing: border-box; width: 100%; line-height: 1.6; }
+        .log-success { color: #22c55e; }
+        .log-error { color: #ef4444; }
+        .log-process { color: #eab308; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="navbar">
+        <h1 class="logo-text">🚀 FastIndexer Console</h1>
+        <span style="color: #94a3b8; font-weight: bold;">Status: Approved Account</span>
+    </div>
+
+    <div class="section">
+        <h2>🔗 Submit Content For Live Indexing</h2>
+        <p style="color: #94a3b8; margin-top: -10px; font-size: 14px;">Your payment has been verified. You can now request instant indexing to Google Engine.</p>
+        <br>
+
+        <label>Your Target URLs (One URL per line)</label>
+        <textarea id="urls" rows="6" placeholder="https://example.com/page1&#10;https://example.com/page2"></textarea>
+
+        <label>Google Service Account JSON Key (Optional - Leave blank to use system default)</label>
+        <textarea id="custom-json" rows="5" placeholder="Paste your Google Service Account JSON content here if you want to use your own console..."></textarea>
+        <br>
+
+        <button class="btn-submit" id="submit-btn" onclick="startIndexingNow()">Start Live Indexing</button>
+
+        <div class="terminal-box" id="terminal-output">
+            <span style="color: #64748b;">// Awaiting submission... Live API response logs from Google Search Console will output here...</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function startIndexingNow() {
+        const urlsText = document.getElementById('urls').value.trim();
+        const customJson = document.getElementById('custom-json').value.trim();
+        const terminal = document.getElementById('terminal-output');
+        const submitBtn = document.getElementById('submit-btn');
+        
+        if(!urlsText) {
+            alert('Please enter at least one URL!');
+            return;
+        }
+
+        const urls = urlsText.split('\n').filter(url => url.trim() !== '');
+
+        terminal.innerHTML = `<span class="log-process">[API PROCESS] Initializing live connection to Google Indexing API...</span><br>`;
+        terminal.innerHTML += `<span class="log-process">[API PROCESS] Processing ${urls.length} total URLs in queue...</span><br>`;
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('/api/index-now', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    urls: urls,
+                    customJson: customJson || null
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success === false || data.error) {
+                terminal.innerHTML += `<span class="log-error">[GOOGLE SERVER ERROR]: ${data.message || data.error}</span>`;
+            } else {
+                terminal.innerHTML += `<span class="log-success">[SUCCESS] Google Indexing Engine execution sequence complete!</span><br>`;
+                terminal.innerHTML += `<span style="color: #475569;">----------------------------------------------------------------------</span><br>`;
+                
+                data.results.forEach(res => {
+                    if(res.success) {
+                        terminal.innerHTML += `<span class="log-success">[INDEXED] ${res.url} -> Google API responded successfully!</span><br>`;
+                    } else {
+                        terminal.innerHTML += `<span class="log-error">[FAILED] ${res.url} -> Error: ${res.error}</span><br>`;
+                    }
+                });
+                
+                terminal.innerHTML += `<span style="color: #475569;">----------------------------------------------------------------------</span><br>`;
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+        } catch (err) {
+            terminal.innerHTML += `<span class="log-error">[CRITICAL ERROR]: Connection to Express Core failed!</span>`;
+        } finally {
+            submitBtn.disabled = false;
+        }
+    }
+</script>
+</body>
+</html>
