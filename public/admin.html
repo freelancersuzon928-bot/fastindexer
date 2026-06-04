@@ -3,115 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FastIndexer - Admin Management</title>
+    <title>FastIndexer - Admin Panel</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
         .navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #1e293b; padding-bottom: 15px; }
         .logo-text { font-size: 24px; font-weight: bold; color: #eab308; display: flex; align-items: center; gap: 8px; margin: 0; }
         h2 { color: #38bdf8; }
+
+        /* Login Box */
+        .login-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 40px; max-width: 400px; margin: 100px auto; text-align: center; }
+        .login-box h2 { margin-top: 0; }
+        .login-box input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: white; box-sizing: border-box; margin-bottom: 15px; font-size: 14px; }
+        .login-box button { background: #eab308; color: #0f172a; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; }
+
+        /* Admin Panel */
+        #admin-panel { display: none; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #1e293b; border-radius: 8px; overflow: hidden; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #334155; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #334155; font-size: 14px; }
         th { background-color: #334155; color: #38bdf8; font-weight: bold; }
         tr:hover { background-color: #24334d; }
         .status-pending { color: #eab308; font-weight: bold; background: #3e3214; padding: 4px 8px; border-radius: 4px; }
         .status-approved { color: #22c55e; font-weight: bold; background: #143e21; padding: 4px 8px; border-radius: 4px; }
-        .btn-approve { background: #22c55e; color: #0f172a; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-approve { background: #22c55e; color: #0f172a; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
         .btn-approve:hover { background: #16a34a; }
+
+        /* Add Credit Box */
+        .credit-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 25px; margin-top: 30px; }
+        .credit-box input { padding: 10px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: white; margin-right: 10px; font-size: 14px; }
+        .credit-box button { background: #38bdf8; color: #0f172a; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+        .section-title { color: #38bdf8; margin-top: 40px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<!-- Login Box -->
+<div id="login-box" class="login-box">
+    <h2>🛡️ Admin Login</h2>
+    <p style="color:#94a3b8;">Enter admin password to continue</p>
+    <input type="password" id="admin-password" placeholder="Admin Password" onkeypress="if(event.key==='Enter') adminLogin()">
+    <button onclick="adminLogin()">Login</button>
+    <p id="login-error" style="color:#ef4444; display:none;">Wrong password!</p>
+</div>
+
+<!-- Admin Panel -->
+<div id="admin-panel" class="container">
     <div class="navbar">
         <h1 class="logo-text">🛡️ FastIndexer Admin Panel</h1>
-        <span style="color: #94a3b8; font-weight: bold;">Role: Super Admin</span>
+        <div>
+            <span style="color:#94a3b8; font-weight:bold;">Super Admin</span>
+            &nbsp;&nbsp;
+            <button onclick="adminLogout()" style="background:#ef4444; color:white; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-weight:bold;">Logout</button>
+        </div>
     </div>
 
-    <h2>💳 Customer Payment Verification Requests</h2>
-    <p style="color: #94a3b8; margin-top: -10px;">Review transactions from db.json and approve manually.</p>
-
+    <!-- Payment Requests -->
+    <h2 class="section-title">💳 Payment Verification Requests</h2>
     <table>
         <thead>
             <tr>
+                <th>Email</th>
                 <th>Plan</th>
-                <th>Gateway</th>
+                <th>Amount</th>
                 <th>Sender Number</th>
-                <th>Transaction ID (TxnID)</th>
+                <th>TxnID</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody id="admin-requests-table">
-            <!-- ডেটা এখানে ডাইনামিকালি লোড হবে -->
+        <tbody id="payments-table">
+            <tr><td colspan="7" style="text-align:center; color:#94a3b8;">Loading...</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Manual Credit Add -->
+    <h2 class="section-title">➕ Manually Add Credit</h2>
+    <div class="credit-box">
+        <p style="color:#94a3b8; margin-top:0;">User এর email এবং credit amount দিয়ে manually credit যোগ করুন।</p>
+        <input type="email" id="credit-email" placeholder="user@email.com" style="width:250px;">
+        <input type="number" id="credit-amount" placeholder="Credit Amount" style="width:150px;">
+        <button onclick="addCredit()">Add Credit</button>
+        <p id="credit-msg" style="margin-top:10px; color:#22c55e; display:none;"></p>
+    </div>
+
+    <!-- User List -->
+    <h2 class="section-title">👥 All Users</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Plan</th>
+                <th>Credit</th>
+                <th>Joined</th>
+            </tr>
+        </thead>
+        <tbody id="users-table">
+            <tr><td colspan="5" style="text-align:center; color:#94a3b8;">Loading...</td></tr>
         </tbody>
     </table>
 </div>
 
 <script>
-    // পেজ লোড হওয়ার সাথে সাথে ডেটা ফেচ হবে
-    window.onload = function() {
-        loadAdminRequests();
-    };
+    let adminPass = '';
 
-    // db.json থেকে সব রিকোয়েস্ট লোড করার ফাংশন
-    async function loadAdminRequests() {
-        const tableBody = document.getElementById('admin-requests-table');
-        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8;">Loading payment requests...</td></tr>`;
+    function adminLogin() {
+        const pass = document.getElementById('admin-password').value;
+        if (!pass) return;
 
-        try {
-            const response = await fetch('/api/admin/requests');
-            const result = await response.json();
+        adminPass = pass;
+        document.getElementById('login-error').style.display = 'none';
 
-            if (result.success && result.data.length > 0) {
-                tableBody.innerHTML = '';
-                
-                // লুপ চালিয়ে ডাটাবেসের সব ডেটা টেবিলে বসানো হচ্ছে
-                result.data.forEach(req => {
-                    const statusClass = req.status === 'approved' ? 'status-approved' : 'status-pending';
-                    const approveButton = req.status === 'pending' 
-                        ? `<button class="btn-approve" onclick="approvePayment('${req.id}')">Approve</button>` 
-                        : `<span style="color:#64748b; font-size:13px;">Verified ✓</span>`;
+        // Password verify করার জন্য API call
+        fetch(`/api/admin/payments?password=${encodeURIComponent(pass)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success === false && data.message === 'Access Denied!') {
+                    document.getElementById('login-error').style.display = 'block';
+                    adminPass = '';
+                } else {
+                    document.getElementById('login-box').style.display = 'none';
+                    document.getElementById('admin-panel').style.display = 'block';
+                    loadPayments(data);
+                    loadUsers();
+                }
+            })
+            .catch(() => {
+                document.getElementById('login-error').style.display = 'block';
+            });
+    }
 
-                    tableBody.innerHTML += `
-                        <tr>
-                            <td style="text-transform: capitalize; font-weight: bold; color: #f1f5f9;">${req.plan.replace('_', ' ')}</td>
-                            <td style="text-transform: uppercase;">${req.gateway || 'N/A'}</td>
-                            <td>${req.senderNumber || 'N/A'}</td>
-                            <td style="font-family: monospace; color: #eab308;">${req.txnid || 'N/A'}</td>
-                            <td><span class="${statusClass}">${req.status.toUpperCase()}</span></td>
-                            <td>${approveButton}</td>
-                        </tr>
-                    `;
-                });
-            } else {
-                tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8;">No payment requests found in database.</td></tr>`;
-            }
-        } catch (err) {
-            tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444;">Failed to load data from server!</td></tr>`;
+    function adminLogout() {
+        adminPass = '';
+        document.getElementById('login-box').style.display = 'block';
+        document.getElementById('admin-panel').style.display = 'none';
+        document.getElementById('admin-password').value = '';
+    }
+
+    function loadPayments(data) {
+        const tableBody = document.getElementById('payments-table');
+
+        if (data.success && data.data.length > 0) {
+            tableBody.innerHTML = '';
+            data.data.forEach(req => {
+                const statusClass = req.status === 'approved' ? 'status-approved' : 'status-pending';
+                const approveBtn = req.status === 'pending'
+                    ? `<button class="btn-approve" onclick="approvePayment('${req._id}')">✅ Approve</button>`
+                    : `<span style="color:#64748b;">Verified ✓</span>`;
+
+                tableBody.innerHTML += `
+                    <tr>
+                        <td style="color:#f1f5f9;">${req.userEmail}</td>
+                        <td style="color:#38bdf8; font-weight:bold;">${req.plan}</td>
+                        <td style="color:#eab308;">${req.amount} TK</td>
+                        <td>${req.senderNumber}</td>
+                        <td style="font-family:monospace; color:#eab308;">${req.txnid}</td>
+                        <td><span class="${statusClass}">${req.status.toUpperCase()}</span></td>
+                        <td>${approveBtn}</td>
+                    </tr>
+                `;
+            });
+        } else {
+            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8;">কোনো payment request নেই।</td></tr>`;
         }
     }
 
-    // পেমেন্ট অ্যাপ্রুভ করার ফাংশন
-    async function approvePayment(id) {
-        if (!confirm("Are you sure you want to approve this payment?")) return;
+    async function approvePayment(paymentId) {
+        if (!confirm("এই payment approve করবেন?")) return;
 
         try {
-            const response = await fetch('/api/admin/approve', {
+            const response = await fetch('/api/admin/approve-payment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: id })
+                body: JSON.stringify({ password: adminPass, paymentId })
             });
             const result = await response.json();
 
             if (result.success) {
-                alert(result.message);
-                loadAdminRequests(); // টেবিলটি রিয়েল-টাইম রিফ্রেশ করার জন্য
+                alert('✅ ' + result.message);
+                // Reload payments
+                fetch(`/api/admin/payments?password=${encodeURIComponent(adminPass)}`)
+                    .then(r => r.json())
+                    .then(loadPayments);
             } else {
-                alert("Error: " + result.message);
+                alert('❌ ' + result.message);
             }
         } catch (err) {
-            alert("Critical connection error to server!");
+            alert('Server connection error!');
+        }
+    }
+
+    async function loadUsers() {
+        try {
+            const response = await fetch(`/api/admin/users?password=${encodeURIComponent(adminPass)}`);
+            const data = await response.json();
+            const tableBody = document.getElementById('users-table');
+
+            if (data.success && data.data.length > 0) {
+                tableBody.innerHTML = '';
+                data.data.forEach(user => {
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td style="color:#f1f5f9;">${user.email}</td>
+                            <td style="color:#94a3b8;">${user.name}</td>
+                            <td style="color:#38bdf8;">${user.plan}</td>
+                            <td style="color:#22c55e; font-weight:bold;">${user.credit}</td>
+                            <td style="color:#64748b;">${new Date(user.createdAt).toLocaleDateString()}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8;">কোনো user নেই।</td></tr>`;
+            }
+        } catch (err) {
+            document.getElementById('users-table').innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ef4444;">Error loading users.</td></tr>`;
+        }
+    }
+
+    async function addCredit() {
+        const email = document.getElementById('credit-email').value.trim();
+        const credit = document.getElementById('credit-amount').value.trim();
+        const msg = document.getElementById('credit-msg');
+
+        if (!email || !credit) {
+            alert('Email এবং credit amount দিন!');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/admin/add-credit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: adminPass, email, credit })
+            });
+            const data = await response.json();
+
+            msg.style.display = 'block';
+            if (data.success) {
+                msg.style.color = '#22c55e';
+                msg.innerText = '✅ ' + data.message;
+                loadUsers();
+            } else {
+                msg.style.color = '#ef4444';
+                msg.innerText = '❌ ' + data.message;
+            }
+        } catch (err) {
+            alert('Server connection error!');
         }
     }
 </script>
