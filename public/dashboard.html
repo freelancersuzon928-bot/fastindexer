@@ -9,9 +9,9 @@
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         .navbar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-bottom: 1px solid #334155; }
         .logo-area { display: flex; align-items: center; gap: 40px; }
-        .logo-text { font-size: 24px; font-weight: bold; color: #38bdf8; text-decoration: none; display: flex; align-items: center; gap: 8px; margin: 0; }
+        .logo-text { font-size: 24px; font-weight: bold; color: #38bdf8; text-decoration: none; display: flex; align-items: center; gap: 8px; }
         .nav-links { display: flex; align-items: center; gap: 20px; }
-        .nav-link { color: #94a3b8; text-decoration: none; font-weight: 500; transition: 0.2s; font-size: 15px; }
+        .nav-link { color: #94a3b8; text-decoration: none; font-weight: 500; font-size: 15px; transition: 0.2s; }
         .nav-link:hover, .nav-link.active { color: #38bdf8; }
         .status-badge { font-size: 14px; color: #10b981; background: rgba(16,185,129,0.1); padding: 6px 12px; border-radius: 6px; font-weight: bold; border: 1px solid rgba(16,185,129,0.2); }
         .admin-badge { font-size: 14px; color: #eab308; background: rgba(234,179,8,0.1); padding: 6px 12px; border-radius: 6px; font-weight: bold; border: 1px solid rgba(234,179,8,0.2); }
@@ -20,15 +20,18 @@
         .admin-section { background: #1e1b4b; border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid #4338ca; margin-top: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: #cbd5e1; }
         input, textarea, select { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: white; box-sizing: border-box; margin-bottom: 15px; font-size: 14px; }
-        input:focus, textarea:focus, select:focus { border-color: #38bdf8; outline: none; }
+        input:focus, textarea:focus { border-color: #38bdf8; outline: none; }
         .btn-submit { background: #38bdf8; color: #0f172a; font-size: 16px; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; width: 100%; transition: 0.2s; }
         .btn-submit:hover { background: #0ea5e9; }
         .btn-submit:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
         .btn-admin { background: #eab308; color: #0f172a; font-size: 16px; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; width: 100%; transition: 0.2s; }
         .btn-admin:hover { background: #ca8a04; }
-        .btn-save { background: #10b981; color: #fff; font-size: 14px; font-weight: bold; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        .btn-save:hover { background: #059669; }
-        .terminal-box { background: #020617; border: 1px solid #334155; font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #38bdf8; padding: 15px; border-radius: 6px; max-height: 350px; overflow-y: auto; margin-top: 20px; box-sizing: border-box; width: 100%; line-height: 1.6; }
+        .btn-admin:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
+        .btn-green { background: #10b981; color: #fff; font-size: 14px; font-weight: bold; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; transition: 0.2s; white-space: nowrap; }
+        .btn-green:hover { background: #059669; }
+        .btn-red { background: #ef4444; color: #fff; font-size: 13px; font-weight: bold; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+        .btn-red:hover { background: #dc2626; }
+        .terminal-box { background: #020617; border: 1px solid #334155; font-family: 'Courier New', monospace; font-size: 13px; color: #38bdf8; padding: 15px; border-radius: 6px; max-height: 350px; overflow-y: auto; margin-top: 20px; width: 100%; box-sizing: border-box; line-height: 1.6; }
         .log-success { color: #22c55e; }
         .log-error { color: #ef4444; }
         .log-process { color: #eab308; }
@@ -37,30 +40,39 @@
         .info-box span { color: #38bdf8; font-weight: bold; }
         .warn-box { background: rgba(234,179,8,0.07); border: 1px solid rgba(234,179,8,0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 15px; font-size: 13px; color: #fde68a; }
         .credit-info { background: rgba(34,197,94,0.05); border: 1px solid rgba(34,197,94,0.2); border-radius: 8px; padding: 12px 16px; margin-bottom: 15px; font-size: 14px; color: #94a3b8; display: none; }
-        .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-buttons { display: flex; gap: 10px; margin-top: 20px; margin-bottom: 0; }
         .tab-btn { padding: 10px 20px; border-radius: 6px; border: 1px solid #475569; background: transparent; color: #94a3b8; cursor: pointer; font-weight: bold; transition: 0.2s; }
         .tab-btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
         .tab-btn.admin-tab.active { background: #eab308; color: #0f172a; border-color: #eab308; }
 
-        /* IndexNow Guide */
+        /* Guide */
         .guide-box { background: #0f2027; border: 1px solid #0ea5e9; border-radius: 10px; padding: 18px 20px; margin-bottom: 18px; }
         .guide-box h4 { color: #38bdf8; margin: 0 0 12px 0; font-size: 15px; }
         .guide-step { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; font-size: 13px; color: #cbd5e1; line-height: 1.6; }
         .guide-num { background: #0ea5e9; color: #0f172a; font-weight: bold; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; margin-top: 2px; }
         .guide-link { color: #38bdf8; text-decoration: none; font-weight: bold; }
-        .guide-link:hover { text-decoration: underline; }
         code { background: #1e293b; padding: 2px 7px; border-radius: 4px; font-size: 12px; color: #f472b6; font-family: 'Courier New', monospace; }
 
-        /* Key Settings */
+        /* Key settings */
         .key-settings { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 18px; margin-bottom: 18px; }
         .key-settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
         .key-settings-header h4 { margin: 0; color: #38bdf8; font-size: 15px; }
         .key-status { font-size: 12px; padding: 3px 10px; border-radius: 20px; font-weight: bold; }
         .key-status.set { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
         .key-status.notset { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
-        .key-row { display: flex; gap: 10px; align-items: flex-start; }
-        .key-row input { margin-bottom: 0; flex: 1; }
-        .key-row button { margin-top: 0; }
+        .input-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+        .input-row input { margin-bottom: 0; flex: 1; }
+
+        /* Admin site list */
+        .site-list { margin-top: 15px; }
+        .site-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-size: 13px; }
+        .site-item .site-host { color: #38bdf8; font-weight: bold; }
+        .site-item .site-key { color: #64748b; font-size: 12px; margin-top: 2px; }
+
+        /* Admin tabs */
+        .admin-sub-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 12px; }
+        .admin-sub-tab { padding: 7px 16px; border-radius: 6px; border: 1px solid #475569; background: transparent; color: #94a3b8; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.2s; }
+        .admin-sub-tab.active { background: #4338ca; color: #fff; border-color: #4338ca; }
     </style>
 </head>
 <body>
@@ -79,8 +91,7 @@
 
 <div class="container">
 
-    <!-- Mode Tabs -->
-    <div class="tab-buttons" style="margin-top:20px;">
+    <div class="tab-buttons">
         <button class="tab-btn active" onclick="switchMode('user')">👤 User Mode</button>
         <button class="tab-btn admin-tab" onclick="switchMode('admin')">🛡️ Admin Mode</button>
     </div>
@@ -89,13 +100,12 @@
     <div id="user-mode">
         <div class="section">
             <h2>🔗 Submit URLs for Indexing</h2>
-            <p style="color:#94a3b8; margin-top:-10px; font-size:14px;">আপনার email, IndexNow key এবং URLs দিয়ে index করুন।</p>
+            <p style="color:#94a3b8; margin-top:-10px; font-size:14px;">আপনার email দিন, একবার key set করুন, তারপর শুধু URL দিলেই হবে।</p>
 
             <div class="info-box">
-                💡 <span>How it works:</span> Credit ব্যবহার করে আপনার নিজের IndexNow key দিয়ে index হবে।
+                💡 <span>How it works:</span> Credit ব্যবহার করে আপনার IndexNow key দিয়ে index হবে।
             </div>
 
-            <!-- Email -->
             <label>Your Email</label>
             <input type="email" id="user-email" placeholder="your@email.com" oninput="loadUserData()">
 
@@ -103,28 +113,15 @@
                 💳 আপনার Credit: <strong id="credit-count" style="color:#22c55e;">0</strong>
             </div>
 
-            <!-- ====== IndexNow Key Section ====== -->
             <div id="key-section" style="display:none;">
 
                 <!-- Guide -->
                 <div class="guide-box">
-                    <h4>🔑 IndexNow Key কীভাবে পাবেন?</h4>
-                    <div class="guide-step">
-                        <div class="guide-num">1</div>
-                        <div><a class="guide-link" href="https://www.indexnow.org/en/documentation" target="_blank">indexnow.org</a> তে যান এবং একটি key তৈরি করুন। অথবা যেকোনো random string (32+ character) key হিসেবে ব্যবহার করতে পারেন।</div>
-                    </div>
-                    <div class="guide-step">
-                        <div class="guide-num">2</div>
-                        <div>আপনার key টি দিয়ে একটি <code>.txt</code> file তৈরি করুন। File এর নাম হবে <code>your-key.txt</code> এবং ভেতরে শুধু key টি লিখুন।</div>
-                    </div>
-                    <div class="guide-step">
-                        <div class="guide-num">3</div>
-                        <div>ওই <code>.txt</code> file টি আপনার site এর root এ রাখুন। যেমন: <code>https://yoursite.com/your-key.txt</code></div>
-                    </div>
-                    <div class="guide-step">
-                        <div class="guide-num">4</div>
-                        <div>নিচে আপনার key ও site host দিয়ে Save করুন। তারপর URL submit করুন।</div>
-                    </div>
+                    <h4>🔑 IndexNow Key কীভাবে পাবেন? (একবারই করতে হবে)</h4>
+                    <div class="guide-step"><div class="guide-num">1</div><div><a class="guide-link" href="https://www.indexnow.org/en/documentation" target="_blank">indexnow.org</a> এ যান → Key generate করুন (বা যেকোনো 32+ character random string)।</div></div>
+                    <div class="guide-step"><div class="guide-num">2</div><div>সেই key দিয়ে একটা file বানান: <code>your-key.txt</code> — ভেতরে শুধু key লিখুন।</div></div>
+                    <div class="guide-step"><div class="guide-num">3</div><div>File টি আপনার site এর root এ রাখুন: <code>https://yoursite.com/your-key.txt</code></div></div>
+                    <div class="guide-step"><div class="guide-num">4</div><div>নিচে key ও host একবার save করুন। এরপর শুধু URL দিলেই submit হবে!</div></div>
                 </div>
 
                 <!-- Key Settings -->
@@ -135,16 +132,14 @@
                     </div>
 
                     <label style="margin-bottom:6px;">Your IndexNow Key</label>
-                    <div class="key-row" style="margin-bottom:12px;">
-                        <input type="text" id="user-indexnow-key" placeholder="e.g. a1b2c3d4e5f6..." style="margin-bottom:0;">
-                    </div>
+                    <input type="text" id="user-indexnow-key" placeholder="e.g. a1b2c3d4e5f6...">
 
                     <label style="margin-bottom:6px;">Your Site Host (without https://)</label>
-                    <div class="key-row">
-                        <input type="text" id="user-indexnow-host" placeholder="e.g. yoursite.com" style="margin-bottom:0; flex:1;">
-                        <button class="btn-save" onclick="saveKey()">💾 Save Key</button>
+                    <div class="input-row">
+                        <input type="text" id="user-indexnow-host" placeholder="e.g. yoursite.com">
+                        <button class="btn-green" onclick="saveKey()">💾 Save Key</button>
                     </div>
-                    <div id="key-save-msg" style="font-size:13px; margin-top:8px; color:#22c55e; display:none;"></div>
+                    <div id="key-save-msg" style="font-size:13px; margin-top:4px; display:none;"></div>
                 </div>
 
                 <!-- URLs -->
@@ -158,35 +153,71 @@
                 </div>
             </div>
 
-            <!-- Email না দিলে prompt দেখাবে -->
             <div id="email-prompt" style="color:#64748b; font-size:14px; text-align:center; padding:20px 0;">
                 ⬆️ উপরে আপনার email দিন
             </div>
-
         </div>
     </div>
 
     <!-- ==================== ADMIN MODE ==================== -->
     <div id="admin-mode" style="display:none;">
         <div class="admin-section">
-            <h2 style="color:#eab308;">🛡️ Admin — Unlimited URL Submit</h2>
-            <p style="color:#94a3b8; margin-top:-10px; font-size:14px;">Admin password দিয়ে unlimited URL submit করুন। Credit কাটবে না।</p>
-
-            <div class="warn-box">
-                ⚡ Admin mode এ সার্ভারের নিজের IndexNow key (.env) ব্যবহার হবে। যেকোনো site এর URL submit করা যাবে।
-            </div>
+            <h2 style="color:#eab308;">🛡️ Admin Panel</h2>
 
             <label>Admin Password</label>
             <input type="password" id="admin-password" placeholder="Admin password দিন">
 
-            <label>Target URLs (One URL per line)</label>
-            <textarea id="admin-urls" rows="10" placeholder="https://example.com/page1&#10;https://example.com/page2&#10;https://example.com/page3"></textarea>
-
-            <button class="btn-admin" id="admin-submit-btn" onclick="adminSubmit()">⚡ Submit All URLs (Unlimited)</button>
-
-            <div class="terminal-box" id="admin-terminal">
-                <span style="color:#64748b;">// Admin mode ready. Password দিয়ে submit করুন...</span>
+            <!-- Admin Sub Tabs -->
+            <div class="admin-sub-tabs">
+                <button class="admin-sub-tab active" onclick="switchAdminTab('submit')">⚡ URL Submit</button>
+                <button class="admin-sub-tab" onclick="switchAdminTab('sites')">🌐 Site Manager</button>
             </div>
+
+            <!-- URL Submit Tab -->
+            <div id="admin-submit-tab">
+                <div class="warn-box">
+                    ⚡ URL দিলেই auto detect হবে কোন site এর — key নিজেই নেবে। Credit কাটবে না।
+                </div>
+
+                <label>Target URLs (One URL per line)</label>
+                <textarea id="admin-urls" rows="10" placeholder="https://clickrisehub.com/page1&#10;https://site2.com/page2&#10;যেকোনো registered site এর URL দিন"></textarea>
+
+                <button class="btn-admin" id="admin-submit-btn" onclick="adminSubmit()">⚡ Submit All URLs (Unlimited)</button>
+
+                <div class="terminal-box" id="admin-terminal">
+                    <span style="color:#64748b;">// Admin mode ready...</span>
+                </div>
+            </div>
+
+            <!-- Site Manager Tab -->
+            <div id="admin-sites-tab" style="display:none;">
+                <div class="info-box">
+                    💡 <span>একবার site register করুন</span> — তারপর সেই site এর যেকোনো URL submit করতে পারবেন, key আর দিতে হবে না।
+                </div>
+
+                <label>Site Host (without https://)</label>
+                <input type="text" id="site-host" placeholder="e.g. clickrisehub.com">
+
+                <label>IndexNow Key (এই site এর)</label>
+                <input type="text" id="site-key" placeholder="e.g. 95ab980e51a64fe18167f67b0af1855f">
+
+                <label>Label (Optional)</label>
+                <div class="input-row">
+                    <input type="text" id="site-label" placeholder="e.g. ClickRise Hub">
+                    <button class="btn-green" onclick="addSite()">➕ Add Site</button>
+                </div>
+                <div id="site-add-msg" style="font-size:13px; margin-bottom:10px; display:none;"></div>
+
+                <!-- Registered Sites List -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <label style="margin:0;">Registered Sites</label>
+                    <button class="btn-green" style="padding:6px 12px; font-size:12px;" onclick="loadSites()">🔄 Refresh</button>
+                </div>
+                <div class="site-list" id="site-list">
+                    <div style="color:#64748b; font-size:13px;">Password দিয়ে Refresh করুন...</div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -199,7 +230,6 @@
     function switchMode(mode) {
         const tabs = document.querySelectorAll('.tab-btn');
         tabs.forEach(t => t.classList.remove('active'));
-
         if (mode === 'user') {
             document.getElementById('user-mode').style.display = 'block';
             document.getElementById('admin-mode').style.display = 'none';
@@ -215,8 +245,22 @@
         }
     }
 
+    function switchAdminTab(tab) {
+        document.querySelectorAll('.admin-sub-tab').forEach(t => t.classList.remove('active'));
+        if (tab === 'submit') {
+            document.getElementById('admin-submit-tab').style.display = 'block';
+            document.getElementById('admin-sites-tab').style.display = 'none';
+            document.querySelectorAll('.admin-sub-tab')[0].classList.add('active');
+        } else {
+            document.getElementById('admin-submit-tab').style.display = 'none';
+            document.getElementById('admin-sites-tab').style.display = 'block';
+            document.querySelectorAll('.admin-sub-tab')[1].classList.add('active');
+            loadSites();
+        }
+    }
+
     // =============================================
-    //   Email দিলে Credit ও Key লোড হবে
+    //   User — Email দিলে data লোড
     // =============================================
     let loadTimeout = null;
     function loadUserData() {
@@ -228,26 +272,20 @@
             document.getElementById('credit-info').style.display = 'none';
             return;
         }
-        // Debounce 700ms
         loadTimeout = setTimeout(async () => {
             try {
-                // User create or get
                 await fetch('/api/user/get-or-create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })
                 });
-
                 const res = await fetch(`/api/user/credit?email=${encodeURIComponent(email)}`);
                 const data = await res.json();
-
                 if (data.success) {
                     document.getElementById('credit-info').style.display = 'block';
                     document.getElementById('credit-count').innerText = data.credit;
                     document.getElementById('key-section').style.display = 'block';
                     document.getElementById('email-prompt').style.display = 'none';
-
-                    // Key & Host পূরণ করা থাকলে দেখাবে
                     if (data.indexnowKey) {
                         document.getElementById('user-indexnow-key').value = data.indexnowKey;
                         document.getElementById('user-indexnow-host').value = data.indexnowHost;
@@ -256,38 +294,25 @@
                         setKeyStatus(false);
                     }
                 }
-            } catch (e) {
-                document.getElementById('key-section').style.display = 'none';
-            }
+            } catch (e) {}
         }, 700);
     }
 
     function setKeyStatus(isSet) {
         const badge = document.getElementById('key-status-badge');
-        if (isSet) {
-            badge.className = 'key-status set';
-            badge.innerText = '✓ Key Set';
-        } else {
-            badge.className = 'key-status notset';
-            badge.innerText = 'Not Set';
-        }
+        badge.className = isSet ? 'key-status set' : 'key-status notset';
+        badge.innerText = isSet ? '✓ Key Set' : 'Not Set';
     }
 
     // =============================================
-    //   IndexNow Key Save
+    //   User — Key Save
     // =============================================
     async function saveKey() {
-        const email       = document.getElementById('user-email').value.trim();
-        const key         = document.getElementById('user-indexnow-key').value.trim();
-        const host        = document.getElementById('user-indexnow-host').value.trim();
-        const msgEl       = document.getElementById('key-save-msg');
-
-        if (!email) { alert('Email দিন!'); return; }
-        if (!key)   { alert('IndexNow Key দিন!'); return; }
-        if (!host)  { alert('Site Host দিন!'); return; }
-
-        msgEl.style.display = 'none';
-
+        const email = document.getElementById('user-email').value.trim();
+        const key   = document.getElementById('user-indexnow-key').value.trim();
+        const host  = document.getElementById('user-indexnow-host').value.trim();
+        const msgEl = document.getElementById('key-save-msg');
+        if (!email || !key || !host) { alert('Email, Key ও Host দিন!'); return; }
         try {
             const res = await fetch('/api/user/update-key', {
                 method: 'POST',
@@ -295,67 +320,49 @@
                 body: JSON.stringify({ email, indexnowKey: key, indexnowHost: host })
             });
             const data = await res.json();
-
-            if (data.success) {
-                msgEl.style.color = '#22c55e';
-                msgEl.innerText = '✅ ' + data.message;
-                msgEl.style.display = 'block';
-                setKeyStatus(true);
-            } else {
-                msgEl.style.color = '#ef4444';
-                msgEl.innerText = '❌ ' + data.message;
-                msgEl.style.display = 'block';
-            }
+            msgEl.style.color = data.success ? '#22c55e' : '#ef4444';
+            msgEl.innerText = (data.success ? '✅ ' : '❌ ') + data.message;
+            msgEl.style.display = 'block';
+            if (data.success) setKeyStatus(true);
         } catch (e) {
             msgEl.style.color = '#ef4444';
-            msgEl.innerText = '❌ Server connection failed!';
+            msgEl.innerText = '❌ Server error!';
             msgEl.style.display = 'block';
         }
     }
 
     // =============================================
-    //   User URL Submit
+    //   User — URL Submit
     // =============================================
     async function userSubmit() {
         const email    = document.getElementById('user-email').value.trim();
         const urlsText = document.getElementById('user-urls').value.trim();
         const terminal = document.getElementById('user-terminal');
         const submitBtn= document.getElementById('user-submit-btn');
-
         if (!email)    { alert('Email দিন!'); return; }
         if (!urlsText) { alert('URL দিন!'); return; }
-
         const key  = document.getElementById('user-indexnow-key').value.trim();
         const host = document.getElementById('user-indexnow-host').value.trim();
-        if (!key || !host) {
-            alert('আগে IndexNow Key ও Site Host দিয়ে Save করুন!');
-            return;
-        }
-
+        if (!key || !host) { alert('আগে IndexNow Key ও Site Host Save করুন!'); return; }
         const urls = urlsText.split('\n').filter(u => u.trim() !== '');
         terminal.innerHTML = `<span class="log-process">[PROCESS] ${urls.length}টি URL পাঠানো হচ্ছে...</span><br>`;
         submitBtn.disabled = true;
-
         try {
             const response = await fetch('/api/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, urls })
             });
-
             const data = await response.json();
-
             if (data.success) {
                 terminal.innerHTML += `<span class="log-success">[SUCCESS] ${data.message}</span><br>`;
                 terminal.innerHTML += `<span class="log-info">[CREDIT] বাকি credit: ${data.remainingCredit}</span><br>`;
                 document.getElementById('credit-count').innerText = data.remainingCredit;
                 terminal.innerHTML += `<span style="color:#475569;">--- Results ---</span><br>`;
                 data.results.forEach(r => {
-                    if (r.success) {
-                        terminal.innerHTML += `<span class="log-success">[✓] ${r.url}</span><br>`;
-                    } else {
-                        terminal.innerHTML += `<span class="log-error">[✕] ${r.url} → ${r.error}</span><br>`;
-                    }
+                    terminal.innerHTML += r.success
+                        ? `<span class="log-success">[✓] ${r.url}</span><br>`
+                        : `<span class="log-error">[✕] ${r.url} → ${r.error}</span><br>`;
                 });
             } else {
                 terminal.innerHTML += `<span class="log-error">[ERROR] ${data.message}</span>`;
@@ -369,39 +376,32 @@
     }
 
     // =============================================
-    //   Admin URL Submit (Unlimited)
+    //   Admin — URL Submit (Auto host detect)
     // =============================================
     async function adminSubmit() {
         const password = document.getElementById('admin-password').value.trim();
         const urlsText = document.getElementById('admin-urls').value.trim();
         const terminal = document.getElementById('admin-terminal');
         const submitBtn= document.getElementById('admin-submit-btn');
-
         if (!password) { alert('Admin password দিন!'); return; }
         if (!urlsText) { alert('URL দিন!'); return; }
-
         const urls = urlsText.split('\n').filter(u => u.trim() !== '');
-        terminal.innerHTML = `<span class="log-process">[ADMIN] ${urls.length}টি URL submit হচ্ছে (Unlimited)...</span><br>`;
+        terminal.innerHTML = `<span class="log-process">[ADMIN] ${urls.length}টি URL submit হচ্ছে...</span><br>`;
         submitBtn.disabled = true;
-
         try {
             const response = await fetch('/api/index-now', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ urls, password })
             });
-
             const data = await response.json();
-
             if (data.success) {
                 terminal.innerHTML += `<span class="log-success">[SUCCESS] ${data.message}</span><br>`;
                 terminal.innerHTML += `<span style="color:#475569;">--- Results ---</span><br>`;
                 data.results.forEach(r => {
-                    if (r.success) {
-                        terminal.innerHTML += `<span class="log-success">[✓] ${r.url}</span><br>`;
-                    } else {
-                        terminal.innerHTML += `<span class="log-error">[✕] ${r.url} → ${r.error}</span><br>`;
-                    }
+                    terminal.innerHTML += r.success
+                        ? `<span class="log-success">[✓] ${r.url}</span><br>`
+                        : `<span class="log-error">[✕] ${r.url} → ${r.error}</span><br>`;
                 });
             } else {
                 terminal.innerHTML += `<span class="log-error">[ERROR] ${data.message}</span>`;
@@ -412,6 +412,94 @@
             submitBtn.disabled = false;
             terminal.scrollTop = terminal.scrollHeight;
         }
+    }
+
+    // =============================================
+    //   Admin — Site Add
+    // =============================================
+    async function addSite() {
+        const password = document.getElementById('admin-password').value.trim();
+        const host     = document.getElementById('site-host').value.trim();
+        const key      = document.getElementById('site-key').value.trim();
+        const label    = document.getElementById('site-label').value.trim();
+        const msgEl    = document.getElementById('site-add-msg');
+        if (!password) { alert('Admin password দিন!'); return; }
+        if (!host || !key) { alert('Host ও Key দিন!'); return; }
+        try {
+            const res = await fetch('/api/admin/site/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password, host, indexnowKey: key, label })
+            });
+            const data = await res.json();
+            msgEl.style.color = data.success ? '#22c55e' : '#ef4444';
+            msgEl.innerText = (data.success ? '✅ ' : '❌ ') + data.message;
+            msgEl.style.display = 'block';
+            if (data.success) {
+                document.getElementById('site-host').value = '';
+                document.getElementById('site-key').value = '';
+                document.getElementById('site-label').value = '';
+                loadSites();
+            }
+        } catch (e) {
+            msgEl.style.color = '#ef4444';
+            msgEl.innerText = '❌ Server error!';
+            msgEl.style.display = 'block';
+        }
+    }
+
+    // =============================================
+    //   Admin — Site List Load
+    // =============================================
+    async function loadSites() {
+        const password = document.getElementById('admin-password').value.trim();
+        const listEl   = document.getElementById('site-list');
+        if (!password) {
+            listEl.innerHTML = '<div style="color:#ef4444; font-size:13px;">Password দিন তারপর Refresh করুন।</div>';
+            return;
+        }
+        listEl.innerHTML = '<div style="color:#64748b; font-size:13px;">লোড হচ্ছে...</div>';
+        try {
+            const res = await fetch(`/api/admin/sites?password=${encodeURIComponent(password)}`);
+            const data = await res.json();
+            if (!data.success) {
+                listEl.innerHTML = `<div style="color:#ef4444; font-size:13px;">${data.message}</div>`;
+                return;
+            }
+            if (data.data.length === 0) {
+                listEl.innerHTML = '<div style="color:#64748b; font-size:13px;">কোনো site register করা নেই।</div>';
+                return;
+            }
+            listEl.innerHTML = data.data.map(site => `
+                <div class="site-item">
+                    <div>
+                        <div class="site-host">🌐 ${site.label || site.host}</div>
+                        <div class="site-key">${site.host} · Key: ${site.indexnowKey.substring(0,8)}...</div>
+                    </div>
+                    <button class="btn-red" onclick="deleteSite('${site.host}')">🗑️ Delete</button>
+                </div>
+            `).join('');
+        } catch (e) {
+            listEl.innerHTML = '<div style="color:#ef4444; font-size:13px;">Server error!</div>';
+        }
+    }
+
+    // =============================================
+    //   Admin — Site Delete
+    // =============================================
+    async function deleteSite(host) {
+        const password = document.getElementById('admin-password').value.trim();
+        if (!confirm(`${host} delete করবেন?`)) return;
+        try {
+            const res = await fetch('/api/admin/site/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password, host })
+            });
+            const data = await res.json();
+            if (data.success) loadSites();
+            else alert(data.message);
+        } catch (e) { alert('Server error!'); }
     }
 </script>
 </body>
