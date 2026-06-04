@@ -8,7 +8,6 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 0; }
         .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
         
-        /* প্রফেশনাল নেভিগেশন বার উইথ লগইন/সাইনআপ */
         .navbar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-bottom: 1px solid #334155; }
         .logo-area { display: flex; align-items: center; gap: 25px; }
         .logo-text { font-size: 24px; font-weight: bold; color: #38bdf8; text-decoration: none; display: flex; align-items: center; gap: 8px; margin: 0; }
@@ -66,10 +65,9 @@
             <a href="status.html" class="nav-link">Submit Status</a>
         </div>
     </div>
-    <!-- বাটন দুটো আবার তাদের মেইন জায়গায় ফিরে আসলো ভাই -->
     <div class="auth-buttons">
-        <button class="btn-auth" onclick="alert('Login system connection coming soon!')">Log In</button>
-        <button class="btn-auth btn-signup" onclick="alert('Sign Up database system connection coming soon!')">Sign Up</button>
+        <button class="btn-auth" onclick="alert('Login system coming soon!')">Log In</button>
+        <button class="btn-auth btn-signup" onclick="alert('Sign Up coming soon!')">Sign Up</button>
     </div>
 </div>
 
@@ -78,7 +76,7 @@
 
     <h2>Select Your Plan</h2>
     <div class="pricing-grid">
-        <div class="card active" id="plan-free" onclick="selectPlan('Free Trial', 0, 'free_trial')">
+        <div class="card active" id="plan-free" onclick="selectPlan('Free', 0, 'Free')">
             <h3>Free Trial</h3>
             <div class="price">0 TK</div>
             <ul>
@@ -88,34 +86,34 @@
             </ul>
             <button class="btn-select">Selected</button>
         </div>
-        <div class="card" id="plan-starter" onclick="selectPlan('Starter Pack', 200, 'starter')">
+        <div class="card" id="plan-starter" onclick="selectPlan('Starter', 199, 'Starter')">
             <h3>Starter Pack</h3>
-            <div class="price">200 TK</div>
+            <div class="price">199 TK</div>
             <ul>
-                <li>50 Specific URLs</li>
+                <li>50 URL Indexing</li>
                 <li>Credit System</li>
-                <li>Manual Mode</li>
+                <li>One-time</li>
             </ul>
             <button class="btn-select">Select</button>
         </div>
-        <div class="card" id="plan-6m" onclick="selectPlan('6-Months Pro', 599, '6_months')">
-            <h3>6-Months Pro</h3>
-            <div class="price">599 TK</div>
+        <div class="card" id="plan-6m" onclick="selectPlan('6 Months', 1499, '6 Months')">
+            <h3>6 Months Pro</h3>
+            <div class="price">1,499 TK</div>
             <ul>
-                <li>Unlimited Sites</li>
-                <li>Upload Own JSON</li>
-                <li>Valid for 6 Months</li>
+                <li>200 URLs/month</li>
+                <li>Credit System</li>
+                <li>Valid 6 Months</li>
             </ul>
             <button class="btn-select">Select</button>
         </div>
-        <div class="card" id="plan-lifetime" onclick="selectPlan('Lifetime Pro', 999, 'lifetime')">
+        <div class="card" id="plan-1year" onclick="selectPlan('1 Year', 2499, '1 Year')">
             <div class="badge" style="background:#22c55e;">BEST VALUE</div>
-            <h3>Lifetime Pro</h3>
-            <div class="price">999 TK</div>
+            <h3>1 Year Pro</h3>
+            <div class="price">2,499 TK</div>
             <ul>
-                <li>Unlimited Sites</li>
-                <li>Upload Own JSON</li>
-                <li>Lifetime Access</li>
+                <li>200 URLs/month</li>
+                <li>Credit System</li>
+                <li>Valid 1 Year</li>
             </ul>
             <button class="btn-select">Select</button>
         </div>
@@ -123,7 +121,7 @@
 
     <div id="payment-box" class="section">
         <h3 style="color: #f43f5e; margin-top:0;">💳 Complete Your Payment</h3>
-        <p>Please Send Money the exact amount to one of our personal accounts below:</p>
+        <p>Please send the exact amount to one of our personal accounts below:</p>
         <div class="payment-method">
             <div class="method">
                 <strong>bKash (Personal):</strong><br>
@@ -136,7 +134,7 @@
         </div>
         
         <label>Selected Plan: <span id="selected-plan-text" style="color:#38bdf8; font-weight:bold;">Free Trial (0 TK)</span></label>
-        <input type="hidden" id="chosen-plan" value="free_trial">
+        <input type="hidden" id="chosen-plan" value="Free">
         <br><br>
 
         <div id="paid-inputs-area" style="display: none;">
@@ -153,6 +151,9 @@
             <input type="text" id="txnid" placeholder="A1B2C3D4E5">
         </div>
 
+        <label>Your Email</label>
+        <input type="email" id="user-email" placeholder="your@email.com">
+
         <button class="btn-submit" id="submit-btn" onclick="submitIndexing()">Verify & Process Activation</button>
 
         <div class="terminal-box" id="terminal-output">
@@ -162,7 +163,7 @@
 </div>
 
 <script>
-    window.onload = function() { selectPlan('Free Trial', 0, 'free_trial'); };
+    window.onload = function() { selectPlan('Free', 0, 'Free'); };
 
     function selectPlan(planName, price, role) {
         document.querySelectorAll('.card').forEach(c => {
@@ -170,10 +171,10 @@
             c.querySelector('.btn-select').innerText = 'Select';
         });
 
-        if(role === 'free_trial') document.getElementById('plan-free').classList.add('active');
-        if(role === 'starter') document.getElementById('plan-starter').classList.add('active');
-        if(role === '6_months') document.getElementById('plan-6m').classList.add('active');
-        if(role === 'lifetime') document.getElementById('plan-lifetime').classList.add('active');
+        if(role === 'Free') document.getElementById('plan-free').classList.add('active');
+        if(role === 'Starter') document.getElementById('plan-starter').classList.add('active');
+        if(role === '6 Months') document.getElementById('plan-6m').classList.add('active');
+        if(role === '1 Year') document.getElementById('plan-1year').classList.add('active');
         
         document.querySelector('.card.active .btn-select').innerText = 'Selected';
         document.getElementById('selected-plan-text').innerText = `${planName} (${price} TK)`;
@@ -192,45 +193,57 @@
 
     async function submitIndexing() {
         const plan = document.getElementById('chosen-plan').value;
+        const email = document.getElementById('user-email').value.trim();
         const gateway = document.getElementById('payment-gateway').value;
         const senderNumber = document.getElementById('sender-number').value.trim();
         const txnid = document.getElementById('txnid').value.trim();
         const terminal = document.getElementById('terminal-output');
         const submitBtn = document.getElementById('submit-btn');
 
-        if(plan !== 'free_trial' && (!senderNumber || !txnid)) {
+        if (!email) {
+            alert('Please enter your email!');
+            return;
+        }
+
+        if(plan !== 'Free' && (!senderNumber || !txnid)) {
             alert('Please fill in your Payment Number and Transaction ID!');
             return;
         }
 
-        terminal.innerHTML = `<span class="log-process">[PROCESS] Initiating Request: Registering plan choice to database...</span><br>`;
+        terminal.innerHTML = `<span class="log-process">[PROCESS] Initiating Request...</span><br>`;
         submitBtn.disabled = true;
 
         try {
-            const response = await fetch('/api/submit', {
+            // প্রথমে user create করো
+            await fetch('/api/user/get-or-create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    plan: plan,
-                    urls: ["init_placeholder"],
-                    gateway: plan !== 'free_trial' ? gateway : null,
-                    senderNumber: plan !== 'free_trial' ? senderNumber : null,
-                    txnid: plan !== 'free_trial' ? txnid : null
-                })
+                body: JSON.stringify({ email })
             });
 
-            const data = await response.json();
-
-            if (data.success === false || data.error) {
-                terminal.innerHTML += `<span class="log-error">[SERVER ERROR]: ${data.message || data.error}</span>`;
+            if (plan === 'Free') {
+                terminal.innerHTML += `<span class="log-success">[SUCCESS] Free plan activated! 5 credits added.</span><br>`;
+                terminal.innerHTML += `<span class="log-process">[REDIRECT] Loading your dashboard in 3 seconds...</span><br>`;
+                setTimeout(() => { window.location.href = "dashboard.html?email=" + encodeURIComponent(email); }, 3000);
             } else {
-                terminal.innerHTML += `<span class="log-success">[SUCCESS] Subscription logged in system registry!</span><br>`;
-                terminal.innerHTML += `<span class="log-process">[REDIRECT] Loading your live URL Submit Console in 3 seconds...</span><br>`;
-                
-                setTimeout(() => { window.location.href = "dashboard.html"; }, 3000);
+                // Paid plan payment submit
+                const response = await fetch('/api/payment/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, plan, senderNumber, txnid })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    terminal.innerHTML += `<span class="log-success">[SUCCESS] Payment request submitted!</span><br>`;
+                    terminal.innerHTML += `<span class="log-process">[INFO] Admin verify করলে আপনার credit যোগ হবে।</span><br>`;
+                } else {
+                    terminal.innerHTML += `<span class="log-error">[ERROR]: ${data.message}</span>`;
+                }
             }
         } catch (err) {
-            terminal.innerHTML += `<span class="log-error">[CRITICAL ERROR]: Express core connection failure!</span>`;
+            terminal.innerHTML += `<span class="log-error">[CRITICAL ERROR]: Server connection failure!</span>`;
         } finally {
             submitBtn.disabled = false;
         }
