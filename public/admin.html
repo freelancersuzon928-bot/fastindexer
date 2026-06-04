@@ -19,11 +19,29 @@
 
         /* Admin Panel */
         #admin-panel { display: none; }
+
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 30px; }
+        .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px 24px; display: flex; align-items: center; gap: 16px; }
+        .stat-card.online { border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.05); }
+        .stat-card.total  { border-color: rgba(56,189,248,0.4); background: rgba(56,189,248,0.05); }
+        .stat-card.today  { border-color: rgba(234,179,8,0.4);  background: rgba(234,179,8,0.05);  }
+        .stat-icon { font-size: 32px; }
+        .stat-info { flex: 1; }
+        .stat-value { font-size: 28px; font-weight: bold; line-height: 1; margin-bottom: 4px; }
+        .stat-card.online .stat-value { color: #22c55e; }
+        .stat-card.total  .stat-value { color: #38bdf8; }
+        .stat-card.today  .stat-value { color: #eab308; }
+        .stat-label { font-size: 13px; color: #64748b; font-weight: 500; }
+        .stat-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; display: inline-block; margin-right: 6px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* Table */
         table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #1e293b; border-radius: 8px; overflow: hidden; }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #334155; font-size: 14px; }
         th { background-color: #334155; color: #38bdf8; font-weight: bold; }
         tr:hover { background-color: #24334d; }
-        .status-pending { color: #eab308; font-weight: bold; background: #3e3214; padding: 4px 8px; border-radius: 4px; }
+        .status-pending  { color: #eab308; font-weight: bold; background: #3e3214; padding: 4px 8px; border-radius: 4px; }
         .status-approved { color: #22c55e; font-weight: bold; background: #143e21; padding: 4px 8px; border-radius: 4px; }
         .btn-approve { background: #22c55e; color: #0f172a; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
         .btn-approve:hover { background: #16a34a; }
@@ -55,6 +73,31 @@
             <span style="color:#94a3b8; font-weight:bold;">Super Admin</span>
             &nbsp;&nbsp;
             <button onclick="adminLogout()" style="background:#ef4444; color:white; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-weight:bold;">Logout</button>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card online">
+            <div class="stat-icon">🟢</div>
+            <div class="stat-info">
+                <div class="stat-value" id="stat-online">-</div>
+                <div class="stat-label"><span class="stat-dot"></span>এখন Online</div>
+            </div>
+        </div>
+        <div class="stat-card total">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+                <div class="stat-value" id="stat-total">-</div>
+                <div class="stat-label">Total Registered Users</div>
+            </div>
+        </div>
+        <div class="stat-card today">
+            <div class="stat-icon">📊</div>
+            <div class="stat-info">
+                <div class="stat-value" id="stat-today">-</div>
+                <div class="stat-label">আজকের Submissions</div>
+            </div>
         </div>
     </div>
 
@@ -107,15 +150,14 @@
 
 <script>
     let adminPass = '';
+    let statsInterval = null;
 
     function adminLogin() {
         const pass = document.getElementById('admin-password').value;
         if (!pass) return;
-
         adminPass = pass;
         document.getElementById('login-error').style.display = 'none';
 
-        // Password verify করার জন্য API call
         fetch(`/api/admin/payments?password=${encodeURIComponent(pass)}`)
             .then(res => res.json())
             .then(data => {
@@ -127,6 +169,9 @@
                     document.getElementById('admin-panel').style.display = 'block';
                     loadPayments(data);
                     loadUsers();
+                    loadStats();
+                    // প্রতি 15 সেকেন্ডে stats refresh
+                    statsInterval = setInterval(loadStats, 15000);
                 }
             })
             .catch(() => {
@@ -136,14 +181,29 @@
 
     function adminLogout() {
         adminPass = '';
+        if (statsInterval) clearInterval(statsInterval);
         document.getElementById('login-box').style.display = 'block';
         document.getElementById('admin-panel').style.display = 'none';
         document.getElementById('admin-password').value = '';
     }
 
+    // =============================================
+    //   Stats Load
+    // =============================================
+    async function loadStats() {
+        try {
+            const res = await fetch(`/api/admin/stats?password=${encodeURIComponent(adminPass)}`);
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('stat-online').innerText = data.onlineUsers;
+                document.getElementById('stat-total').innerText  = data.totalUsers;
+                document.getElementById('stat-today').innerText  = data.todaySubmissions;
+            }
+        } catch (e) {}
+    }
+
     function loadPayments(data) {
         const tableBody = document.getElementById('payments-table');
-
         if (data.success && data.data.length > 0) {
             tableBody.innerHTML = '';
             data.data.forEach(req => {
@@ -151,7 +211,6 @@
                 const approveBtn = req.status === 'pending'
                     ? `<button class="btn-approve" onclick="approvePayment('${req._id}')">✅ Approve</button>`
                     : `<span style="color:#64748b;">Verified ✓</span>`;
-
                 tableBody.innerHTML += `
                     <tr>
                         <td style="color:#f1f5f9;">${req.userEmail}</td>
@@ -171,7 +230,6 @@
 
     async function approvePayment(paymentId) {
         if (!confirm("এই payment approve করবেন?")) return;
-
         try {
             const response = await fetch('/api/admin/approve-payment', {
                 method: 'POST',
@@ -179,10 +237,8 @@
                 body: JSON.stringify({ password: adminPass, paymentId })
             });
             const result = await response.json();
-
             if (result.success) {
                 alert('✅ ' + result.message);
-                // Reload payments
                 fetch(`/api/admin/payments?password=${encodeURIComponent(adminPass)}`)
                     .then(r => r.json())
                     .then(loadPayments);
@@ -199,7 +255,6 @@
             const response = await fetch(`/api/admin/users?password=${encodeURIComponent(adminPass)}`);
             const data = await response.json();
             const tableBody = document.getElementById('users-table');
-
             if (data.success && data.data.length > 0) {
                 tableBody.innerHTML = '';
                 data.data.forEach(user => {
@@ -222,15 +277,10 @@
     }
 
     async function addCredit() {
-        const email = document.getElementById('credit-email').value.trim();
+        const email  = document.getElementById('credit-email').value.trim();
         const credit = document.getElementById('credit-amount').value.trim();
-        const msg = document.getElementById('credit-msg');
-
-        if (!email || !credit) {
-            alert('Email এবং credit amount দিন!');
-            return;
-        }
-
+        const msg    = document.getElementById('credit-msg');
+        if (!email || !credit) { alert('Email এবং credit amount দিন!'); return; }
         try {
             const response = await fetch('/api/admin/add-credit', {
                 method: 'POST',
@@ -238,12 +288,12 @@
                 body: JSON.stringify({ password: adminPass, email, credit })
             });
             const data = await response.json();
-
             msg.style.display = 'block';
             if (data.success) {
                 msg.style.color = '#22c55e';
                 msg.innerText = '✅ ' + data.message;
                 loadUsers();
+                loadStats();
             } else {
                 msg.style.color = '#ef4444';
                 msg.innerText = '❌ ' + data.message;

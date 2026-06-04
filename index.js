@@ -17,6 +17,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // =============================================
+//   Online Users Tracking (In-Memory)
+//   প্রতি 30 সেকেন্ডে ping না আসলে offline ধরবে
+// =============================================
+const onlineUsers = new Map(); // key: sessionId, value: lastSeen timestamp
+
+function cleanOldSessions() {
+  const now = Date.now();
+  for (const [id, lastSeen] of onlineUsers.entries()) {
+    if (now - lastSeen > 60000) { // 60 সেকেন্ড inactive = offline
+      onlineUsers.delete(id);
+    }
+  }
+}
+setInterval(cleanOldSessions, 30000);
+
+// =============================================
 //   MongoDB সংযোগ
 // =============================================
 mongoose.connect(process.env.MONGODB_URI)
@@ -38,11 +54,10 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
-// Admin Site Registry — admin এর সব site এর key এখানে
 const siteSchema = new mongoose.Schema({
-  host:        { type: String, required: true, unique: true }, // e.g. clickrisehub.com
+  host:        { type: String, required: true, unique: true },
   indexnowKey: { type: String, required: true },
-  label:       { type: String, default: '' }, // friendly name
+  label:       { type: String, default: '' },
   addedAt:     { type: Date, default: Date.now }
 });
 const Site = mongoose.model('Site', siteSchema);
@@ -156,6 +171,52 @@ async function sendToIndexNow(urls, indexnowKey, indexnowHost) {
 
 app.get('/api/payment-info', (req, res) => {
   res.json({ success: true, ...PAYMENT_NUMBERS, packages: PACKAGES });
+});
+
+// =============================================
+//   Online Ping — dashboard থেকে প্রতি 30s call
+// =============================================
+app.post('/api/ping', (req, res) => {
+  const { sessionId } = req.body;
+  if (sessionId) {
+    onlineUsers.set(sessionId, Date.now());
+  }
+  res.json({ success: true });
+});
+
+// =============================================
+//   Admin Stats — online users, total users, today submissions
+// =============================================
+app.get('/api/admin/stats', async (req, res) => {
+  try {
+    const { password } = req.query;
+    if (password !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).json({ success: false, message: 'Access Denied!' });
+    }
+
+    cleanOldSessions();
+    const onlineCount = onlineUsers.size;
+
+    const totalUsers = await User.countDocuments();
+
+    // আজকের শুরু (Bangladesh time UTC+6)
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const todaySubmissions = await Submission.countDocuments({
+      submittedAt: { $gte: todayStart },
+      userEmail: { $ne: 'admin' }
+    });
+
+    res.json({
+      success: true,
+      onlineUsers: onlineCount,
+      totalUsers,
+      todaySubmissions
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
 // User তৈরি বা get
@@ -296,7 +357,6 @@ app.post('/api/admin/site/delete', async (req, res) => {
 
 // =============================================
 //   ADMIN — URL Submit (Auto host detect)
-//   শুধু URLs দিলেই হবে, key auto নেবে
 // =============================================
 app.post('/api/index-now', async (req, res) => {
   try {
@@ -309,7 +369,6 @@ app.post('/api/index-now', async (req, res) => {
       return res.status(403).json({ success: false, message: 'Access Denied!' });
     }
 
-    // Host অনুযায়ী URLs গ্রুপ করো
     const hostGroups = {};
     const unknownUrls = [];
 
@@ -320,14 +379,12 @@ app.post('/api/index-now', async (req, res) => {
       hostGroups[host].push(url);
     }
 
-    // প্রতিটা host এর key MongoDB থেকে নাও
     const allResults = [];
 
     for (const [host, hostUrls] of Object.entries(hostGroups)) {
       const site = await Site.findOne({ host });
 
       if (!site) {
-        // Key registered নেই
         hostUrls.forEach(url => allResults.push({
           success: false, url, method: 'IndexNow',
           error: `${host} register করা নেই। Admin panel এ site যোগ করুন।`
@@ -339,7 +396,6 @@ app.post('/api/index-now', async (req, res) => {
       allResults.push(...results);
     }
 
-    // Unknown URLs
     unknownUrls.forEach(url => allResults.push({
       success: false, url, method: 'IndexNow', error: 'Invalid URL format'
     }));
