@@ -3,55 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FastIndexer - User Dashboard</title>
+    <title>FastIndexer - URL Submit Console</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 0; }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        
-        .navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #1e293b; padding-bottom: 15px; }
-        .logo-text { font-size: 24px; font-weight: bold; color: #38bdf8; display: flex; align-items: center; gap: 8px; margin: 0; }
-        
+        .navbar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-bottom: 1px solid #334155; }
+        .logo-area { display: flex; align-items: center; gap: 40px; }
+        .logo-text { font-size: 24px; font-weight: bold; color: #38bdf8; text-decoration: none; display: flex; align-items: center; gap: 8px; margin: 0; }
+        .nav-links { display: flex; align-items: center; gap: 20px; }
+        .nav-link { color: #94a3b8; text-decoration: none; font-weight: 500; transition: 0.2s; font-size: 15px; }
+        .nav-link:hover, .nav-link.active { color: #38bdf8; }
+        .status-badge { font-size: 14px; color: #10b981; background: rgba(16,185,129,0.1); padding: 6px 12px; border-radius: 6px; font-weight: bold; border: 1px solid rgba(16,185,129,0.2); }
         h2 { color: #38bdf8; margin-top: 10px; }
-        .section { background: #1e293b; border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid #334155; }
-        
+        .section { background: #1e293b; border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid #334155; margin-top: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: #cbd5e1; }
         input, textarea, select { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: white; box-sizing: border-box; margin-bottom: 15px; font-size: 14px; }
         input:focus, textarea:focus, select:focus { border-color: #38bdf8; outline: none; }
-        
         .btn-submit { background: #38bdf8; color: #0f172a; font-size: 16px; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; width: 100%; transition: 0.2s; }
         .btn-submit:hover { background: #0ea5e9; }
         .btn-submit:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
-        
-        .terminal-box { background: #020617; border: 1px solid #334155; font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #38bdf8; padding: 15px; border-radius: 6px; max-height: 300px; overflow-y: auto; margin-top: 20px; box-sizing: border-box; width: 100%; line-height: 1.6; }
+        .terminal-box { background: #020617; border: 1px solid #334155; font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #38bdf8; padding: 15px; border-radius: 6px; max-height: 350px; overflow-y: auto; margin-top: 20px; box-sizing: border-box; width: 100%; line-height: 1.6; }
         .log-success { color: #22c55e; }
         .log-error { color: #ef4444; }
         .log-process { color: #eab308; }
+        .log-info { color: #38bdf8; font-weight: bold; }
+        .info-box { background: rgba(56,189,248,0.05); border: 1px solid rgba(56,189,248,0.2); border-radius: 8px; padding: 12px 16px; margin-bottom: 15px; font-size: 13px; color: #94a3b8; }
+        .info-box span { color: #38bdf8; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="navbar">
-        <h1 class="logo-text">🚀 FastIndexer Console</h1>
-        <span style="color: #94a3b8; font-weight: bold;">Status: Approved Account</span>
+<div class="navbar">
+    <div class="logo-area">
+        <a href="index.html" class="logo-text">🚀 FastIndexer</a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="dashboard.html" class="nav-link active">URL Submit</a>
+            <a href="status.html" class="nav-link">Submit Status</a>
+        </div>
     </div>
+    <span class="status-badge">Console Active</span>
+</div>
 
+<div class="container">
     <div class="section">
         <h2>🔗 Submit Content For Live Indexing</h2>
-        <p style="color: #94a3b8; margin-top: -10px; font-size: 14px;">Your payment has been verified. You can now request instant indexing to Google Engine.</p>
+        <p style="color: #94a3b8; margin-top: -10px; font-size: 14px;">Submit any URL for instant indexing via Google Indexing API or IndexNow.</p>
         <br>
+
+        <div class="info-box">
+            💡 <span>How it works:</span> JSON Key দিলে → Google Indexing API | JSON Key না দিলে → IndexNow (Bing + Google) দিয়ে index হবে।
+        </div>
 
         <label>Your Target URLs (One URL per line)</label>
         <textarea id="urls" rows="6" placeholder="https://example.com/page1&#10;https://example.com/page2"></textarea>
 
-        <label>Google Service Account JSON Key (Optional - Leave blank to use system default)</label>
-        <textarea id="custom-json" rows="5" placeholder="Paste your Google Service Account JSON content here if you want to use your own console..."></textarea>
+        <label>Google Service Account JSON Key <span style="color:#64748b; font-weight:normal;">(Optional — খালি রাখলে IndexNow দিয়ে index হবে)</span></label>
+        <textarea id="custom-json" rows="5" placeholder="Paste your Google Service Account JSON content here..."></textarea>
         <br>
 
         <button class="btn-submit" id="submit-btn" onclick="startIndexingNow()">Start Live Indexing</button>
 
         <div class="terminal-box" id="terminal-output">
-            <span style="color: #64748b;">// Awaiting submission... Live API response logs from Google Search Console will output here...</span>
+            <span style="color: #64748b;">// Awaiting submission... Live API response logs will output here...</span>
         </div>
     </div>
 </div>
@@ -62,49 +76,52 @@
         const customJson = document.getElementById('custom-json').value.trim();
         const terminal = document.getElementById('terminal-output');
         const submitBtn = document.getElementById('submit-btn');
-        
+
         if(!urlsText) {
             alert('Please enter at least one URL!');
             return;
         }
 
         const urls = urlsText.split('\n').filter(url => url.trim() !== '');
+        const method = customJson ? 'Google Indexing API' : 'IndexNow (Bing/Google)';
 
-        terminal.innerHTML = `<span class="log-process">[API PROCESS] Initializing live connection to Google Indexing API...</span><br>`;
-        terminal.innerHTML += `<span class="log-process">[API PROCESS] Processing ${urls.length} total URLs in queue...</span><br>`;
+        terminal.innerHTML = `<span class="log-process">[API PROCESS] Connection established... Using: ${method}</span><br>`;
+        terminal.innerHTML += `<span class="log-info">[QUEUE INFO] Detected total ${urls.length} URLs in the pipeline.</span><br>`;
+        terminal.innerHTML += `<span style="color: #475569;">----------------------------------------------------------------------</span><br>`;
         submitBtn.disabled = true;
 
         try {
             const response = await fetch('/api/index-now', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    urls: urls,
-                    customJson: customJson || null
-                })
+                body: JSON.stringify({ urls: urls, customJson: customJson || null })
             });
 
             const data = await response.json();
 
             if (data.success === false || data.error) {
-                terminal.innerHTML += `<span class="log-error">[GOOGLE SERVER ERROR]: ${data.message || data.error}</span>`;
+                terminal.innerHTML += `<span class="log-error">[SERVER ERROR]: ${data.message || data.error}</span>`;
             } else {
-                terminal.innerHTML += `<span class="log-success">[SUCCESS] Google Indexing Engine execution sequence complete!</span><br>`;
-                terminal.innerHTML += `<span style="color: #475569;">----------------------------------------------------------------------</span><br>`;
-                
+                terminal.innerHTML += `<span class="log-success">[SUCCESS] Indexing process completed!</span><br>`;
+                terminal.innerHTML += `<span class="log-info">[TOTAL]: ${urls.length} URLs processed via ${method}</span><br>`;
+                terminal.innerHTML += `<span style="color: #475569;">------------------- RESULTS -------------------</span><br>`;
+
                 data.results.forEach(res => {
                     if(res.success) {
-                        terminal.innerHTML += `<span class="log-success">[INDEXED] ${res.url} -> Google API responded successfully!</span><br>`;
+                        terminal.innerHTML += `<span class="log-success">[✓ SUCCESS] ${res.url}</span><br>`;
+                        terminal.innerHTML += `<span style="color:#64748b; font-size:12px;">  → ${res.method} | ${res.data || 'Submitted'}</span><br>`;
                     } else {
-                        terminal.innerHTML += `<span class="log-error">[FAILED] ${res.url} -> Error: ${res.error}</span><br>`;
+                        terminal.innerHTML += `<span class="log-error">[✕ FAILED] ${res.url}</span><br>`;
+                        terminal.innerHTML += `<span style="color:#64748b; font-size:12px;">  → Error: ${res.error}</span><br>`;
                     }
                 });
-                
+
                 terminal.innerHTML += `<span style="color: #475569;">----------------------------------------------------------------------</span><br>`;
+                terminal.innerHTML += `<span style="color: #94a3b8;">💡 Check <a href="status.html" style="color:#38bdf8;">Submit Status</a> for history.</span><br>`;
                 terminal.scrollTop = terminal.scrollHeight;
             }
         } catch (err) {
-            terminal.innerHTML += `<span class="log-error">[CRITICAL ERROR]: Connection to Express Core failed!</span>`;
+            terminal.innerHTML += `<span class="log-error">[CRITICAL ERROR]: Could not connect to server!</span>`;
         } finally {
             submitBtn.disabled = false;
         }

@@ -1,199 +1,350 @@
+// =============================================
+//     FastIndexer - Backend Server
+//     MongoDB + Credit System সহ
+// =============================================
+
+require('dotenv').config();
 const express = require('express');
-const path = require('path');
 const bodyParser = require('body-parser');
-const { google } = require('googleapis');
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
-
-// LowDB Setup
-const adapter = new FileSync('db.json');
-const db = low(adapter);
-
-// Initialize Default Schema
-db.defaults({ requests: [] }).write();
+const mongoose = require('mongoose');
+const https = require('https');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Middleware Setup
+// --- Middleware ---
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
-// Static Files Folder
-app.use(express.static(path.join(__dirname, 'public')));
+// =============================================
+//   MongoDB সংযোগ
+// =============================================
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('✅ MongoDB Atlas Connected!'))
+  .catch(err => console.error('❌ MongoDB Error:', err.message));
 
-// Simple test route to ensure server works
-app.get('/api/health', (req, res) => {
-    res.json({ status: "alive", message: "FastIndexer backend is responding!" });
+// =============================================
+//   MongoDB Schema & Models
+// =============================================
+
+// User Schema (credit সহ)
+const userSchema = new mongoose.Schema({
+  email:     { type: String, required: true, unique: true },
+  name:      { type: String, default: 'User' },
+  credit:    { type: Number, default: 0 },
+  plan:      { type: String, default: 'Free' },
+  createdAt: { type: Date, default: Date.now }
 });
+const User = mongoose.model('User', userSchema);
 
-// POST Route to Handle Indexing Submissions (Frontend Plan Selection)
-app.post('/api/submit', (req, res) => {
-    try {
-        const { plan, urls, senderNumber, txnid, gateway, customJson } = req.body;
-
-        // Basic Validation
-        if (!plan || !urls || !Array.isArray(urls) || urls.length === 0) {
-            return res.status(400).json({ success: false, message: "Required fields or URLs are missing!" });
-        }
-
-        let status = "pending";
-        let expiryDate = null;
-        const requestedAt = new Date().toISOString();
-
-        // 4 Packages Pricing Logic Validation
-        if (plan === "free_trial") {
-            if (urls.length > 5) {
-                return res.status(400).json({ success: false, message: "Free trial limit is 5 URLs max!" });
-            }
-            status = "approved"; // Auto-approve free trial
-        } else {
-            // Paid plans (starter, 6_months, 1_year) validation
-            if (!senderNumber || !txnid || !gateway) {
-                return res.status(400).json({ success: false, message: "Payment details missing for paid plan!" });
-            }
-
-            let currentDate = new Date();
-            if (plan === "starter") {
-                expiryDate = "one-time-credit";
-            } else if (plan === "6_months") {
-                currentDate.setMonth(currentDate.getMonth() + 6);
-                expiryDate = currentDate.toISOString();
-            } else if (plan === "1_year") {
-                currentDate.setFullYear(currentDate.getFullYear() + 1);
-                expiryDate = currentDate.toISOString();
-            }
-        }
-
-        // Object structure to save inside LowDB (db.json)
-        const newRequest = {
-            id: Date.now().toString(),
-            plan,
-            urls,
-            senderNumber: senderNumber || null,
-            txnid: txnid || null,
-            gateway: gateway || null,
-            customJson: customJson || null,
-            status,
-            requestedAt,
-            expiryDate
-        };
-
-        // Push data to db.json array
-        db.get('requests').push(newRequest).write();
-
-        return res.status(200).json({
-            success: true,
-            message: plan === "free_trial" ? "Free trial processed instantly!" : "Payment submitted for verification!",
-            data: newRequest
-        });
-
-    } catch (err) {
-        return res.status(500).json({ success: false, error: err.message });
-    }
+// Submission Schema
+const submissionSchema = new mongoose.Schema({
+  userEmail:   { type: String, required: true },
+  plan:        { type: String, required: true },
+  urls:        [String],
+  senderNumber:{ type: String, default: 'N/A' },
+  txnid:       { type: String, default: 'N/A' },
+  status:      { type: String, default: 'pending' },
+  results:     [{ url: String, success: Boolean, method: String, error: String }],
+  submittedAt: { type: Date, default: Date.now }
 });
+const Submission = mongoose.model('Submission', submissionSchema);
 
-// API Route to Process Google Indexing Requests
-app.post('/api/index-now', async (req, res) => {
-    try {
-        const { urls, customJson } = req.body;
-
-        if (!urls || !Array.isArray(urls) || urls.length === 0) {
-            return res.status(400).json({ success: false, message: "No URLs provided for indexing!" });
-        }
-
-        let serviceAccountKey;
-
-        if (customJson) {
-            try {
-                serviceAccountKey = typeof customJson === 'string' ? JSON.parse(customJson) : customJson;
-            } catch (e) {
-                return res.status(400).json({ success: false, message: "Invalid JSON format in Service Account Key!" });
-            }
-        } else {
-            try {
-                serviceAccountKey = require('./service-account.json');
-            } catch (e) {
-                return res.status(500).json({ success: false, message: "Default service-account.json file is missing on server!" });
-            }
-        }
-
-        const indexResults = [];
-        for (const url of urls) {
-            const result = await sendToGoogleIndexer(serviceAccountKey, url.trim());
-            indexResults.push(result);
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "Indexing process completed!",
-            results: indexResults
-        });
-
-    } catch (err) {
-        return res.status(500).json({ success: false, error: err.message });
-    }
+// Payment Schema
+const paymentSchema = new mongoose.Schema({
+  userEmail:   { type: String, required: true },
+  plan:        { type: String, required: true },
+  amount:      { type: Number, required: true },
+  creditAdded: { type: Number, required: true },
+  senderNumber:{ type: String, required: true },
+  txnid:       { type: String, required: true },
+  status:      { type: String, default: 'pending' },
+  submittedAt: { type: Date, default: Date.now }
 });
+const Payment = mongoose.model('Payment', paymentSchema);
 
-// API to Get All Requests for Admin Panel
-app.get('/api/admin/requests', (req, res) => {
-    try {
-        const requests = db.get('requests').value() || [];
-        return res.status(200).json({ success: true, data: requests });
-    } catch (err) {
-        return res.status(500).json({ success: false, error: err.message });
-    }
-});
+// =============================================
+//   প্যাকেজ এবং পেমেন্ট তথ্য
+// =============================================
+const PACKAGES = {
+  'Free':     { price: 0,    credit: 5    },
+  'Starter':  { price: 199,  credit: 50   },
+  'Pro':      { price: 399,  credit: 200  },
+  '6 Months': { price: 1499, credit: 1200 },
+  '1 Year':   { price: 2499, credit: 2400 }
+};
 
-// API to Approve a Payment Request Manually
-app.post('/api/admin/approve', (req, res) => {
-    try {
-        const { id } = req.body;
-        if (!id) return res.status(400).json({ success: false, message: "Request ID is required!" });
+const PAYMENT_NUMBERS = {
+  bkash: '+8801755178188',
+  nagad: '+8801907763300'
+};
 
-        db.get('requests')
-          .find({ id: id })
-          .assign({ status: 'approved' })
-          .write();
+// =============================================
+//   IndexNow Function
+// =============================================
+async function sendToIndexNow(urls) {
+  return new Promise((resolve) => {
+    const body = JSON.stringify({
+      host: 'fastindexer.com',
+      key: 'your-indexnow-key',
+      keyLocation: 'https://fastindexer.com/your-indexnow-key.txt',
+      urlList: urls
+    });
 
-        return res.status(200).json({ success: true, message: "Payment successfully approved!" });
-    } catch (err) {
-        return res.status(500).json({ success: false, error: err.message });
-    }
-});
+    const options = {
+      hostname: 'api.indexnow.org',
+      path: '/indexnow',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Content-Length': Buffer.byteLength(body)
+      }
+    };
 
-// Fallback Middleware for Single Page Application (Must be placed after all API routes)
-app.use((req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+    const req = https.request(options, (res) => {
+      resolve(urls.map(url => ({
+        success: res.statusCode === 200 || res.statusCode === 202,
+        url,
+        method: 'IndexNow',
+        error: res.statusCode !== 200 && res.statusCode !== 202 ? `Status: ${res.statusCode}` : null
+      })));
+    });
 
-// Start Server
-app.listen(PORT, () => {
-    console.log(`Server started successfully on port ${PORT}`);
-});
+    req.on('error', (e) => {
+      resolve(urls.map(url => ({
+        success: false, url, method: 'IndexNow', error: e.message
+      })));
+    });
 
-// Core Google Indexing API Function
-async function sendToGoogleIndexer(serviceAccountKey, url, type = 'URL_UPDATED') {
-    try {
-        const jwtClient = new google.auth.JWT(
-            serviceAccountKey.client_email,
-            null,
-            serviceAccountKey.private_key,
-            ['https://www.googleapis.com/auth/indexing'],
-            null
-        );
-
-        await jwtClient.authorize();
-
-        const response = await google.indexing({ version: 'v3', auth: jwtClient }).urlNotifications.publish({
-            requestBody: {
-                url: url,
-                type: type
-            }
-        });
-
-        return { success: true, url, data: response.data };
-    } catch (error) {
-        return { success: false, url, error: error.message };
-    }
+    req.write(body);
+    req.end();
+  });
 }
+
+// =============================================
+//   API Routes
+// =============================================
+
+// পেমেন্ট তথ্য
+app.get('/api/payment-info', (req, res) => {
+  res.json({ success: true, ...PAYMENT_NUMBERS, packages: PACKAGES });
+});
+
+// User তৈরি বা credit দেখা
+app.post('/api/user/get-or-create', async (req, res) => {
+  try {
+    const { email, name } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: 'Email দিন।' });
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({ email, name: name || email.split('@')[0], credit: 5 });
+    }
+    res.json({ success: true, user });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Credit দেখা
+app.get('/api/user/credit', async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ success: false, message: 'Email দিন।' });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ success: false, message: 'User পাওয়া যায়নি।' });
+
+    res.json({ success: true, credit: user.credit, plan: user.plan });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Payment Submit
+app.post('/api/payment/submit', async (req, res) => {
+  try {
+    const { email, plan, senderNumber, txnid } = req.body;
+
+    if (!email || !plan || !senderNumber || !txnid) {
+      return res.status(400).json({ success: false, message: 'সব তথ্য দিন।' });
+    }
+
+    if (!PACKAGES[plan] || plan === 'Free') {
+      return res.status(400).json({ success: false, message: 'বৈধ পেইড প্ল্যান সিলেক্ট করুন।' });
+    }
+
+    const pkg = PACKAGES[plan];
+    const payment = await Payment.create({
+      userEmail: email, plan,
+      amount: pkg.price, creditAdded: pkg.credit,
+      senderNumber, txnid, status: 'pending'
+    });
+
+    res.json({
+      success: true,
+      message: 'পেমেন্ট রিকোয়েস্ট পাঠানো হয়েছে। Admin ভেরিফাই করলে credit যোগ হবে।',
+      paymentId: payment._id
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// URL Submit (IndexNow)
+app.post('/api/submit', async (req, res) => {
+  try {
+    const { email, urls } = req.body;
+
+    if (!email || !urls) {
+      return res.status(400).json({ success: false, message: 'Email এবং URLs দিন।' });
+    }
+
+    const urlArray = Array.isArray(urls)
+      ? urls
+      : urls.split('\n').map(u => u.trim()).filter(Boolean);
+
+    if (urlArray.length === 0) {
+      return res.status(400).json({ success: false, message: 'কমপক্ষে একটি URL দিন।' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ success: false, message: 'User পাওয়া যায়নি।' });
+
+    if (user.credit < urlArray.length) {
+      return res.status(400).json({
+        success: false,
+        message: `Credit কম! আপনার ${user.credit} credit আছে, দরকার ${urlArray.length}।`
+      });
+    }
+
+    const results = await sendToIndexNow(urlArray);
+    const successCount = results.filter(r => r.success).length;
+
+    user.credit -= urlArray.length;
+    await user.save();
+
+    await Submission.create({
+      userEmail: email, plan: user.plan,
+      urls: urlArray, status: 'completed', results
+    });
+
+    console.log(`[SUBMIT] ${email} | URLs: ${urlArray.length} | Success: ${successCount}`);
+
+    res.json({
+      success: true,
+      message: `${urlArray.length}টি URL submit হয়েছে! ${successCount}টি সফল।`,
+      remainingCredit: user.credit,
+      results
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Submission history
+app.get('/api/submissions', async (req, res) => {
+  try {
+    const { email } = req.query;
+    const query = email ? { userEmail: email } : {};
+    const submissions = await Submission.find(query).sort({ submittedAt: -1 }).limit(50);
+    res.json({ success: true, total: submissions.length, data: submissions });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// =============================================
+//   ADMIN Routes
+// =============================================
+
+app.get('/api/admin/payments', async (req, res) => {
+  try {
+    const { password } = req.query;
+    if (password !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).json({ success: false, message: 'Access Denied!' });
+    }
+    const payments = await Payment.find().sort({ submittedAt: -1 });
+    res.json({ success: true, total: payments.length, data: payments });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+app.post('/api/admin/approve-payment', async (req, res) => {
+  try {
+    const { password, paymentId } = req.body;
+    if (password !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).json({ success: false, message: 'Access Denied!' });
+    }
+
+    const payment = await Payment.findById(paymentId);
+    if (!payment) return res.status(404).json({ success: false, message: 'Payment পাওয়া যায়নি।' });
+    if (payment.status === 'approved') {
+      return res.status(400).json({ success: false, message: 'আগেই approve হয়েছে।' });
+    }
+
+    await User.findOneAndUpdate(
+      { email: payment.userEmail },
+      { $inc: { credit: payment.creditAdded }, plan: payment.plan }
+    );
+
+    payment.status = 'approved';
+    await payment.save();
+
+    res.json({
+      success: true,
+      message: `${payment.userEmail} কে ${payment.creditAdded} credit দেওয়া হয়েছে!`
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+app.post('/api/admin/add-credit', async (req, res) => {
+  try {
+    const { password, email, credit } = req.body;
+    if (password !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).json({ success: false, message: 'Access Denied!' });
+    }
+
+    const user = await User.findOneAndUpdate(
+      { email },
+      { $inc: { credit: parseInt(credit) } },
+      { new: true }
+    );
+
+    if (!user) return res.status(404).json({ success: false, message: 'User পাওয়া যায়নি।' });
+
+    res.json({ success: true, message: `${credit} credit যোগ হয়েছে!`, newCredit: user.credit });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+app.get('/api/admin/users', async (req, res) => {
+  try {
+    const { password } = req.query;
+    if (password !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).json({ success: false, message: 'Access Denied!' });
+    }
+    const users = await User.find().sort({ createdAt: -1 });
+    res.json({ success: true, total: users.length, data: users });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// =============================================
+//   Server Start
+// =============================================
+app.listen(PORT, () => {
+  console.log('========================================');
+  console.log(`  🚀 FastIndexer চালু আছে!`);
+  console.log(`  http://localhost:${PORT}`);
+  console.log('========================================');
+  console.log(`  বিকাশ : ${PAYMENT_NUMBERS.bkash}`);
+  console.log(`  নগদ   : ${PAYMENT_NUMBERS.nagad}`);
+  console.log('========================================');
+});

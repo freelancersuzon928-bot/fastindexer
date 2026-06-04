@@ -13,9 +13,10 @@
   "dependencies": {
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "googleapis": "^173.0.0",
-    "lowdb": "^1.0.0"
-  },
-  "devDependencies": {}
+    "lowdb": "^1.0.0",
+    "mongoose": "^9.6.3"
+  }
 }

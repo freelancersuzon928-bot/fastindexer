@@ -1,3 +1,105 @@
 {
-  "requests": []
+  "requests": [
+    {
+      "id": "1780480523477",
+      "plan": "IndexNow",
+      "urls": [
+        "https://www.clickrisehub.com/p/terms-conditions.html"
+      ],
+      "status": "success",
+      "requestedAt": "2026-06-03T09:55:23.478Z",
+      "expiryDate": null,
+      "senderNumber": null,
+      "txnid": null,
+      "gateway": null,
+      "customJson": null
+    },
+    {
+      "id": "1780505110171",
+      "plan": "IndexNow",
+      "urls": [
+        "https://www.clickrisehub.com/2026/06/how-to-use-google-trends-for-seo-step.html"
+      ],
+      "status": "success",
+      "requestedAt": "2026-06-03T16:45:10.171Z",
+      "expiryDate": null,
+      "senderNumber": null,
+      "txnid": null,
+      "gateway": null,
+      "customJson": null
+    },
+    {
+      "id": "1780508526678",
+      "plan": "IndexNow",
+      "urls": [
+        "https://www.ruhistore.com/p/buy-high-quality-verified-gmail.html",
+        "https://www.ruhistore.com/2026/04/buy-aol-mail-account-online-in-usa.html",
+        "https://www.ruhistore.com/2026/04/how-to-get-high-authority-pva-gmail.html"
+      ],
+      "status": "partial",
+      "requestedAt": "2026-06-03T17:42:06.682Z",
+      "expiryDate": null,
+      "senderNumber": null,
+      "txnid": null,
+      "gateway": null,
+      "customJson": null
+    },
+    {
+      "id": "1780508553556",
+      "plan": "IndexNow",
+      "urls": [
+        "https://www.ruhistore.com/p/buy-high-quality-verified-gmail.html",
+        "https://www.ruhistore.com/2026/04/buy-aol-mail-account-online-in-usa.html"
+      ],
+      "status": "partial",
+      "requestedAt": "2026-06-03T17:42:33.556Z",
+      "expiryDate": null,
+      "senderNumber": null,
+      "txnid": null,
+      "gateway": null,
+      "customJson": null
+    },
+    {
+      "id": "1780508621648",
+      "plan": "IndexNow",
+      "urls": [
+        "https://www.ruhistore.com/p/buy-high-quality-verified-gmail.html"
+      ],
+      "status": "partial",
+      "requestedAt": "2026-06-03T17:43:41.648Z",
+      "expiryDate": null,
+      "senderNumber": null,
+      "txnid": null,
+      "gateway": null,
+      "customJson": null
+    },
+    {
+      "id": "1780508651898",
+      "plan": "IndexNow",
+      "urls": [
+        "https://www.ruhistore.com/2026/04/how-to-get-high-authority-pva-gmail.html"
+      ],
+      "status": "partial",
+      "requestedAt": "2026-06-03T17:44:11.898Z",
+      "expiryDate": null,
+      "senderNumber": null,
+      "txnid": null,
+      "gateway": null,
+      "customJson": null
+    },
+    {
+      "id": "1780508704784",
+      "plan": "IndexNow",
+      "urls": [
+        "https://earniyo.blogspot.com/2026/03/do-you-know-how-google-ads-for-real.html"
+      ],
+      "status": "partial",
+      "requestedAt": "2026-06-03T17:45:04.784Z",
+      "expiryDate": null,
+      "senderNumber": null,
+      "txnid": null,
+      "gateway": null,
+      "customJson": null
+    }
+  ]
 }
