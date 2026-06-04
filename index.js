@@ -1,6 +1,6 @@
 // =============================================
 //     FastIndexer - Backend Server
-//     MongoDB + Credit System সহ
+//     MongoDB + Credit System + Client IndexNow Key
 // =============================================
 
 require('dotenv').config();
@@ -29,35 +29,37 @@ mongoose.connect(process.env.MONGODB_URI)
 // =============================================
 
 const userSchema = new mongoose.Schema({
-  email:     { type: String, required: true, unique: true },
-  name:      { type: String, default: 'User' },
-  credit:    { type: Number, default: 0 },
-  plan:      { type: String, default: 'Free' },
-  createdAt: { type: Date, default: Date.now }
+  email:          { type: String, required: true, unique: true },
+  name:           { type: String, default: 'User' },
+  credit:         { type: Number, default: 0 },
+  plan:           { type: String, default: 'Free' },
+  indexnowKey:    { type: String, default: '' },  // Client এর IndexNow key
+  indexnowHost:   { type: String, default: '' },  // Client এর site host
+  createdAt:      { type: Date, default: Date.now }
 });
 const User = mongoose.model('User', userSchema);
 
 const submissionSchema = new mongoose.Schema({
-  userEmail:   { type: String, required: true },
-  plan:        { type: String, required: true },
-  urls:        [String],
-  senderNumber:{ type: String, default: 'N/A' },
-  txnid:       { type: String, default: 'N/A' },
-  status:      { type: String, default: 'pending' },
-  results:     [{ url: String, success: Boolean, method: String, error: String }],
-  submittedAt: { type: Date, default: Date.now }
+  userEmail:    { type: String, required: true },
+  plan:         { type: String, required: true },
+  urls:         [String],
+  senderNumber: { type: String, default: 'N/A' },
+  txnid:        { type: String, default: 'N/A' },
+  status:       { type: String, default: 'pending' },
+  results:      [{ url: String, success: Boolean, method: String, error: String }],
+  submittedAt:  { type: Date, default: Date.now }
 });
 const Submission = mongoose.model('Submission', submissionSchema);
 
 const paymentSchema = new mongoose.Schema({
-  userEmail:   { type: String, required: true },
-  plan:        { type: String, required: true },
-  amount:      { type: Number, required: true },
-  creditAdded: { type: Number, required: true },
-  senderNumber:{ type: String, required: true },
-  txnid:       { type: String, required: true },
-  status:      { type: String, default: 'pending' },
-  submittedAt: { type: Date, default: Date.now }
+  userEmail:    { type: String, required: true },
+  plan:         { type: String, required: true },
+  amount:       { type: Number, required: true },
+  creditAdded:  { type: Number, required: true },
+  senderNumber: { type: String, required: true },
+  txnid:        { type: String, required: true },
+  status:       { type: String, default: 'pending' },
+  submittedAt:  { type: Date, default: Date.now }
 });
 const Payment = mongoose.model('Payment', paymentSchema);
 
@@ -78,34 +80,51 @@ const PAYMENT_NUMBERS = {
 };
 
 // =============================================
-//   IndexNow Function
+//   IndexNow Function — Client এর key & host দিয়ে
 // =============================================
-async function sendToIndexNow(urls) {
+async function sendToIndexNow(urls, indexnowKey, indexnowHost) {
   return new Promise((resolve) => {
+
+    // Admin mode: .env থেকে নেবে। User mode: client এর key & host
+    const key  = indexnowKey  || process.env.INDEXNOW_KEY;
+    const host = indexnowHost || process.env.INDEXNOW_HOST;
+
+    if (!key || !host) {
+      return resolve(urls.map(url => ({
+        success: false, url, method: 'IndexNow',
+        error: 'IndexNow key বা host পাওয়া যায়নি।'
+      })));
+    }
+
     const body = JSON.stringify({
-      host: 'fastindexer-production.up.railway.app',
-      key: 'your-indexnow-key',
-      keyLocation: 'https://fastindexer-production.up.railway.app/your-indexnow-key.txt',
-      urlList: urls
+      host:        host,
+      key:         key,
+      keyLocation: `https://${host}/${key}.txt`,
+      urlList:     urls
     });
 
     const options = {
       hostname: 'api.indexnow.org',
-      path: '/indexnow',
-      method: 'POST',
+      path:     '/indexnow',
+      method:   'POST',
       headers: {
-        'Content-Type': 'application/json; charset=utf-8',
+        'Content-Type':   'application/json; charset=utf-8',
         'Content-Length': Buffer.byteLength(body)
       }
     };
 
     const req = https.request(options, (res) => {
-      resolve(urls.map(url => ({
-        success: res.statusCode === 200 || res.statusCode === 202,
-        url,
-        method: 'IndexNow',
-        error: res.statusCode !== 200 && res.statusCode !== 202 ? `Status: ${res.statusCode}` : null
-      })));
+      let responseData = '';
+      res.on('data', chunk => { responseData += chunk; });
+      res.on('end', () => {
+        const isSuccess = res.statusCode === 200 || res.statusCode === 202;
+        resolve(urls.map(url => ({
+          success: isSuccess,
+          url,
+          method: 'IndexNow',
+          error: !isSuccess ? `Status: ${res.statusCode}` : null
+        })));
+      });
     });
 
     req.on('error', (e) => {
@@ -128,7 +147,7 @@ app.get('/api/payment-info', (req, res) => {
   res.json({ success: true, ...PAYMENT_NUMBERS, packages: PACKAGES });
 });
 
-// User তৈরি বা credit দেখা
+// User তৈরি বা get করা
 app.post('/api/user/get-or-create', async (req, res) => {
   try {
     const { email, name } = req.body;
@@ -136,7 +155,11 @@ app.post('/api/user/get-or-create', async (req, res) => {
 
     let user = await User.findOne({ email });
     if (!user) {
-      user = await User.create({ email, name: name || email.split('@')[0], credit: 5 });
+      user = await User.create({
+        email,
+        name: name || email.split('@')[0],
+        credit: 5  // New user পাবে 5 free credit
+      });
     }
     res.json({ success: true, user });
   } catch (err) {
@@ -144,7 +167,7 @@ app.post('/api/user/get-or-create', async (req, res) => {
   }
 });
 
-// Credit দেখা
+// Credit ও IndexNow key দেখা
 app.get('/api/user/credit', async (req, res) => {
   try {
     const { email } = req.query;
@@ -153,7 +176,44 @@ app.get('/api/user/credit', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ success: false, message: 'User পাওয়া যায়নি।' });
 
-    res.json({ success: true, credit: user.credit, plan: user.plan });
+    res.json({
+      success:      true,
+      credit:       user.credit,
+      plan:         user.plan,
+      indexnowKey:  user.indexnowKey  || '',
+      indexnowHost: user.indexnowHost || ''
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// User এর IndexNow key ও host আপডেট
+app.post('/api/user/update-key', async (req, res) => {
+  try {
+    const { email, indexnowKey, indexnowHost } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: 'Email দিন।' });
+    if (!indexnowKey || !indexnowHost) {
+      return res.status(400).json({ success: false, message: 'IndexNow key এবং host দিন।' });
+    }
+
+    // Host থেকে https:// বা http:// সরিয়ে নেওয়া
+    const cleanHost = indexnowHost.replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+    const user = await User.findOneAndUpdate(
+      { email },
+      { indexnowKey: indexnowKey.trim(), indexnowHost: cleanHost },
+      { new: true }
+    );
+
+    if (!user) return res.status(404).json({ success: false, message: 'User পাওয়া যায়নি।' });
+
+    res.json({
+      success: true,
+      message: 'IndexNow key সেভ হয়েছে!',
+      indexnowKey:  user.indexnowKey,
+      indexnowHost: user.indexnowHost
+    });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -180,8 +240,8 @@ app.post('/api/payment/submit', async (req, res) => {
     });
 
     res.json({
-      success: true,
-      message: 'পেমেন্ট রিকোয়েস্ট পাঠানো হয়েছে। Admin ভেরিফাই করলে credit যোগ হবে।',
+      success:   true,
+      message:   'পেমেন্ট রিকোয়েস্ট পাঠানো হয়েছে। Admin ভেরিফাই করলে credit যোগ হবে।',
       paymentId: payment._id
     });
   } catch (err) {
@@ -190,7 +250,8 @@ app.post('/api/payment/submit', async (req, res) => {
 });
 
 // =============================================
-//   ADMIN - Unlimited URL Submit (No credit deduction)
+//   ADMIN — Unlimited URL Submit (No credit deduction)
+//   Admin এর নিজের IndexNow key (.env থেকে) use করবে
 // =============================================
 app.post('/api/index-now', async (req, res) => {
   try {
@@ -200,20 +261,24 @@ app.post('/api/index-now', async (req, res) => {
       return res.status(400).json({ success: false, message: 'URLs দিন।' });
     }
 
-    // Admin password check
     if (password !== process.env.ADMIN_PASSWORD) {
       return res.status(403).json({ success: false, message: 'Access Denied! Admin password ভুল।' });
     }
 
-    const results = await sendToIndexNow(urls);
+    // Admin এর key .env থেকে নেবে
+    const results = await sendToIndexNow(
+      urls,
+      process.env.INDEXNOW_KEY,
+      process.env.INDEXNOW_HOST
+    );
+
     const successCount = results.filter(r => r.success).length;
 
-    // Admin submission log করো
     await Submission.create({
       userEmail: 'admin',
-      plan: 'Admin',
-      urls: urls,
-      status: 'completed',
+      plan:      'Admin',
+      urls,
+      status:    'completed',
       results
     });
 
@@ -229,7 +294,9 @@ app.post('/api/index-now', async (req, res) => {
   }
 });
 
-// URL Submit (Credit based - for users)
+// =============================================
+//   User URL Submit — Client এর নিজের IndexNow key দিয়ে
+// =============================================
 app.post('/api/submit', async (req, res) => {
   try {
     const { email, urls } = req.body;
@@ -249,29 +316,41 @@ app.post('/api/submit', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ success: false, message: 'User পাওয়া যায়নি।' });
 
-    if (user.credit < urlArray.length) {
+    // IndexNow key ও host check
+    if (!user.indexnowKey || !user.indexnowHost) {
       return res.status(400).json({
         success: false,
-        message: `Credit কম! আপনার ${user.credit} credit আছে, দরকার ${urlArray.length}।`
+        message: 'আপনার IndexNow key ও site host দিন (Settings এ)।'
       });
     }
 
-    const results = await sendToIndexNow(urlArray);
+    if (user.credit < urlArray.length) {
+      return res.status(400).json({
+        success:  false,
+        message:  `Credit কম! আপনার ${user.credit} credit আছে, দরকার ${urlArray.length}।`
+      });
+    }
+
+    // Client এর নিজের key & host দিয়ে submit
+    const results = await sendToIndexNow(urlArray, user.indexnowKey, user.indexnowHost);
     const successCount = results.filter(r => r.success).length;
 
     user.credit -= urlArray.length;
     await user.save();
 
     await Submission.create({
-      userEmail: email, plan: user.plan,
-      urls: urlArray, status: 'completed', results
+      userEmail: email,
+      plan:      user.plan,
+      urls:      urlArray,
+      status:    'completed',
+      results
     });
 
     console.log(`[SUBMIT] ${email} | URLs: ${urlArray.length} | Success: ${successCount}`);
 
     res.json({
-      success: true,
-      message: `${urlArray.length}টি URL submit হয়েছে! ${successCount}টি সফল।`,
+      success:         true,
+      message:         `${urlArray.length}টি URL submit হয়েছে! ${successCount}টি সফল।`,
       remainingCredit: user.credit,
       results
     });
