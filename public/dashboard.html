@@ -14,14 +14,18 @@
         .nav-link { color: #94a3b8; text-decoration: none; font-weight: 500; transition: 0.2s; font-size: 15px; }
         .nav-link:hover, .nav-link.active { color: #38bdf8; }
         .status-badge { font-size: 14px; color: #10b981; background: rgba(16,185,129,0.1); padding: 6px 12px; border-radius: 6px; font-weight: bold; border: 1px solid rgba(16,185,129,0.2); }
+        .admin-badge { font-size: 14px; color: #eab308; background: rgba(234,179,8,0.1); padding: 6px 12px; border-radius: 6px; font-weight: bold; border: 1px solid rgba(234,179,8,0.2); }
         h2 { color: #38bdf8; margin-top: 10px; }
         .section { background: #1e293b; border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid #334155; margin-top: 20px; }
+        .admin-section { background: #1e1b4b; border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid #4338ca; margin-top: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: #cbd5e1; }
         input, textarea, select { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: white; box-sizing: border-box; margin-bottom: 15px; font-size: 14px; }
         input:focus, textarea:focus, select:focus { border-color: #38bdf8; outline: none; }
         .btn-submit { background: #38bdf8; color: #0f172a; font-size: 16px; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; width: 100%; transition: 0.2s; }
         .btn-submit:hover { background: #0ea5e9; }
         .btn-submit:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
+        .btn-admin { background: #eab308; color: #0f172a; font-size: 16px; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; width: 100%; transition: 0.2s; }
+        .btn-admin:hover { background: #ca8a04; }
         .terminal-box { background: #020617; border: 1px solid #334155; font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #38bdf8; padding: 15px; border-radius: 6px; max-height: 350px; overflow-y: auto; margin-top: 20px; box-sizing: border-box; width: 100%; line-height: 1.6; }
         .log-success { color: #22c55e; }
         .log-error { color: #ef4444; }
@@ -29,6 +33,11 @@
         .log-info { color: #38bdf8; font-weight: bold; }
         .info-box { background: rgba(56,189,248,0.05); border: 1px solid rgba(56,189,248,0.2); border-radius: 8px; padding: 12px 16px; margin-bottom: 15px; font-size: 13px; color: #94a3b8; }
         .info-box span { color: #38bdf8; font-weight: bold; }
+        .credit-info { background: rgba(34,197,94,0.05); border: 1px solid rgba(34,197,94,0.2); border-radius: 8px; padding: 12px 16px; margin-bottom: 15px; font-size: 14px; color: #94a3b8; display: none; }
+        .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { padding: 10px 20px; border-radius: 6px; border: 1px solid #475569; background: transparent; color: #94a3b8; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .tab-btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
+        .tab-btn.admin-tab.active { background: #eab308; color: #0f172a; border-color: #eab308; }
     </style>
 </head>
 <body>
@@ -42,88 +51,193 @@
             <a href="status.html" class="nav-link">Submit Status</a>
         </div>
     </div>
-    <span class="status-badge">Console Active</span>
+    <span id="mode-badge" class="status-badge">Console Active</span>
 </div>
 
 <div class="container">
-    <div class="section">
-        <h2>🔗 Submit Content For Live Indexing</h2>
-        <p style="color: #94a3b8; margin-top: -10px; font-size: 14px;">Submit any URL for instant indexing via Google Indexing API or IndexNow.</p>
-        <br>
 
-        <div class="info-box">
-            💡 <span>How it works:</span> JSON Key দিলে → Google Indexing API | JSON Key না দিলে → IndexNow (Bing + Google) দিয়ে index হবে।
-        </div>
+    <!-- Mode Tabs -->
+    <div class="tab-buttons" style="margin-top:20px;">
+        <button class="tab-btn active" onclick="switchMode('user')">👤 User Mode</button>
+        <button class="tab-btn admin-tab" onclick="switchMode('admin')">🛡️ Admin Mode</button>
+    </div>
 
-        <label>Your Target URLs (One URL per line)</label>
-        <textarea id="urls" rows="6" placeholder="https://example.com/page1&#10;https://example.com/page2"></textarea>
+    <!-- User Mode -->
+    <div id="user-mode">
+        <div class="section">
+            <h2>🔗 Submit URLs for Indexing</h2>
+            <p style="color: #94a3b8; margin-top: -10px; font-size: 14px;">আপনার email এবং URLs দিয়ে index করুন।</p>
 
-        <label>Google Service Account JSON Key <span style="color:#64748b; font-weight:normal;">(Optional — খালি রাখলে IndexNow দিয়ে index হবে)</span></label>
-        <textarea id="custom-json" rows="5" placeholder="Paste your Google Service Account JSON content here..."></textarea>
-        <br>
+            <div class="info-box">
+                💡 <span>How it works:</span> Credit ব্যবহার করে IndexNow দিয়ে index হবে।
+            </div>
 
-        <button class="btn-submit" id="submit-btn" onclick="startIndexingNow()">Start Live Indexing</button>
+            <label>Your Email</label>
+            <input type="email" id="user-email" placeholder="your@email.com" oninput="loadCredit()">
 
-        <div class="terminal-box" id="terminal-output">
-            <span style="color: #64748b;">// Awaiting submission... Live API response logs will output here...</span>
+            <div class="credit-info" id="credit-info">
+                💳 আপনার Credit: <strong id="credit-count" style="color:#22c55e;">0</strong>
+            </div>
+
+            <label>Your Target URLs (One URL per line)</label>
+            <textarea id="user-urls" rows="6" placeholder="https://example.com/page1&#10;https://example.com/page2"></textarea>
+
+            <button class="btn-submit" id="user-submit-btn" onclick="userSubmit()">🚀 Start Indexing</button>
+
+            <div class="terminal-box" id="user-terminal">
+                <span style="color: #64748b;">// Awaiting submission...</span>
+            </div>
         </div>
     </div>
+
+    <!-- Admin Mode -->
+    <div id="admin-mode" style="display:none;">
+        <div class="admin-section">
+            <h2 style="color:#eab308;">🛡️ Admin - Unlimited URL Submit</h2>
+            <p style="color: #94a3b8; margin-top: -10px; font-size: 14px;">Admin password দিয়ে unlimited URL submit করুন। Credit কাটবে না।</p>
+
+            <label>Admin Password</label>
+            <input type="password" id="admin-password" placeholder="Admin password দিন">
+
+            <label>Target URLs (One URL per line)</label>
+            <textarea id="admin-urls" rows="10" placeholder="https://example.com/page1&#10;https://example.com/page2&#10;https://example.com/page3"></textarea>
+
+            <button class="btn-admin" id="admin-submit-btn" onclick="adminSubmit()">⚡ Submit All URLs (Unlimited)</button>
+
+            <div class="terminal-box" id="admin-terminal">
+                <span style="color: #64748b;">// Admin mode ready. Password দিয়ে submit করুন...</span>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
-    async function startIndexingNow() {
-        const urlsText = document.getElementById('urls').value.trim();
-        const customJson = document.getElementById('custom-json').value.trim();
-        const terminal = document.getElementById('terminal-output');
-        const submitBtn = document.getElementById('submit-btn');
+    function switchMode(mode) {
+        const tabs = document.querySelectorAll('.tab-btn');
+        tabs.forEach(t => t.classList.remove('active'));
 
-        if(!urlsText) {
-            alert('Please enter at least one URL!');
-            return;
+        if (mode === 'user') {
+            document.getElementById('user-mode').style.display = 'block';
+            document.getElementById('admin-mode').style.display = 'none';
+            document.getElementById('mode-badge').className = 'status-badge';
+            document.getElementById('mode-badge').innerText = 'Console Active';
+            tabs[0].classList.add('active');
+        } else {
+            document.getElementById('user-mode').style.display = 'none';
+            document.getElementById('admin-mode').style.display = 'block';
+            document.getElementById('mode-badge').className = 'admin-badge';
+            document.getElementById('mode-badge').innerText = '🛡️ Admin Mode';
+            tabs[1].classList.add('active');
         }
+    }
 
-        const urls = urlsText.split('\n').filter(url => url.trim() !== '');
-        const method = customJson ? 'Google Indexing API' : 'IndexNow (Bing/Google)';
+    async function loadCredit() {
+        const email = document.getElementById('user-email').value.trim();
+        if (!email || !email.includes('@')) return;
 
-        terminal.innerHTML = `<span class="log-process">[API PROCESS] Connection established... Using: ${method}</span><br>`;
-        terminal.innerHTML += `<span class="log-info">[QUEUE INFO] Detected total ${urls.length} URLs in the pipeline.</span><br>`;
-        terminal.innerHTML += `<span style="color: #475569;">----------------------------------------------------------------------</span><br>`;
+        try {
+            const res = await fetch(`/api/user/credit?email=${encodeURIComponent(email)}`);
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('credit-info').style.display = 'block';
+                document.getElementById('credit-count').innerText = data.credit;
+            }
+        } catch (e) {}
+    }
+
+    async function userSubmit() {
+        const email = document.getElementById('user-email').value.trim();
+        const urlsText = document.getElementById('user-urls').value.trim();
+        const terminal = document.getElementById('user-terminal');
+        const submitBtn = document.getElementById('user-submit-btn');
+
+        if (!email) { alert('Email দিন!'); return; }
+        if (!urlsText) { alert('URL দিন!'); return; }
+
+        const urls = urlsText.split('\n').filter(u => u.trim() !== '');
+        terminal.innerHTML = `<span class="log-process">[PROCESS] ${urls.length}টি URL পাঠানো হচ্ছে...</span><br>`;
+        submitBtn.disabled = true;
+
+        try {
+            // প্রথমে user create করো
+            await fetch('/api/user/get-or-create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+
+            const response = await fetch('/api/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, urls })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                terminal.innerHTML += `<span class="log-success">[SUCCESS] ${data.message}</span><br>`;
+                terminal.innerHTML += `<span class="log-info">[CREDIT] বাকি credit: ${data.remainingCredit}</span><br>`;
+                document.getElementById('credit-count').innerText = data.remainingCredit;
+                terminal.innerHTML += `<span style="color:#475569;">--- Results ---</span><br>`;
+                data.results.forEach(r => {
+                    if (r.success) {
+                        terminal.innerHTML += `<span class="log-success">[✓] ${r.url}</span><br>`;
+                    } else {
+                        terminal.innerHTML += `<span class="log-error">[✕] ${r.url} → ${r.error}</span><br>`;
+                    }
+                });
+            } else {
+                terminal.innerHTML += `<span class="log-error">[ERROR] ${data.message}</span>`;
+            }
+        } catch (err) {
+            terminal.innerHTML += `<span class="log-error">[ERROR] Server connection failed!</span>`;
+        } finally {
+            submitBtn.disabled = false;
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+    }
+
+    async function adminSubmit() {
+        const password = document.getElementById('admin-password').value.trim();
+        const urlsText = document.getElementById('admin-urls').value.trim();
+        const terminal = document.getElementById('admin-terminal');
+        const submitBtn = document.getElementById('admin-submit-btn');
+
+        if (!password) { alert('Admin password দিন!'); return; }
+        if (!urlsText) { alert('URL দিন!'); return; }
+
+        const urls = urlsText.split('\n').filter(u => u.trim() !== '');
+        terminal.innerHTML = `<span class="log-process">[ADMIN] ${urls.length}টি URL submit হচ্ছে (Unlimited)...</span><br>`;
         submitBtn.disabled = true;
 
         try {
             const response = await fetch('/api/index-now', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ urls: urls, customJson: customJson || null })
+                body: JSON.stringify({ urls, password })
             });
 
             const data = await response.json();
 
-            if (data.success === false || data.error) {
-                terminal.innerHTML += `<span class="log-error">[SERVER ERROR]: ${data.message || data.error}</span>`;
-            } else {
-                terminal.innerHTML += `<span class="log-success">[SUCCESS] Indexing process completed!</span><br>`;
-                terminal.innerHTML += `<span class="log-info">[TOTAL]: ${urls.length} URLs processed via ${method}</span><br>`;
-                terminal.innerHTML += `<span style="color: #475569;">------------------- RESULTS -------------------</span><br>`;
-
-                data.results.forEach(res => {
-                    if(res.success) {
-                        terminal.innerHTML += `<span class="log-success">[✓ SUCCESS] ${res.url}</span><br>`;
-                        terminal.innerHTML += `<span style="color:#64748b; font-size:12px;">  → ${res.method} | ${res.data || 'Submitted'}</span><br>`;
+            if (data.success) {
+                terminal.innerHTML += `<span class="log-success">[SUCCESS] ${data.message}</span><br>`;
+                terminal.innerHTML += `<span style="color:#475569;">--- Results ---</span><br>`;
+                data.results.forEach(r => {
+                    if (r.success) {
+                        terminal.innerHTML += `<span class="log-success">[✓] ${r.url}</span><br>`;
                     } else {
-                        terminal.innerHTML += `<span class="log-error">[✕ FAILED] ${res.url}</span><br>`;
-                        terminal.innerHTML += `<span style="color:#64748b; font-size:12px;">  → Error: ${res.error}</span><br>`;
+                        terminal.innerHTML += `<span class="log-error">[✕] ${r.url} → ${r.error}</span><br>`;
                     }
                 });
-
-                terminal.innerHTML += `<span style="color: #475569;">----------------------------------------------------------------------</span><br>`;
-                terminal.innerHTML += `<span style="color: #94a3b8;">💡 Check <a href="status.html" style="color:#38bdf8;">Submit Status</a> for history.</span><br>`;
-                terminal.scrollTop = terminal.scrollHeight;
+            } else {
+                terminal.innerHTML += `<span class="log-error">[ERROR] ${data.message}</span>`;
             }
         } catch (err) {
-            terminal.innerHTML += `<span class="log-error">[CRITICAL ERROR]: Could not connect to server!</span>`;
+            terminal.innerHTML += `<span class="log-error">[ERROR] Server connection failed!</span>`;
         } finally {
             submitBtn.disabled = false;
+            terminal.scrollTop = terminal.scrollHeight;
         }
     }
 </script>

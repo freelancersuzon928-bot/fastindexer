@@ -28,7 +28,6 @@ mongoose.connect(process.env.MONGODB_URI)
 //   MongoDB Schema & Models
 // =============================================
 
-// User Schema (credit সহ)
 const userSchema = new mongoose.Schema({
   email:     { type: String, required: true, unique: true },
   name:      { type: String, default: 'User' },
@@ -38,7 +37,6 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
-// Submission Schema
 const submissionSchema = new mongoose.Schema({
   userEmail:   { type: String, required: true },
   plan:        { type: String, required: true },
@@ -51,7 +49,6 @@ const submissionSchema = new mongoose.Schema({
 });
 const Submission = mongoose.model('Submission', submissionSchema);
 
-// Payment Schema
 const paymentSchema = new mongoose.Schema({
   userEmail:   { type: String, required: true },
   plan:        { type: String, required: true },
@@ -86,9 +83,9 @@ const PAYMENT_NUMBERS = {
 async function sendToIndexNow(urls) {
   return new Promise((resolve) => {
     const body = JSON.stringify({
-      host: 'fastindexer.com',
+      host: 'fastindexer-production.up.railway.app',
       key: 'your-indexnow-key',
-      keyLocation: 'https://fastindexer.com/your-indexnow-key.txt',
+      keyLocation: 'https://fastindexer-production.up.railway.app/your-indexnow-key.txt',
       urlList: urls
     });
 
@@ -192,7 +189,47 @@ app.post('/api/payment/submit', async (req, res) => {
   }
 });
 
-// URL Submit (IndexNow)
+// =============================================
+//   ADMIN - Unlimited URL Submit (No credit deduction)
+// =============================================
+app.post('/api/index-now', async (req, res) => {
+  try {
+    const { urls, password } = req.body;
+
+    if (!urls || urls.length === 0) {
+      return res.status(400).json({ success: false, message: 'URLs দিন।' });
+    }
+
+    // Admin password check
+    if (password !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).json({ success: false, message: 'Access Denied! Admin password ভুল।' });
+    }
+
+    const results = await sendToIndexNow(urls);
+    const successCount = results.filter(r => r.success).length;
+
+    // Admin submission log করো
+    await Submission.create({
+      userEmail: 'admin',
+      plan: 'Admin',
+      urls: urls,
+      status: 'completed',
+      results
+    });
+
+    console.log(`[ADMIN SUBMIT] URLs: ${urls.length} | Success: ${successCount}`);
+
+    res.json({
+      success: true,
+      message: `${urls.length}টি URL submit হয়েছে! ${successCount}টি সফল।`,
+      results
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// URL Submit (Credit based - for users)
 app.post('/api/submit', async (req, res) => {
   try {
     const { email, urls } = req.body;
