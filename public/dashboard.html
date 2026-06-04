@@ -17,7 +17,7 @@
         h2 { color: #38bdf8; margin-top: 10px; }
         .section { background: #1e293b; border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid #334155; margin-top: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: #cbd5e1; }
-        input, textarea, select { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: white; box-sizing: border-box; margin-bottom: 15px; font-size: 14px; }
+        input, textarea { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: white; box-sizing: border-box; margin-bottom: 15px; font-size: 14px; }
         input:focus, textarea:focus { border-color: #38bdf8; outline: none; }
         .btn-submit { background: #38bdf8; color: #0f172a; font-size: 16px; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; width: 100%; transition: 0.2s; }
         .btn-submit:hover { background: #0ea5e9; }
@@ -81,10 +81,22 @@
         <div id="key-section" style="display:none;">
             <div class="guide-box">
                 <h4>🔑 IndexNow Key কীভাবে পাবেন? (একবারই করতে হবে)</h4>
-                <div class="guide-step"><div class="guide-num">1</div><div><a class="guide-link" href="https://www.indexnow.org/en/documentation" target="_blank">indexnow.org</a> এ যান → Key generate করুন (বা যেকোনো 32+ character random string)।</div></div>
-                <div class="guide-step"><div class="guide-num">2</div><div>সেই key দিয়ে একটা file বানান: <code>your-key.txt</code> — ভেতরে শুধু key লিখুন।</div></div>
-                <div class="guide-step"><div class="guide-num">3</div><div>File টি আপনার site এর root এ রাখুন: <code>https://yoursite.com/your-key.txt</code></div></div>
-                <div class="guide-step"><div class="guide-num">4</div><div>নিচে key ও host একবার save করুন। এরপর শুধু URL দিলেই submit হবে!</div></div>
+                <div class="guide-step">
+                    <div class="guide-num">1</div>
+                    <div><a class="guide-link" href="https://www.indexnow.org/en/documentation" target="_blank">indexnow.org</a> এ যান → Key generate করুন।</div>
+                </div>
+                <div class="guide-step">
+                    <div class="guide-num">2</div>
+                    <div>সেই key দিয়ে একটা file বানান: <code>your-key.txt</code> — ভেতরে শুধু key লিখুন।</div>
+                </div>
+                <div class="guide-step">
+                    <div class="guide-num">3</div>
+                    <div>File টি আপনার site এর root এ রাখুন: <code>https://yoursite.com/your-key.txt</code></div>
+                </div>
+                <div class="guide-step">
+                    <div class="guide-num">4</div>
+                    <div>নিচে key ও host একবার save করুন। এরপর শুধু URL দিলেই submit হবে!</div>
+                </div>
             </div>
 
             <div class="key-settings">
@@ -92,9 +104,9 @@
                     <h4>⚙️ Your IndexNow Settings</h4>
                     <span class="key-status notset" id="key-status-badge">Not Set</span>
                 </div>
-                <label style="margin-bottom:6px;">Your IndexNow Key</label>
+                <label>Your IndexNow Key</label>
                 <input type="text" id="user-indexnow-key" placeholder="e.g. a1b2c3d4e5f6...">
-                <label style="margin-bottom:6px;">Your Site Host (without https://)</label>
+                <label>Your Site Host (without https://)</label>
                 <div class="input-row">
                     <input type="text" id="user-indexnow-host" placeholder="e.g. yoursite.com">
                     <button class="btn-green" onclick="saveKey()">💾 Save Key</button>
@@ -119,7 +131,7 @@
 </div>
 
 <script>
-    // Online Ping — প্রতি 30 সেকেন্ডে server কে জানাবে
+    // Online Ping
     const sessionId = 'sess_' + Math.random().toString(36).substr(2, 12);
     function pingServer() {
         fetch('/api/ping', {
@@ -132,6 +144,7 @@
     setInterval(pingServer, 30000);
 
     let loadTimeout = null;
+
     function loadUserData() {
         const email = document.getElementById('user-email').value.trim();
         clearTimeout(loadTimeout);
@@ -163,7 +176,7 @@
                         setKeyStatus(false);
                     }
                 }
-            } catch (e) {}
+            } catch(e) {}
         }, 700);
     }
 
@@ -190,7 +203,7 @@
             msgEl.innerText = (data.success ? '✅ ' : '❌ ') + data.message;
             msgEl.style.display = 'block';
             if (data.success) setKeyStatus(true);
-        } catch (e) {
+        } catch(e) {
             msgEl.style.color = '#ef4444';
             msgEl.innerText = '❌ Server error!';
             msgEl.style.display = 'block';
@@ -201,7 +214,7 @@
         const email    = document.getElementById('user-email').value.trim();
         const urlsText = document.getElementById('user-urls').value.trim();
         const terminal = document.getElementById('user-terminal');
-        const submitBtn= document.getElementById('user-submit-btn');
+        const submitBtn = document.getElementById('user-submit-btn');
         if (!email)    { alert('Email দিন!'); return; }
         if (!urlsText) { alert('URL দিন!'); return; }
         const key  = document.getElementById('user-indexnow-key').value.trim();
@@ -230,7 +243,7 @@
             } else {
                 terminal.innerHTML += `<span class="log-error">[ERROR] ${data.message}</span>`;
             }
-        } catch (err) {
+        } catch(err) {
             terminal.innerHTML += `<span class="log-error">[ERROR] Server connection failed!</span>`;
         } finally {
             submitBtn.disabled = false;

@@ -5,303 +5,531 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FastIndexer - Admin Panel</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #1e293b; padding-bottom: 15px; }
-        .logo-text { font-size: 24px; font-weight: bold; color: #eab308; display: flex; align-items: center; gap: 8px; margin: 0; }
-        h2 { color: #38bdf8; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
-        /* Login Box */
+        /* Login */
         .login-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 40px; max-width: 400px; margin: 100px auto; text-align: center; }
-        .login-box h2 { margin-top: 0; }
-        .login-box input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: white; box-sizing: border-box; margin-bottom: 15px; font-size: 14px; }
+        .login-box h2 { margin-top: 0; color: #eab308; }
+        .login-box input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: white; margin-bottom: 15px; font-size: 14px; }
         .login-box button { background: #eab308; color: #0f172a; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; }
 
-        /* Admin Panel */
-        #admin-panel { display: none; }
+        /* Navbar */
+        .navbar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 15px 30px; border-bottom: 1px solid #334155; margin-bottom: 0; }
+        .logo-text { font-size: 22px; font-weight: bold; color: #eab308; margin: 0; }
 
-        /* Stats Cards */
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 30px; }
+        /* Tab Navigation */
+        .tab-nav { display: flex; background: #1e293b; border-bottom: 1px solid #334155; padding: 0 20px; }
+        .tab-nav button { background: transparent; border: none; color: #94a3b8; padding: 14px 20px; font-size: 14px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: 0.2s; }
+        .tab-nav button:hover { color: #f8fafc; }
+        .tab-nav button.active { color: #eab308; border-bottom-color: #eab308; }
+
+        /* Tab Content */
+        .tab-content { display: none; padding: 24px; }
+        .tab-content.active { display: block; }
+
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
         .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px 24px; display: flex; align-items: center; gap: 16px; }
         .stat-card.online { border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.05); }
         .stat-card.total  { border-color: rgba(56,189,248,0.4); background: rgba(56,189,248,0.05); }
-        .stat-card.today  { border-color: rgba(234,179,8,0.4);  background: rgba(234,179,8,0.05);  }
+        .stat-card.today  { border-color: rgba(234,179,8,0.4);  background: rgba(234,179,8,0.05); }
         .stat-icon { font-size: 32px; }
-        .stat-info { flex: 1; }
         .stat-value { font-size: 28px; font-weight: bold; line-height: 1; margin-bottom: 4px; }
         .stat-card.online .stat-value { color: #22c55e; }
         .stat-card.total  .stat-value { color: #38bdf8; }
         .stat-card.today  .stat-value { color: #eab308; }
-        .stat-label { font-size: 13px; color: #64748b; font-weight: 500; }
+        .stat-label { font-size: 13px; color: #64748b; }
         .stat-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; display: inline-block; margin-right: 6px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
 
         /* Table */
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #1e293b; border-radius: 8px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 8px; overflow: hidden; margin-top: 16px; }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #334155; font-size: 14px; }
-        th { background-color: #334155; color: #38bdf8; font-weight: bold; }
-        tr:hover { background-color: #24334d; }
-        .status-pending  { color: #eab308; font-weight: bold; background: #3e3214; padding: 4px 8px; border-radius: 4px; }
-        .status-approved { color: #22c55e; font-weight: bold; background: #143e21; padding: 4px 8px; border-radius: 4px; }
-        .btn-approve { background: #22c55e; color: #0f172a; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-        .btn-approve:hover { background: #16a34a; }
+        th { background: #334155; color: #38bdf8; font-weight: bold; }
+        tr:hover { background: #24334d; }
+        .badge-pending  { color: #eab308; background: #3e3214; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .badge-approved { color: #22c55e; background: #143e21; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .btn-approve { background: #22c55e; color: #0f172a; border: none; padding: 5px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 13px; }
 
-        /* Add Credit Box */
-        .credit-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 25px; margin-top: 30px; }
-        .credit-box input { padding: 10px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: white; margin-right: 10px; font-size: 14px; }
-        .credit-box button { background: #38bdf8; color: #0f172a; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        /* Section */
+        .section-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .section-title { color: #38bdf8; font-size: 16px; font-weight: bold; margin: 0 0 16px 0; padding-bottom: 10px; border-bottom: 1px solid #334155; }
 
-        .section-title { color: #38bdf8; margin-top: 40px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        /* Form */
+        label { display: block; margin-bottom: 6px; font-weight: bold; color: #cbd5e1; font-size: 14px; }
+        input, textarea, select { width: 100%; padding: 10px 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: white; margin-bottom: 12px; font-size: 14px; }
+        input:focus, textarea:focus { border-color: #38bdf8; outline: none; }
+        .btn { border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .btn-blue   { background: #38bdf8; color: #0f172a; }
+        .btn-blue:hover { background: #0ea5e9; }
+        .btn-yellow { background: #eab308; color: #0f172a; }
+        .btn-yellow:hover { background: #ca8a04; }
+        .btn-red    { background: #ef4444; color: white; }
+        .btn-red:hover { background: #dc2626; }
+        .btn-green  { background: #22c55e; color: #0f172a; }
+        .btn-green:hover { background: #16a34a; }
+        .btn-full { width: 100%; padding: 12px; font-size: 16px; }
+
+        /* Terminal */
+        .terminal { background: #020617; border: 1px solid #334155; font-family: 'Courier New', monospace; font-size: 13px; color: #38bdf8; padding: 15px; border-radius: 6px; max-height: 300px; overflow-y: auto; margin-top: 12px; line-height: 1.6; }
+        .log-ok  { color: #22c55e; }
+        .log-err { color: #ef4444; }
+        .log-pro { color: #eab308; }
+
+        /* Info box */
+        .info-box { background: rgba(56,189,248,0.05); border: 1px solid rgba(56,189,248,0.2); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #94a3b8; }
+        .info-box span { color: #38bdf8; font-weight: bold; }
+
+        /* Site list */
+        .site-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; }
+        .site-info { font-size: 14px; }
+        .site-host { color: #38bdf8; font-weight: bold; }
+        .site-key  { color: #64748b; font-size: 12px; margin-top: 2px; }
+
+        /* Row */
+        .row { display: flex; gap: 10px; align-items: flex-end; }
+        .row > * { flex: 1; }
+        .row > .btn { flex: 0; white-space: nowrap; margin-bottom: 12px; }
+
+        #admin-panel { display: none; }
     </style>
 </head>
 <body>
 
-<!-- Login Box -->
+<!-- Login -->
 <div id="login-box" class="login-box">
     <h2>🛡️ Admin Login</h2>
     <p style="color:#94a3b8;">Enter admin password to continue</p>
     <input type="password" id="admin-password" placeholder="Admin Password" onkeypress="if(event.key==='Enter') adminLogin()">
     <button onclick="adminLogin()">Login</button>
-    <p id="login-error" style="color:#ef4444; display:none;">Wrong password!</p>
+    <p id="login-error" style="color:#ef4444; display:none; margin-top:10px;">Wrong password!</p>
 </div>
 
 <!-- Admin Panel -->
-<div id="admin-panel" class="container">
+<div id="admin-panel">
     <div class="navbar">
-        <h1 class="logo-text">🛡️ FastIndexer Admin Panel</h1>
-        <div>
-            <span style="color:#94a3b8; font-weight:bold;">Super Admin</span>
-            &nbsp;&nbsp;
-            <button onclick="adminLogout()" style="background:#ef4444; color:white; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-weight:bold;">Logout</button>
+        <h1 class="logo-text">🛡️ FastIndexer Admin</h1>
+        <div style="display:flex; align-items:center; gap:16px;">
+            <span style="color:#94a3b8; font-size:14px;">Super Admin</span>
+            <button class="btn btn-red" onclick="adminLogout()">Logout</button>
         </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="stats-grid">
-        <div class="stat-card online">
-            <div class="stat-icon">🟢</div>
-            <div class="stat-info">
-                <div class="stat-value" id="stat-online">-</div>
-                <div class="stat-label"><span class="stat-dot"></span>এখন Online</div>
+    <div class="tab-nav">
+        <button class="active" onclick="showTab('dashboard')">📊 Dashboard</button>
+        <button onclick="showTab('payments')">💳 Payments</button>
+        <button onclick="showTab('users')">👥 Users</button>
+        <button onclick="showTab('urlsubmit')">⚡ URL Submit</button>
+        <button onclick="showTab('sitemanager')">🌐 Site Manager</button>
+    </div>
+
+    <!-- Dashboard Tab -->
+    <div id="tab-dashboard" class="tab-content active">
+        <div class="stats-grid">
+            <div class="stat-card online">
+                <div class="stat-icon">🟢</div>
+                <div>
+                    <div class="stat-value" id="stat-online">-</div>
+                    <div class="stat-label"><span class="stat-dot"></span>এখন Online</div>
+                </div>
+            </div>
+            <div class="stat-card total">
+                <div class="stat-icon">👥</div>
+                <div>
+                    <div class="stat-value" id="stat-total">-</div>
+                    <div class="stat-label">Total Registered Users</div>
+                </div>
+            </div>
+            <div class="stat-card today">
+                <div class="stat-icon">📊</div>
+                <div>
+                    <div class="stat-value" id="stat-today">-</div>
+                    <div class="stat-label">আজকের Submissions</div>
+                </div>
             </div>
         </div>
-        <div class="stat-card total">
-            <div class="stat-icon">👥</div>
-            <div class="stat-info">
-                <div class="stat-value" id="stat-total">-</div>
-                <div class="stat-label">Total Registered Users</div>
-            </div>
+        <div class="section-card">
+            <p class="section-title">📋 Recent Payments</p>
+            <table>
+                <thead><tr><th>Email</th><th>Plan</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody id="dash-payments-table">
+                    <tr><td colspan="5" style="text-align:center; color:#64748b;">Loading...</td></tr>
+                </tbody>
+            </table>
         </div>
-        <div class="stat-card today">
-            <div class="stat-icon">📊</div>
-            <div class="stat-info">
-                <div class="stat-value" id="stat-today">-</div>
-                <div class="stat-label">আজকের Submissions</div>
+    </div>
+
+    <!-- Payments Tab -->
+    <div id="tab-payments" class="tab-content">
+        <div class="section-card">
+            <p class="section-title">💳 Payment Verification Requests</p>
+            <table>
+                <thead><tr><th>Email</th><th>Plan</th><th>Amount</th><th>Sender</th><th>TxnID</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody id="payments-table">
+                    <tr><td colspan="7" style="text-align:center; color:#64748b;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Users Tab -->
+    <div id="tab-users" class="tab-content">
+        <div class="section-card" style="margin-bottom:20px;">
+            <p class="section-title">➕ Manually Add Credit</p>
+            <div class="row">
+                <div>
+                    <label>User Email</label>
+                    <input type="email" id="credit-email" placeholder="user@email.com">
+                </div>
+                <div>
+                    <label>Credit Amount</label>
+                    <input type="number" id="credit-amount" placeholder="e.g. 200">
+                </div>
+                <button class="btn btn-blue" onclick="addCredit()">Add Credit</button>
+            </div>
+            <p id="credit-msg" style="color:#22c55e; display:none; margin:0;"></p>
+        </div>
+        <div class="section-card">
+            <p class="section-title">👥 All Users</p>
+            <table>
+                <thead><tr><th>Email</th><th>Name</th><th>Plan</th><th>Credit</th><th>IndexNow Key</th><th>Joined</th></tr></thead>
+                <tbody id="users-table">
+                    <tr><td colspan="6" style="text-align:center; color:#64748b;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- URL Submit Tab -->
+    <div id="tab-urlsubmit" class="tab-content">
+        <div class="section-card">
+            <p class="section-title">⚡ Admin URL Submit (Unlimited)</p>
+            <div class="info-box">
+                ⚡ <span>Auto detect:</span> URL দিলেই site এর host detect হবে এবং registered key দিয়ে submit হবে। Credit কাটবে না।
+            </div>
+            <label>Target URLs (One URL per line)</label>
+            <textarea id="admin-urls" rows="10" placeholder="https://clickrisehub.com/page1&#10;https://ruhistore.com/page2&#10;যেকোনো registered site এর URL দিন"></textarea>
+            <button class="btn btn-yellow btn-full" id="admin-submit-btn" onclick="adminSubmit()">⚡ Submit All URLs (Unlimited)</button>
+            <div class="terminal" id="admin-terminal">
+                <span style="color:#64748b;">// Admin mode ready...</span>
             </div>
         </div>
     </div>
 
-    <!-- Payment Requests -->
-    <h2 class="section-title">💳 Payment Verification Requests</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Email</th>
-                <th>Plan</th>
-                <th>Amount</th>
-                <th>Sender Number</th>
-                <th>TxnID</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="payments-table">
-            <tr><td colspan="7" style="text-align:center; color:#94a3b8;">Loading...</td></tr>
-        </tbody>
-    </table>
-
-    <!-- Manual Credit Add -->
-    <h2 class="section-title">➕ Manually Add Credit</h2>
-    <div class="credit-box">
-        <p style="color:#94a3b8; margin-top:0;">User এর email এবং credit amount দিয়ে manually credit যোগ করুন।</p>
-        <input type="email" id="credit-email" placeholder="user@email.com" style="width:250px;">
-        <input type="number" id="credit-amount" placeholder="Credit Amount" style="width:150px;">
-        <button onclick="addCredit()">Add Credit</button>
-        <p id="credit-msg" style="margin-top:10px; color:#22c55e; display:none;"></p>
+    <!-- Site Manager Tab -->
+    <div id="tab-sitemanager" class="tab-content">
+        <div class="section-card" style="margin-bottom:20px;">
+            <p class="section-title">➕ Register New Site</p>
+            <div class="info-box">
+                💡 <span>একবার site register করুন</span> — তারপর সেই site এর যেকোনো URL submit করতে পারবেন, key আর দিতে হবে না।
+            </div>
+            <div class="row">
+                <div>
+                    <label>Site Host (without https://)</label>
+                    <input type="text" id="site-host" placeholder="e.g. clickrisehub.com">
+                </div>
+                <div>
+                    <label>IndexNow Key</label>
+                    <input type="text" id="site-key" placeholder="e.g. 95ab980e51a64fe18167f67b0af1855f">
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <label>Label (Optional)</label>
+                    <input type="text" id="site-label" placeholder="e.g. ClickRise Hub">
+                </div>
+                <button class="btn btn-green" onclick="addSite()" style="margin-bottom:12px;">+ Add Site</button>
+            </div>
+            <p id="site-msg" style="display:none; margin:0; font-size:14px;"></p>
+        </div>
+        <div class="section-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <p class="section-title" style="margin:0; border:none; padding:0;">🌐 Registered Sites</p>
+                <button class="btn btn-blue" onclick="loadSites()" style="padding:6px 14px; font-size:13px;">🔄 Refresh</button>
+            </div>
+            <div id="sites-list">
+                <p style="color:#64748b; text-align:center;">Loading...</p>
+            </div>
+        </div>
     </div>
 
-    <!-- User List -->
-    <h2 class="section-title">👥 All Users</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Email</th>
-                <th>Name</th>
-                <th>Plan</th>
-                <th>Credit</th>
-                <th>Joined</th>
-            </tr>
-        </thead>
-        <tbody id="users-table">
-            <tr><td colspan="5" style="text-align:center; color:#94a3b8;">Loading...</td></tr>
-        </tbody>
-    </table>
 </div>
 
 <script>
-    let adminPass = '';
-    let statsInterval = null;
+let adminPass = '';
+let statsInterval = null;
 
-    function adminLogin() {
-        const pass = document.getElementById('admin-password').value;
-        if (!pass) return;
-        adminPass = pass;
-        document.getElementById('login-error').style.display = 'none';
+// =============================================
+//   Login / Logout
+// =============================================
+function adminLogin() {
+    const pass = document.getElementById('admin-password').value;
+    if (!pass) return;
+    adminPass = pass;
+    document.getElementById('login-error').style.display = 'none';
 
-        fetch(`/api/admin/payments?password=${encodeURIComponent(pass)}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.success === false && data.message === 'Access Denied!') {
-                    document.getElementById('login-error').style.display = 'block';
-                    adminPass = '';
-                } else {
-                    document.getElementById('login-box').style.display = 'none';
-                    document.getElementById('admin-panel').style.display = 'block';
-                    loadPayments(data);
-                    loadUsers();
-                    loadStats();
-                    // প্রতি 15 সেকেন্ডে stats refresh
-                    statsInterval = setInterval(loadStats, 15000);
-                }
-            })
-            .catch(() => {
+    fetch(`/api/admin/payments?password=${encodeURIComponent(pass)}`)
+        .then(r => r.json())
+        .then(data => {
+            if (!data.success && data.message === 'Access Denied!') {
                 document.getElementById('login-error').style.display = 'block';
-            });
-    }
-
-    function adminLogout() {
-        adminPass = '';
-        if (statsInterval) clearInterval(statsInterval);
-        document.getElementById('login-box').style.display = 'block';
-        document.getElementById('admin-panel').style.display = 'none';
-        document.getElementById('admin-password').value = '';
-    }
-
-    // =============================================
-    //   Stats Load
-    // =============================================
-    async function loadStats() {
-        try {
-            const res = await fetch(`/api/admin/stats?password=${encodeURIComponent(adminPass)}`);
-            const data = await res.json();
-            if (data.success) {
-                document.getElementById('stat-online').innerText = data.onlineUsers;
-                document.getElementById('stat-total').innerText  = data.totalUsers;
-                document.getElementById('stat-today').innerText  = data.todaySubmissions;
-            }
-        } catch (e) {}
-    }
-
-    function loadPayments(data) {
-        const tableBody = document.getElementById('payments-table');
-        if (data.success && data.data.length > 0) {
-            tableBody.innerHTML = '';
-            data.data.forEach(req => {
-                const statusClass = req.status === 'approved' ? 'status-approved' : 'status-pending';
-                const approveBtn = req.status === 'pending'
-                    ? `<button class="btn-approve" onclick="approvePayment('${req._id}')">✅ Approve</button>`
-                    : `<span style="color:#64748b;">Verified ✓</span>`;
-                tableBody.innerHTML += `
-                    <tr>
-                        <td style="color:#f1f5f9;">${req.userEmail}</td>
-                        <td style="color:#38bdf8; font-weight:bold;">${req.plan}</td>
-                        <td style="color:#eab308;">${req.amount} TK</td>
-                        <td>${req.senderNumber}</td>
-                        <td style="font-family:monospace; color:#eab308;">${req.txnid}</td>
-                        <td><span class="${statusClass}">${req.status.toUpperCase()}</span></td>
-                        <td>${approveBtn}</td>
-                    </tr>
-                `;
-            });
-        } else {
-            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8;">কোনো payment request নেই।</td></tr>`;
-        }
-    }
-
-    async function approvePayment(paymentId) {
-        if (!confirm("এই payment approve করবেন?")) return;
-        try {
-            const response = await fetch('/api/admin/approve-payment', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password: adminPass, paymentId })
-            });
-            const result = await response.json();
-            if (result.success) {
-                alert('✅ ' + result.message);
-                fetch(`/api/admin/payments?password=${encodeURIComponent(adminPass)}`)
-                    .then(r => r.json())
-                    .then(loadPayments);
+                adminPass = '';
             } else {
-                alert('❌ ' + result.message);
-            }
-        } catch (err) {
-            alert('Server connection error!');
-        }
-    }
-
-    async function loadUsers() {
-        try {
-            const response = await fetch(`/api/admin/users?password=${encodeURIComponent(adminPass)}`);
-            const data = await response.json();
-            const tableBody = document.getElementById('users-table');
-            if (data.success && data.data.length > 0) {
-                tableBody.innerHTML = '';
-                data.data.forEach(user => {
-                    tableBody.innerHTML += `
-                        <tr>
-                            <td style="color:#f1f5f9;">${user.email}</td>
-                            <td style="color:#94a3b8;">${user.name}</td>
-                            <td style="color:#38bdf8;">${user.plan}</td>
-                            <td style="color:#22c55e; font-weight:bold;">${user.credit}</td>
-                            <td style="color:#64748b;">${new Date(user.createdAt).toLocaleDateString()}</td>
-                        </tr>
-                    `;
-                });
-            } else {
-                tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8;">কোনো user নেই।</td></tr>`;
-            }
-        } catch (err) {
-            document.getElementById('users-table').innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ef4444;">Error loading users.</td></tr>`;
-        }
-    }
-
-    async function addCredit() {
-        const email  = document.getElementById('credit-email').value.trim();
-        const credit = document.getElementById('credit-amount').value.trim();
-        const msg    = document.getElementById('credit-msg');
-        if (!email || !credit) { alert('Email এবং credit amount দিন!'); return; }
-        try {
-            const response = await fetch('/api/admin/add-credit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password: adminPass, email, credit })
-            });
-            const data = await response.json();
-            msg.style.display = 'block';
-            if (data.success) {
-                msg.style.color = '#22c55e';
-                msg.innerText = '✅ ' + data.message;
+                document.getElementById('login-box').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                loadPayments(data, 'payments-table', 7);
+                loadPayments(data, 'dash-payments-table', 5);
                 loadUsers();
                 loadStats();
-            } else {
-                msg.style.color = '#ef4444';
-                msg.innerText = '❌ ' + data.message;
+                loadSites();
+                statsInterval = setInterval(loadStats, 15000);
             }
-        } catch (err) {
-            alert('Server connection error!');
+        })
+        .catch(() => { document.getElementById('login-error').style.display = 'block'; });
+}
+
+function adminLogout() {
+    adminPass = '';
+    if (statsInterval) clearInterval(statsInterval);
+    document.getElementById('login-box').style.display = 'block';
+    document.getElementById('admin-panel').style.display = 'none';
+    document.getElementById('admin-password').value = '';
+}
+
+// =============================================
+//   Tab Switch
+// =============================================
+function showTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// =============================================
+//   Stats
+// =============================================
+async function loadStats() {
+    try {
+        const res = await fetch(`/api/admin/stats?password=${encodeURIComponent(adminPass)}`);
+        const data = await res.json();
+        if (data.success) {
+            document.getElementById('stat-online').innerText = data.onlineUsers;
+            document.getElementById('stat-total').innerText  = data.totalUsers;
+            document.getElementById('stat-today').innerText  = data.todaySubmissions;
         }
+    } catch(e) {}
+}
+
+// =============================================
+//   Payments
+// =============================================
+function loadPayments(data, tableId, cols) {
+    const tbody = document.getElementById(tableId);
+    if (data.success && data.data.length > 0) {
+        tbody.innerHTML = '';
+        data.data.forEach(req => {
+            const statusClass = req.status === 'approved' ? 'badge-approved' : 'badge-pending';
+            const approveBtn = req.status === 'pending'
+                ? `<button class="btn-approve" onclick="approvePayment('${req._id}')">✅ Approve</button>`
+                : `<span style="color:#64748b; font-size:12px;">Verified ✓</span>`;
+
+            if (cols === 7) {
+                tbody.innerHTML += `<tr>
+                    <td style="color:#f1f5f9;">${req.userEmail}</td>
+                    <td style="color:#38bdf8; font-weight:bold;">${req.plan}</td>
+                    <td style="color:#eab308;">${req.amount} TK</td>
+                    <td>${req.senderNumber}</td>
+                    <td style="font-family:monospace; color:#eab308; font-size:12px;">${req.txnid}</td>
+                    <td><span class="${statusClass}">${req.status.toUpperCase()}</span></td>
+                    <td>${approveBtn}</td>
+                </tr>`;
+            } else {
+                tbody.innerHTML += `<tr>
+                    <td style="color:#f1f5f9;">${req.userEmail}</td>
+                    <td style="color:#38bdf8;">${req.plan}</td>
+                    <td style="color:#eab308;">${req.amount} TK</td>
+                    <td><span class="${statusClass}">${req.status.toUpperCase()}</span></td>
+                    <td>${approveBtn}</td>
+                </tr>`;
+            }
+        });
+    } else {
+        tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align:center; color:#64748b;">কোনো payment request নেই।</td></tr>`;
     }
+}
+
+async function approvePayment(paymentId) {
+    if (!confirm("এই payment approve করবেন?")) return;
+    try {
+        const res = await fetch('/api/admin/approve-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: adminPass, paymentId })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert('✅ ' + data.message);
+            const r = await fetch(`/api/admin/payments?password=${encodeURIComponent(adminPass)}`);
+            const d = await r.json();
+            loadPayments(d, 'payments-table', 7);
+            loadPayments(d, 'dash-payments-table', 5);
+            loadStats();
+        } else {
+            alert('❌ ' + data.message);
+        }
+    } catch(e) { alert('Server error!'); }
+}
+
+// =============================================
+//   Users
+// =============================================
+async function loadUsers() {
+    try {
+        const res = await fetch(`/api/admin/users?password=${encodeURIComponent(adminPass)}`);
+        const data = await res.json();
+        const tbody = document.getElementById('users-table');
+        if (data.success && data.data.length > 0) {
+            tbody.innerHTML = '';
+            data.data.forEach(u => {
+                tbody.innerHTML += `<tr>
+                    <td style="color:#f1f5f9;">${u.email}</td>
+                    <td style="color:#94a3b8;">${u.name || '-'}</td>
+                    <td style="color:#38bdf8;">${u.plan}</td>
+                    <td style="color:#22c55e; font-weight:bold;">${u.credit}</td>
+                    <td style="color:#64748b; font-size:12px;">${u.indexnowKey ? u.indexnowKey.substring(0,16) + '...' : 'Not set'}</td>
+                    <td style="color:#64748b;">${new Date(u.createdAt).toLocaleDateString()}</td>
+                </tr>`;
+            });
+        } else {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b;">কোনো user নেই।</td></tr>`;
+        }
+    } catch(e) {}
+}
+
+async function addCredit() {
+    const email  = document.getElementById('credit-email').value.trim();
+    const credit = document.getElementById('credit-amount').value.trim();
+    const msg    = document.getElementById('credit-msg');
+    if (!email || !credit) { alert('Email ও credit amount দিন!'); return; }
+    try {
+        const res = await fetch('/api/admin/add-credit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: adminPass, email, credit })
+        });
+        const data = await res.json();
+        msg.style.display = 'block';
+        msg.style.color = data.success ? '#22c55e' : '#ef4444';
+        msg.innerText = (data.success ? '✅ ' : '❌ ') + data.message;
+        if (data.success) { loadUsers(); loadStats(); }
+    } catch(e) { alert('Server error!'); }
+}
+
+// =============================================
+//   URL Submit (Admin Unlimited)
+// =============================================
+async function adminSubmit() {
+    const urlsText = document.getElementById('admin-urls').value.trim();
+    const terminal = document.getElementById('admin-terminal');
+    const btn      = document.getElementById('admin-submit-btn');
+    if (!urlsText) { alert('URL দিন!'); return; }
+    const urls = urlsText.split('\n').filter(u => u.trim() !== '');
+    terminal.innerHTML = `<span class="log-pro">[ADMIN] ${urls.length}টি URL submit হচ্ছে...</span><br>`;
+    btn.disabled = true;
+    try {
+        const res = await fetch('/api/index-now', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ urls, password: adminPass })
+        });
+        const data = await res.json();
+        if (data.success) {
+            terminal.innerHTML += `<span class="log-ok">[SUCCESS] ${data.message}</span><br>`;
+            terminal.innerHTML += `<span style="color:#475569;">--- Results ---</span><br>`;
+            data.results.forEach(r => {
+                terminal.innerHTML += r.success
+                    ? `<span class="log-ok">[✓] ${r.url}</span><br>`
+                    : `<span class="log-err">[✕] ${r.url} → ${r.error}</span><br>`;
+            });
+        } else {
+            terminal.innerHTML += `<span class="log-err">[ERROR] ${data.message}</span>`;
+        }
+    } catch(e) {
+        terminal.innerHTML += `<span class="log-err">[ERROR] Server connection failed!</span>`;
+    } finally {
+        btn.disabled = false;
+        terminal.scrollTop = terminal.scrollHeight;
+        loadStats();
+    }
+}
+
+// =============================================
+//   Site Manager
+// =============================================
+async function loadSites() {
+    try {
+        const res = await fetch(`/api/admin/sites?password=${encodeURIComponent(adminPass)}`);
+        const data = await res.json();
+        const container = document.getElementById('sites-list');
+        if (data.success && data.data.length > 0) {
+            container.innerHTML = '';
+            data.data.forEach(site => {
+                container.innerHTML += `
+                <div class="site-item">
+                    <div class="site-info">
+                        <div class="site-host">🌐 ${site.label || site.host}</div>
+                        <div class="site-key">${site.host} · Key: ${site.indexnowKey.substring(0,16)}...</div>
+                    </div>
+                    <button class="btn btn-red" onclick="deleteSite('${site.host}')" style="padding:6px 12px; font-size:13px;">🗑️ Delete</button>
+                </div>`;
+            });
+        } else {
+            container.innerHTML = `<p style="color:#64748b; text-align:center;">কোনো registered site নেই।</p>`;
+        }
+    } catch(e) {}
+}
+
+async function addSite() {
+    const host  = document.getElementById('site-host').value.trim();
+    const key   = document.getElementById('site-key').value.trim();
+    const label = document.getElementById('site-label').value.trim();
+    const msg   = document.getElementById('site-msg');
+    if (!host || !key) { alert('Host ও Key দিন!'); return; }
+    try {
+        const res = await fetch('/api/admin/site/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: adminPass, host, indexnowKey: key, label })
+        });
+        const data = await res.json();
+        msg.style.display = 'block';
+        msg.style.color = data.success ? '#22c55e' : '#ef4444';
+        msg.innerText = (data.success ? '✅ ' : '❌ ') + data.message;
+        if (data.success) {
+            document.getElementById('site-host').value = '';
+            document.getElementById('site-key').value = '';
+            document.getElementById('site-label').value = '';
+            loadSites();
+        }
+    } catch(e) { alert('Server error!'); }
+}
+
+async function deleteSite(host) {
+    if (!confirm(`${host} delete করবেন?`)) return;
+    try {
+        const res = await fetch('/api/admin/site/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: adminPass, host })
+        });
+        const data = await res.json();
+        if (data.success) { loadSites(); }
+        else { alert('❌ ' + data.message); }
+    } catch(e) { alert('Server error!'); }
+}
 </script>
 </body>
 </html>
