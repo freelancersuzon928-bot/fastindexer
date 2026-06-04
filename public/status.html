@@ -7,8 +7,6 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 0; }
         .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
-        
-        /* প্রফেশনাল নেভিগেশন বার এলাইনমেন্ট */
         .navbar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-bottom: 1px solid #334155; }
         .logo-area { display: flex; align-items: center; gap: 40px; }
         .logo-text { font-size: 24px; font-weight: bold; color: #38bdf8; text-decoration: none; display: flex; align-items: center; gap: 8px; margin: 0; }
@@ -16,15 +14,12 @@
         .nav-link { color: #94a3b8; text-decoration: none; font-weight: 500; transition: 0.2s; font-size: 15px; }
         .nav-link:hover, .nav-link.active { color: #38bdf8; }
         .status-badge { font-size: 14px; color: #10b981; background: rgba(16,185,129,0.1); padding: 6px 12px; border-radius: 6px; font-weight: bold; }
-        
         h2 { color: #38bdf8; margin-top: 20px; }
         .section { background: #1e293b; border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid #334155; margin-top: 20px; }
-        
         table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #0f172a; border-radius: 8px; overflow: hidden; }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #1e293b; font-size: 14px; }
         th { background-color: #334155; color: #38bdf8; font-weight: bold; }
         tr:hover { background-color: #1e293b; }
-        
         .badge-success { background: rgba(34,197,94,0.1); color: #22c55e; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
         .badge-pending { background: rgba(234,179,8,0.1); color: #eab308; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
     </style>
@@ -54,7 +49,7 @@
                     <th>Plan Type</th>
                     <th>Submissions Logs / Target URLs</th>
                     <th>Requested At</th>
-                    <th>Payment Status</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody id="status-table-body">
@@ -65,35 +60,36 @@
 </div>
 
 <script>
-    async function loadStatusHistory() {
-        try {
-            const response = await fetch('/api/admin/requests');
-            const data = await response.json();
-            const tableBody = document.getElementById('status-table-body');
-            tableBody.innerHTML = '';
+async function loadStatusHistory() {
+    try {
+        const response = await fetch('/api/submissions');
+        const data = await response.json();
+        const tableBody = document.getElementById('status-table-body');
+        tableBody.innerHTML = '';
 
-            if(data.success && data.data.length > 0) {
-                data.data.reverse().forEach(req => {
-                    const tr = document.createElement('tr');
-                    const statusClass = req.status === 'approved' ? 'badge-success' : 'badge-pending';
-                    const urlsDisplay = Array.isArray(req.urls) ? req.urls.join(', ') : req.urls;
+        if (data.success && data.data.length > 0) {
+            data.data.forEach(req => {
+                const tr = document.createElement('tr');
+                const statusClass = req.status === 'completed' ? 'badge-success' : 'badge-pending';
+                const urlsDisplay = Array.isArray(req.urls) ? req.urls.join(', ') : req.urls;
 
-                    tr.innerHTML = `
-                        <td style="color:#38bdf8; font-weight:bold;">${req.plan.toUpperCase()}</td>
-                        <td style="max-width: 400px; word-break: break-all; color:#cbd5e1;">${urlsDisplay}</td>
-                        <td style="color:#94a3b8;">${new Date(req.requestedAt).toLocaleString()}</td>
-                        <td><span class="${statusClass}">${req.status.toUpperCase()}</span></td>
-                    `;
-                    tableBody.appendChild(tr);
-                });
-            } else {
-                tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">No indexing submission history found in db.json.</td></tr>`;
-            }
-        } catch (err) {
-            document.getElementById('status-table-body').innerHTML = `<tr><td colspan="4" style="text-align:center; color:#ef4444;">Failed to fetch storage streams from server.</td></tr>`;
+                tr.innerHTML = `
+                    <td style="color:#38bdf8; font-weight:bold;">${req.plan.toUpperCase()}</td>
+                    <td style="max-width: 400px; word-break: break-all; color:#cbd5e1;">${urlsDisplay}</td>
+                    <td style="color:#94a3b8;">${new Date(req.submittedAt).toLocaleString()}</td>
+                    <td><span class="${statusClass}">${req.status.toUpperCase()}</span></td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        } else {
+            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">কোনো submission নেই।</td></tr>`;
         }
+    } catch (err) {
+        document.getElementById('status-table-body').innerHTML = `<tr><td colspan="4" style="text-align:center; color:#ef4444;">Server এ সংযোগ হচ্ছে না।</td></tr>`;
     }
-    window.onload = loadStatusHistory;
+}
+window.onload = loadStatusHistory;
 </script>
+
 </body>
 </html>
