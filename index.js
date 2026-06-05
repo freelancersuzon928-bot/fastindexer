@@ -258,6 +258,44 @@ app.get('/api/admin/stats', async (req, res) => {
 });
 
 // =============================================
+//   Public Stats (login ছাড়াই দেখা যাবে)
+// =============================================
+app.get('/api/public/stats', async (req, res) => {
+  try {
+    cleanOldSessions();
+
+    const totalUsers = await User.countDocuments();
+
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const todaySubmissions = await Submission.countDocuments({
+      submittedAt: { $gte: todayStart },
+      userEmail: { $ne: 'admin' }
+    });
+
+    const todayDocs = await Submission.find({
+      submittedAt: { $gte: todayStart },
+      userEmail: { $ne: 'admin' }
+    }, 'urls');
+
+    const todayUrls = todayDocs.reduce((sum, sub) => {
+      return sum + (Array.isArray(sub.urls) ? sub.urls.length : 1);
+    }, 0);
+
+    res.json({
+      success: true,
+      onlineUsers: onlineUsers.size,
+      totalUsers,
+      todaySubmissions,
+      todayUrls
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// =============================================
 //   User Routes
 // =============================================
 app.post('/api/user/get-or-create', async (req, res) => {

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastIndexer - My Profile</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; min-height: 100vh; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-bottom: 1px solid #334155; }
+        .logo-area { display: flex; align-items: center; gap: 25px; }
+        .logo-text { font-size: 24px; font-weight: bold; color: #38bdf8; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .nav-links { display: flex; align-items: center; gap: 20px; }
+        .nav-link { color: #94a3b8; text-decoration: none; font-weight: 500; transition: 0.2s; font-size: 15px; }
+        .nav-link:hover, .nav-link.active { color: #38bdf8; }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .btn-auth { background: transparent; color: #cbd5e1; border: 1px solid #475569; padding: 8px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s; text-decoration: none; display: inline-block; }
+        .btn-auth:hover { border-color: #38bdf8; color: #38bdf8; }
+        .btn-danger { border-color: #ef4444; color: #ef4444; background: transparent; cursor: pointer; font-size: 14px; font-weight: bold; padding: 8px 18px; border-radius: 6px; border: 1px solid; transition: 0.2s; }
+        .btn-danger:hover { background: rgba(239,68,68,0.1); }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
+
+        /* Profile Header */
+        .profile-header { background: linear-gradient(135deg, #1e293b 0%, #0f2744 100%); border: 1px solid #334155; border-radius: 16px; padding: 30px; margin-bottom: 25px; display: flex; align-items: center; gap: 24px; }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #38bdf8, #0ea5e9); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; color: #0f172a; flex-shrink: 0; }
+        .profile-info h1 { font-size: 24px; color: #f1f5f9; margin-bottom: 4px; }
+        .profile-info p { color: #94a3b8; font-size: 14px; }
+        .profile-badge { margin-top: 8px; display: inline-block; background: rgba(56,189,248,0.1); border: 1px solid #38bdf8; color: #38bdf8; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 25px; }
+        .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: center; transition: 0.2s; }
+        .stat-card:hover { border-color: #38bdf8; transform: translateY(-2px); }
+        .stat-card .icon { font-size: 28px; margin-bottom: 8px; }
+        .stat-card .value { font-size: 28px; font-weight: bold; color: #38bdf8; margin-bottom: 4px; }
+        .stat-card .label { color: #64748b; font-size: 13px; }
+
+        /* Sections */
+        .section { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 25px; margin-bottom: 20px; }
+        .section-title { font-size: 16px; font-weight: bold; color: #38bdf8; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+
+        /* IndexNow Key */
+        .key-display { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .key-value { color: #94a3b8; font-family: 'Courier New', monospace; font-size: 13px; word-break: break-all; flex: 1; }
+        .key-value.set { color: #22c55e; }
+        .btn-copy { background: #334155; border: none; color: #cbd5e1; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s; white-space: nowrap; }
+        .btn-copy:hover { background: #38bdf8; color: #0f172a; }
+
+        /* Submission Table */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid #1e293b; font-size: 13px; }
+        th { background: #0f172a; color: #38bdf8; font-weight: bold; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        tr:hover td { background: rgba(56,189,248,0.03); }
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .badge-success { background: rgba(34,197,94,0.1); color: #22c55e; }
+        .badge-pending { background: rgba(234,179,8,0.1); color: #eab308; }
+        .badge-completed { background: rgba(34,197,94,0.1); color: #22c55e; }
+        .url-cell { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #cbd5e1; }
+
+        /* Plan upgrade */
+        .plan-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #334155; }
+        .plan-row:last-child { border-bottom: none; }
+        .plan-label { color: #94a3b8; font-size: 14px; }
+        .plan-value { color: #f1f5f9; font-weight: bold; font-size: 14px; }
+        .btn-upgrade { background: #eab308; color: #0f172a; border: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.2s; text-decoration: none; display: inline-block; }
+        .btn-upgrade:hover { background: #ca8a04; }
+
+        /* No login */
+        .no-login { text-align: center; padding: 80px 20px; }
+        .no-login h2 { color: #38bdf8; font-size: 22px; margin-bottom: 10px; }
+        .no-login p { color: #64748b; margin-bottom: 24px; }
+        .btn-login { background: #38bdf8; color: #0f172a; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; transition: 0.2s; }
+        .btn-login:hover { background: #0ea5e9; }
+
+        .empty-row td { text-align: center; color: #64748b; padding: 30px; }
+
+        .loading { text-align: center; color: #64748b; padding: 30px; }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo-area">
+        <a href="index.html" class="logo-text">🚀 FastIndexer</a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="dashboard.html" class="nav-link">URL Submit</a>
+            <a href="status.html" class="nav-link">Submit Status</a>
+            <a href="profile.html" class="nav-link active">Profile</a>
+        </div>
+    </div>
+    <div class="nav-right" id="nav-right">
+        <a href="login.html" class="btn-auth">Log In</a>
+        <a href="signup.html" class="btn-auth" style="background:#38bdf8; color:#0f172a; border:none;">Sign Up</a>
+    </div>
+</div>
+
+<div class="container" id="main-content">
+    <div class="no-login" id="no-login-msg">
+        <div style="font-size:60px; margin-bottom:16px;">🔒</div>
+        <h2>Login করুন</h2>
+        <p>Profile দেখতে আগে login করতে হবে।</p>
+        <a href="login.html" class="btn-login">Log In করুন</a>
+    </div>
+
+    <div id="profile-content" style="display:none;">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="avatar" id="avatar-text">?</div>
+            <div class="profile-info">
+                <h1 id="user-name">Loading...</h1>
+                <p id="user-email-display">loading@email.com</p>
+                <div class="profile-badge" id="user-plan-badge">Free Plan</div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon">💳</div>
+                <div class="value" id="stat-credit">-</div>
+                <div class="label">Available Credits</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🔗</div>
+                <div class="value" id="stat-total-urls">-</div>
+                <div class="label">Total URLs Submitted</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">✅</div>
+                <div class="value" id="stat-success">-</div>
+                <div class="label">Successful Submissions</div>
+            </div>
+        </div>
+
+        <!-- Account Info -->
+        <div class="section">
+            <div class="section-title">👤 Account Information</div>
+            <div class="plan-row">
+                <span class="plan-label">নাম</span>
+                <span class="plan-value" id="info-name">-</span>
+            </div>
+            <div class="plan-row">
+                <span class="plan-label">Email</span>
+                <span class="plan-value" id="info-email">-</span>
+            </div>
+            <div class="plan-row">
+                <span class="plan-label">Current Plan</span>
+                <span class="plan-value" id="info-plan">-</span>
+            </div>
+            <div class="plan-row">
+                <span class="plan-label">Credit Balance</span>
+                <span class="plan-value" style="color:#38bdf8;" id="info-credit">-</span>
+            </div>
+            <div class="plan-row" style="border:none; padding-top:16px;">
+                <span class="plan-label">Plan Upgrade করুন</span>
+                <a href="index.html#plans" class="btn-upgrade">🚀 Upgrade Plan</a>
+            </div>
+        </div>
+
+        <!-- IndexNow Key -->
+        <div class="section">
+            <div class="section-title">🔑 IndexNow Key Setup</div>
+            <div style="margin-bottom:12px;">
+                <div style="color:#94a3b8; font-size:13px; margin-bottom:8px;">Your IndexNow Key:</div>
+                <div class="key-display">
+                    <span class="key-value" id="indexnow-key-display">Not Set</span>
+                    <button class="btn-copy" id="copy-key-btn" onclick="copyKey()" style="display:none;">Copy</button>
+                </div>
+            </div>
+            <div>
+                <div style="color:#94a3b8; font-size:13px; margin-bottom:8px;">Site Host:</div>
+                <div class="key-display">
+                    <span class="key-value" id="indexnow-host-display">Not Set</span>
+                </div>
+            </div>
+            <p style="color:#64748b; font-size:12px; margin-top:12px;">🔧 Key বা Host পরিবর্তন করতে <a href="dashboard.html" style="color:#38bdf8;">Dashboard</a> এ যান।</p>
+        </div>
+
+        <!-- Submission History -->
+        <div class="section">
+            <div class="section-title">📋 My Submission History</div>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>URLs</th>
+                            <th>Count</th>
+                            <th>Submitted At</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="submission-tbody">
+                        <tr><td colspan="5" class="loading">Loading history...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const user = JSON.parse(localStorage.getItem('fi_user') || 'null');
+
+    // Navbar update
+    const navRight = document.getElementById('nav-right');
+    if (user) {
+        navRight.innerHTML = `
+            <span style="color:#94a3b8; font-size:14px;">👤 ${user.name}</span>
+            <a href="dashboard.html" class="btn-auth" style="border-color:#38bdf8; color:#38bdf8;">Dashboard</a>
+            <button class="btn-danger" onclick="logout()">Logout</button>
+        `;
+    }
+
+    function logout() {
+        localStorage.removeItem('fi_user');
+        window.location.href = 'index.html';
+    }
+
+    function copyKey() {
+        const key = document.getElementById('indexnow-key-display').textContent;
+        navigator.clipboard.writeText(key).then(() => {
+            const btn = document.getElementById('copy-key-btn');
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = 'Copy', 2000);
+        });
+    }
+
+    async function loadProfile() {
+        if (!user) {
+            document.getElementById('no-login-msg').style.display = 'block';
+            document.getElementById('profile-content').style.display = 'none';
+            return;
+        }
+
+        document.getElementById('no-login-msg').style.display = 'none';
+        document.getElementById('profile-content').style.display = 'block';
+
+        // Avatar
+        const initials = user.name ? user.name.charAt(0).toUpperCase() : '?';
+        document.getElementById('avatar-text').textContent = initials;
+
+        // Basic info from localStorage
+        document.getElementById('user-name').textContent = user.name || 'User';
+        document.getElementById('user-email-display').textContent = user.email;
+        document.getElementById('info-name').textContent = user.name || '-';
+        document.getElementById('info-email').textContent = user.email;
+
+        // Fetch latest credit/plan/key from server
+        try {
+            const res = await fetch(`/api/user/credit?email=${encodeURIComponent(user.email)}`);
+            const data = await res.json();
+            if (data.success) {
+                const credit = data.credit;
+                const plan = data.plan || 'Free';
+                const key = data.indexnowKey || '';
+                const host = data.indexnowHost || '';
+
+                document.getElementById('stat-credit').textContent = credit;
+                document.getElementById('info-credit').textContent = credit + ' Credits';
+                document.getElementById('info-plan').textContent = plan;
+                document.getElementById('user-plan-badge').textContent = plan + ' Plan';
+
+                const keyDisplay = document.getElementById('indexnow-key-display');
+                const hostDisplay = document.getElementById('indexnow-host-display');
+
+                if (key) {
+                    keyDisplay.textContent = key;
+                    keyDisplay.classList.add('set');
+                    document.getElementById('copy-key-btn').style.display = 'inline-block';
+                } else {
+                    keyDisplay.textContent = 'Not Set — Dashboard এ গিয়ে set করুন';
+                }
+
+                if (host) {
+                    hostDisplay.textContent = host;
+                    hostDisplay.classList.add('set');
+                } else {
+                    hostDisplay.textContent = 'Not Set';
+                }
+
+                // Update localStorage
+                user.credit = credit;
+                user.plan = plan;
+                localStorage.setItem('fi_user', JSON.stringify(user));
+            }
+        } catch (err) {
+            console.error('Credit load error:', err);
+        }
+
+        // Load submission history (only this user)
+        try {
+            const res = await fetch(`/api/submissions?email=${encodeURIComponent(user.email)}`);
+            const data = await res.json();
+            const tbody = document.getElementById('submission-tbody');
+
+            if (data.success && data.data.length > 0) {
+                let totalUrls = 0;
+                let successCount = 0;
+
+                tbody.innerHTML = '';
+                data.data.forEach((sub, i) => {
+                    const urlCount = Array.isArray(sub.urls) ? sub.urls.length : 1;
+                    totalUrls += urlCount;
+
+                    // Count successes from results
+                    if (Array.isArray(sub.results)) {
+                        successCount += sub.results.filter(r => r.success).length;
+                    } else if (sub.status === 'completed') {
+                        successCount += urlCount;
+                    }
+
+                    const urlsText = Array.isArray(sub.urls)
+                        ? (sub.urls.length > 1 ? `${sub.urls[0]} (+${sub.urls.length - 1} more)` : sub.urls[0])
+                        : sub.urls;
+
+                    const statusClass = sub.status === 'completed' ? 'badge-completed' : 'badge-pending';
+                    const date = new Date(sub.submittedAt).toLocaleString('en-BD', {
+                        day: '2-digit', month: 'short', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit'
+                    });
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="color:#64748b;">${i + 1}</td>
+                        <td class="url-cell" title="${Array.isArray(sub.urls) ? sub.urls.join(', ') : sub.urls}">${urlsText}</td>
+                        <td style="color:#38bdf8; font-weight:bold;">${urlCount}</td>
+                        <td style="color:#94a3b8;">${date}</td>
+                        <td><span class="badge ${statusClass}">${sub.status.toUpperCase()}</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('stat-total-urls').textContent = totalUrls;
+                document.getElementById('stat-success').textContent = successCount;
+            } else {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="5">এখনো কোনো submission নেই।</td></tr>`;
+                document.getElementById('stat-total-urls').textContent = '0';
+                document.getElementById('stat-success').textContent = '0';
+            }
+        } catch (err) {
+            document.getElementById('submission-tbody').innerHTML =
+                `<tr class="empty-row"><td colspan="5" style="color:#ef4444;">History load হচ্ছে না।</td></tr>`;
+        }
+    }
+
+    loadProfile();
+</script>
+
+</body>
+</html>
