@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastIndexer - Log In</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 15px 30px; border-bottom: 1px solid #334155; }
+        .logo-text { font-size: 22px; font-weight: bold; color: #38bdf8; text-decoration: none; }
+        .btn-signup { background: #38bdf8; color: #0f172a; border: none; padding: 8px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; text-decoration: none; }
+        .btn-signup:hover { background: #0ea5e9; }
+
+        .page-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+        .auth-box { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 40px; width: 100%; max-width: 440px; }
+        .auth-box h2 { color: #38bdf8; margin: 0 0 6px 0; font-size: 24px; }
+        .auth-box p { color: #64748b; margin: 0 0 28px 0; font-size: 14px; }
+
+        label { display: block; margin-bottom: 6px; font-weight: 600; color: #cbd5e1; font-size: 14px; }
+        input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; color: white; font-size: 14px; margin-bottom: 16px; transition: 0.2s; }
+        input:focus { border-color: #38bdf8; outline: none; }
+
+        .btn-submit { width: 100%; padding: 13px; background: #38bdf8; color: #0f172a; font-size: 16px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; margin-top: 4px; }
+        .btn-submit:hover { background: #0ea5e9; }
+        .btn-submit:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
+
+        .signup-link { text-align: center; font-size: 14px; color: #94a3b8; margin-top: 16px; }
+        .signup-link a { color: #38bdf8; text-decoration: none; font-weight: bold; }
+
+        .alert { padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-bottom: 16px; display: none; }
+        .alert-error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; }
+        .alert-success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #22c55e; }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <a href="index.html" class="logo-text">🚀 FastIndexer</a>
+    <a href="signup.html" class="btn-signup">Sign Up</a>
+</div>
+
+<div class="page-wrap">
+    <div class="auth-box">
+        <h2>Welcome Back!</h2>
+        <p>আপনার account এ login করুন।</p>
+
+        <div class="alert alert-error" id="error-msg"></div>
+        <div class="alert alert-success" id="success-msg"></div>
+
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="your@email.com">
+
+        <label>Password</label>
+        <input type="password" id="password" placeholder="আপনার password">
+
+        <button class="btn-submit" id="login-btn" onclick="doLogin()">Log In →</button>
+
+        <div class="signup-link">
+            Don't have an account? <a href="signup.html">Sign Up Free</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Already logged in?
+    if (localStorage.getItem('fi_user')) {
+        window.location.href = 'dashboard.html';
+    }
+
+    async function doLogin() {
+        const email    = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const btn      = document.getElementById('login-btn');
+        const errEl    = document.getElementById('error-msg');
+        const sucEl    = document.getElementById('success-msg');
+
+        errEl.style.display = 'none';
+        sucEl.style.display = 'none';
+
+        if (!email || !password) {
+            errEl.innerText = 'Email ও password দিন!';
+            errEl.style.display = 'block';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = 'Logging in...';
+
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                localStorage.setItem('fi_user', JSON.stringify(data.user));
+                sucEl.innerText = '✅ Login সফল! Dashboard এ যাচ্ছেন...';
+                sucEl.style.display = 'block';
+                setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+            } else {
+                errEl.innerText = '❌ ' + data.message;
+                errEl.style.display = 'block';
+                btn.disabled = false;
+                btn.innerText = 'Log In →';
+            }
+        } catch(e) {
+            errEl.innerText = '❌ Server connection error!';
+            errEl.style.display = 'block';
+            btn.disabled = false;
+            btn.innerText = 'Log In →';
+        }
+    }
+
+    document.addEventListener('keypress', e => {
+        if (e.key === 'Enter') doLogin();
+    });
+</script>
+</body>
+</html>
