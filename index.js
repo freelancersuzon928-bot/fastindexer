@@ -91,7 +91,7 @@ const PACKAGES = {
   'Free':     { price: 0,    credit: 5    },
   'Starter':  { price: 199,  credit: 50   },
   '6 Months': { price: 1499, credit: 1200 },
-  '1 Year':   { price: 2499, credit: 2400 }
+  '1 Year':   { price: 2499, credit: 3600 }
 };
 
 const PAYMENT_NUMBERS = {
