@@ -14,7 +14,8 @@
         .nav-link { color: #94a3b8; text-decoration: none; font-weight: 500; font-size: 15px; transition: 0.2s; }
         .nav-link:hover, .nav-link.active { color: #38bdf8; }
         .user-info { display: flex; align-items: center; gap: 12px; }
-        .user-name { color: #94a3b8; font-size: 14px; font-weight: 500; }
+        .user-name { color: #94a3b8; font-size: 14px; font-weight: 500; text-decoration: none; transition: 0.2s; }
+        .user-name:hover { color: #38bdf8; }
         .btn-logout { background: transparent; color: #ef4444; border: 1px solid #ef4444; padding: 6px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.2s; }
         .btn-logout:hover { background: #ef4444; color: white; }
 
@@ -67,7 +68,7 @@
         </div>
     </div>
     <div class="user-info">
-        <span class="user-name">👤 <span id="nav-username"></span></span>
+        <a href="profile.html" class="user-name">👤 <span id="nav-username"></span></a>
         <button class="btn-logout" onclick="logout()">Logout</button>
     </div>
 </div>
@@ -135,39 +136,26 @@
 </div>
 
 <script>
-    // =============================================
-    //   Login Check
-    // =============================================
     const userData = JSON.parse(localStorage.getItem('fi_user') || 'null');
-    if (!userData) {
-        window.location.href = 'login.html';
-    }
+    if (!userData) { window.location.href = 'login.html'; }
 
-    // User info load
     const userEmail = userData.email;
     document.getElementById('nav-username').innerText = userData.name || userData.email;
     document.getElementById('credit-count').innerText = userData.credit || 0;
 
-    // IndexNow key যদি saved থাকে
     if (userData.indexnowKey) {
         document.getElementById('user-indexnow-key').value = userData.indexnowKey;
         document.getElementById('user-indexnow-host').value = userData.indexnowHost;
         setKeyStatus(true);
     }
 
-    // Online Ping
     const sessionId = 'sess_' + Math.random().toString(36).substr(2, 12);
     function pingServer() {
-        fetch('/api/ping', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ sessionId })
-        }).catch(() => {});
+        fetch('/api/ping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId }) }).catch(() => {});
     }
     pingServer();
     setInterval(pingServer, 30000);
 
-    // Fresh credit load
     async function loadCredit() {
         try {
             const res = await fetch(`/api/user/credit?email=${encodeURIComponent(userEmail)}`);
@@ -179,7 +167,6 @@
                     document.getElementById('user-indexnow-host').value = data.indexnowHost;
                     setKeyStatus(true);
                 }
-                // Update localStorage
                 const updated = { ...userData, credit: data.credit, indexnowKey: data.indexnowKey, indexnowHost: data.indexnowHost };
                 localStorage.setItem('fi_user', JSON.stringify(updated));
             }
