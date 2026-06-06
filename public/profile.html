@@ -52,6 +52,33 @@
         .btn-login { background: #38bdf8; color: #0f172a; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; }
         .empty-row td { text-align: center; color: #64748b; padding: 30px; }
         .loading { text-align: center; color: #64748b; padding: 30px; }
+
+        /* IndexNow Setup Section */
+        input[type="text"], input[type="url"] { width: 100%; padding: 11px 14px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; color: #f8fafc; font-size: 14px; margin-top: 6px; margin-bottom: 4px; transition: 0.2s; }
+        input[type="text"]:focus, input[type="url"]:focus { border-color: #38bdf8; outline: none; }
+        .btn-save { background: #38bdf8; color: #0f172a; border: none; padding: 11px 28px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .btn-save:hover { background: #0ea5e9; }
+        .input-label { color: #cbd5e1; font-size: 14px; font-weight: bold; margin-top: 14px; display: block; }
+        .input-hint { color: #64748b; font-size: 12px; margin-top: 3px; margin-bottom: 10px; }
+        .save-msg { margin-top: 12px; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: bold; display: none; }
+        .save-msg.success { background: rgba(34,197,94,0.1); border: 1px solid #22c55e; color: #22c55e; }
+        .save-msg.error { background: rgba(239,68,68,0.1); border: 1px solid #ef4444; color: #ef4444; }
+        .current-key-box { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; font-size: 13px; color: #94a3b8; }
+        .current-key-box span { color: #38bdf8; font-weight: bold; }
+
+        /* Guide Tabs */
+        .guide-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+        .guide-tab { background: #0f172a; border: 1px solid #334155; color: #94a3b8; padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .guide-tab.active, .guide-tab:hover { background: rgba(56,189,248,0.1); border-color: #38bdf8; color: #38bdf8; }
+        .guide-content { display: none; background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; }
+        .guide-content.active { display: block; }
+        .guide-step { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+        .step-num { background: #38bdf8; color: #0f172a; font-weight: bold; font-size: 13px; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+        .step-text { color: #cbd5e1; font-size: 14px; line-height: 1.6; }
+        .step-text b { color: #f1f5f9; }
+        .step-text code { background: #1e293b; border: 1px solid #334155; padding: 2px 7px; border-radius: 4px; font-size: 12px; color: #38bdf8; font-family: monospace; }
+        .alert-box { background: rgba(234,179,8,0.08); border: 1px solid #eab308; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; color: #eab308; font-size: 13px; }
+        .alert-box b { color: #fbbf24; }
     </style>
 </head>
 <body>
@@ -132,6 +159,115 @@
             </div>
         </div>
 
+        <!-- ===== IndexNow Setup Section ===== -->
+        <div class="section">
+            <div class="section-title">🔑 আপনার Site ও IndexNow Key সেটআপ করুন</div>
+
+            <div class="alert-box">
+                <b>⚠️ গুরুত্বপূর্ণ:</b> URL submit করার আগে অবশ্যই আপনার site-এর IndexNow key এখানে save করতে হবে। একবার save করলে পরে আর করতে হবে না।
+            </div>
+
+            <div id="current-key-display" class="current-key-box" style="display:none;">
+                ✅ বর্তমান Site: <span id="current-host-text">-</span> &nbsp;|&nbsp; Key: <span id="current-key-text">-</span>
+            </div>
+
+            <label class="input-label">আপনার Website URL</label>
+            <div class="input-hint">উদাহরণ: https://yoursite.com অথবা https://yoursite.blogspot.com</div>
+            <input type="url" id="input-host" placeholder="https://yoursite.com">
+
+            <label class="input-label">IndexNow Key</label>
+            <div class="input-hint">নিচের guide দেখে আপনার site থেকে key সংগ্রহ করুন এবং এখানে paste করুন।</div>
+            <input type="text" id="input-key" placeholder="e.g. a1b2c3d4e5f6g7h8i9j0">
+
+            <button class="btn-save" onclick="saveKey()">💾 Save করুন</button>
+            <div class="save-msg" id="save-msg"></div>
+
+            <!-- Guide -->
+            <div style="margin-top: 28px;">
+                <div class="section-title" style="margin-bottom:12px;">📖 কীভাবে IndexNow Key পাবেন — আপনার site type বেছে নিন:</div>
+                <div class="guide-tabs">
+                    <div class="guide-tab active" onclick="showGuide('wordpress')">🟦 WordPress</div>
+                    <div class="guide-tab" onclick="showGuide('blogger')">🟠 Blogger</div>
+                    <div class="guide-tab" onclick="showGuide('others')">🌐 অন্য Site</div>
+                </div>
+
+                <!-- WordPress Guide -->
+                <div class="guide-content active" id="guide-wordpress">
+                    <div class="guide-step">
+                        <div class="step-num">1</div>
+                        <div class="step-text">আপনার WordPress Dashboard-এ login করুন। তারপর বাম মেনু থেকে <b>Plugins → Add New</b> এ যান।</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-num">2</div>
+                        <div class="step-text">Search box-এ <code>IndexNow</code> লিখে search করুন। <b>"IndexNow" by Microsoft Bing</b> plugin টি install করুন এবং Activate করুন।</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-num">3</div>
+                        <div class="step-text">Activate হলে বাম মেনুতে <b>Settings → IndexNow</b> এ যান। সেখানে একটি Key দেখতে পাবেন — সেটি copy করুন।</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-num">4</div>
+                        <div class="step-text">উপরে <b>আপনার Website URL</b> field-এ আপনার site-এর address এবং <b>IndexNow Key</b> field-এ copy করা key paste করুন। তারপর <b>Save করুন</b> button চাপুন।</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-num">5</div>
+                        <div class="step-text">✅ এখন থেকে <b>URL Submit</b> page থেকে যেকোনো URL submit করতে পারবেন!</div>
+                    </div>
+                </div>
+
+                <!-- Blogger Guide -->
+                <div class="guide-content" id="guide-blogger">
+                    <div class="guide-step">
+                        <div class="step-num">1</div>
+                        <div class="step-text"><b>IndexNow key generate করুন:</b> যেকোনো random string key হিসেবে ব্যবহার করা যাবে। উদাহরণ: <code>fastindexer2024abc123</code> — এটি copy করে রাখুন।</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-num">2</div>
+                        <div class="step-text">Blogger Dashboard-এ যান। <b>Theme → Edit HTML</b> এ click করুন।</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-num">3</div>
+                        <div class="step-text">HTML-এর একদম শুরুতে <code>&lt;head&gt;</code> tag-এর পরে নিচের code টি paste করুন:<br><br>
+                        <code>&lt;meta name="indexnow-key" content="আপনার_key_এখানে"/&gt;</code><br><br>
+                        তারপর <b>Save</b> করুন।</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-num">4</div>
+                        <div class="step-text">এরপর আপনার Blogger-এর root-এ একটি text file রাখতে হবে। এটি করতে <b>Pages → New Page</b> থেকে একটি custom page বানান যার URL হবে <code>yoursite.blogspot.com/আপনার_key.txt</code> এবং content হবে শুধু আপনার key।</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-num">5</div>
+                        <div class="step-text">উপরে Website URL ও Key দিয়ে <b>Save করুন</b>। এখন URL submit করতে পারবেন! ✅</div>
+                    </div>
+                </div>
+
+                <!-- Others Guide -->
+                <div class="guide-content" id="guide-others">
+                    <div class="guide-step">
+                        <div class="step-num">1</div>
+                        <div class="step-text"><b>Key তৈরি করুন:</b> যেকোনো alphanumeric string key হিসেবে ব্যবহার করতে পারবেন। উদাহরণ: <code>mysite_indexnow_key_2024</code></div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-num">2</div>
+                        <div class="step-text"><b>Key file আপলোড করুন:</b> আপনার key দিয়ে একটি text file তৈরি করুন। File-এর নাম হবে <code>yourkey.txt</code> এবং ভেতরে শুধু key লেখা থাকবে। এই file টি আপনার site-এর root folder-এ (public_html বা www) আপলোড করুন।</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-num">3</div>
+                        <div class="step-text"><b>Verify করুন:</b> Browser-এ যান: <code>https://yoursite.com/yourkey.txt</code> — এটি open হলে এবং শুধু key দেখালে সেটআপ সফল।</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-num">4</div>
+                        <div class="step-text"><b>Vercel / Netlify / Static Site:</b> আপনার project-এর <code>public</code> folder-এ key file রাখুন এবং redeploy করুন।</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="step-num">5</div>
+                        <div class="step-text">উপরে Website URL ও Key দিয়ে <b>Save করুন</b>। ✅ এখন থেকে URL submit করতে পারবেন!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ===== End IndexNow Setup Section ===== -->
+
         <div class="section">
             <div class="section-title">📋 My Submission History</div>
             <div style="overflow-x:auto;">
@@ -171,6 +307,57 @@
         window.location.href = 'index.html';
     }
 
+    function showGuide(type) {
+        document.querySelectorAll('.guide-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.guide-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('guide-' + type).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    async function saveKey() {
+        const hostRaw = document.getElementById('input-host').value.trim();
+        const key = document.getElementById('input-key').value.trim();
+        const msgEl = document.getElementById('save-msg');
+
+        if (!hostRaw || !key) {
+            msgEl.textContent = '❌ Website URL এবং Key দুটোই দিন।';
+            msgEl.className = 'save-msg error';
+            msgEl.style.display = 'block';
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/user/update-key', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: user.email, indexnowKey: key, indexnowHost: hostRaw })
+            });
+            const data = await res.json();
+            if (data.success) {
+                msgEl.textContent = '✅ সফলভাবে Save হয়েছে! এখন URL Submit করতে পারবেন।';
+                msgEl.className = 'save-msg success';
+                user.indexnowKey = key;
+                user.indexnowHost = hostRaw.replace(/^https?:\/\//, '').replace(/\/$/, '');
+                localStorage.setItem('fi_user', JSON.stringify(user));
+                showCurrentKey(user.indexnowHost, key);
+            } else {
+                msgEl.textContent = '❌ ' + data.message;
+                msgEl.className = 'save-msg error';
+            }
+        } catch (err) {
+            msgEl.textContent = '❌ Server error! আবার চেষ্টা করুন।';
+            msgEl.className = 'save-msg error';
+        }
+        msgEl.style.display = 'block';
+    }
+
+    function showCurrentKey(host, key) {
+        const box = document.getElementById('current-key-display');
+        document.getElementById('current-host-text').textContent = host;
+        document.getElementById('current-key-text').textContent = key.substring(0, 8) + '****';
+        box.style.display = 'block';
+    }
+
     async function loadProfile() {
         if (!user) {
             document.getElementById('no-login-msg').style.display = 'block';
@@ -197,6 +384,14 @@
                 document.getElementById('user-plan-badge').textContent = (data.plan || 'Free') + ' Plan';
                 user.credit = data.credit;
                 user.plan = data.plan;
+
+                // যদি আগে key set করা থাকে দেখাও
+                if (data.indexnowKey && data.indexnowHost) {
+                    showCurrentKey(data.indexnowHost, data.indexnowKey);
+                    document.getElementById('input-host').value = 'https://' + data.indexnowHost;
+                    document.getElementById('input-key').value = data.indexnowKey;
+                }
+
                 localStorage.setItem('fi_user', JSON.stringify(user));
             }
         } catch (err) {}
