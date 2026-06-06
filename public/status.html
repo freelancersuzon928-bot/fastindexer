@@ -25,13 +25,14 @@
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
         .hero-label { color: #64748b; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
-        .hero-count { font-size: 100px; font-weight: 900; color: #38bdf8; line-height: 1; margin-bottom: 10px; text-shadow: 0 0 40px rgba(56,189,248,0.3); }
+        .hero-count { font-size: 100px; font-weight: 900; color: #38bdf8; line-height: 1; margin-bottom: 10px; text-shadow: 0 0 40px rgba(56,189,248,0.3); transition: all 0.5s ease; }
         .hero-sub { color: #94a3b8; font-size: 18px; margin-bottom: 8px; }
         .hero-date { color: #475569; font-size: 13px; }
 
         .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 30px 0; }
-        .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 22px; text-align: center; }
-        .stat-card .val { font-size: 32px; font-weight: bold; color: #38bdf8; margin-bottom: 4px; }
+        .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 22px; text-align: center; transition: 0.3s; }
+        .stat-card:hover { border-color: #38bdf8; transform: translateY(-3px); }
+        .stat-card .val { font-size: 32px; font-weight: bold; color: #38bdf8; margin-bottom: 4px; transition: all 0.5s; }
         .stat-card .lbl { color: #64748b; font-size: 13px; }
 
         .cta-box { background: linear-gradient(135deg, #1e293b, #0f2744); border: 1px solid #334155; border-radius: 12px; padding: 30px; text-align: center; margin-top: 20px; }
@@ -67,13 +68,17 @@
             <div class="live-dot"></div>
             Live Counter
         </div>
-        <div class="hero-label">আজকে মোট URL Submitted</div>
-        <div class="hero-count" id="daily-count">—</div>
-        <div class="hero-sub">টি URL আজ index করা হয়েছে</div>
+        <div class="hero-label">সর্বমোট URL Indexed</div>
+        <div class="hero-count" id="total-count">—</div>
+        <div class="hero-sub">টি URL এখন পর্যন্ত index করা হয়েছে</div>
         <div class="hero-date" id="today-date"></div>
     </div>
 
     <div class="stats-row">
+        <div class="stat-card">
+            <div class="val" id="stat-today">—</div>
+            <div class="lbl">আজকের URL Submitted</div>
+        </div>
         <div class="stat-card">
             <div class="val" id="stat-submissions">—</div>
             <div class="lbl">আজকের Submission</div>
@@ -93,7 +98,7 @@
         <p>Sign up করুন এবং বিনামূল্যে ৫টি URL submit করুন!</p>
         <a href="signup.html" class="btn-cta">Sign Up করুন</a>
         <a href="login.html" class="btn-cta-outline">Log In</a>
-        <div class="refresh-note">এই page প্রতি ৬০ সেকেন্ডে auto-refresh হয়।</div>
+        <div class="refresh-note">এই page প্রতি ৩০ সেকেন্ডে auto-refresh হয়।</div>
     </div>
 </div>
 
@@ -103,7 +108,7 @@
     if (user) {
         document.getElementById('nav-auth').innerHTML = `
             <span style="color:#94a3b8; font-size:14px;">👤 ${user.name}</span>
-            <a href="dashboard.html" class="btn-auth" style="border-color:#38bdf8; color:#38bdf8;">Dashboard</a>
+            <a href="profile.html" class="btn-auth" style="border-color:#38bdf8; color:#38bdf8;">Profile</a>
             <button class="btn-auth" style="border-color:#ef4444; color:#ef4444;" onclick="logout()">Logout</button>
         `;
     }
@@ -123,19 +128,19 @@
             const res = await fetch('/api/public/stats');
             const data = await res.json();
             if (data.success) {
-                document.getElementById('daily-count').textContent = data.todayUrls ?? 0;
+                document.getElementById('total-count').textContent = data.totalUrls ?? 0;
+                document.getElementById('stat-today').textContent = data.todayUrls ?? 0;
                 document.getElementById('stat-submissions').textContent = data.todaySubmissions ?? 0;
                 document.getElementById('stat-users').textContent = data.totalUsers ?? '—';
                 document.getElementById('stat-online').textContent = data.onlineUsers ?? '—';
             }
         } catch (err) {
-            document.getElementById('daily-count').textContent = '—';
+            document.getElementById('total-count').textContent = '—';
         }
     }
 
     loadStats();
-    setInterval(loadStats, 60000);
+    setInterval(loadStats, 30000);
 </script>
-
 </body>
 </html>
