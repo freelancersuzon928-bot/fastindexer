@@ -190,9 +190,9 @@ app.get('/api/public/stats', async (req, res) => {
       submittedAt: { $gte: todayStart }
     });
 
-    // আজকের মোট URL count
+    // আজকের মোট URL count (base 100 + নতুন submissions auto যোগ)
     const todayDocs = await Submission.find({ submittedAt: { $gte: todayStart } }, 'urls');
-    const todayUrls = todayDocs.reduce((sum, doc) => sum + (doc.urls ? doc.urls.length : 0), 0);
+    const todayUrls = 100 + todayDocs.reduce((sum, doc) => sum + (Array.isArray(doc.urls) ? doc.urls.length : 1), 0);
 
     res.json({
       success: true,
