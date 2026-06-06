@@ -18,86 +18,40 @@
         .btn-auth:hover { border-color: #38bdf8; color: #38bdf8; }
         .btn-danger { border-color: #ef4444; color: #ef4444; background: transparent; cursor: pointer; font-size: 14px; font-weight: bold; padding: 8px 18px; border-radius: 6px; border: 1px solid; transition: 0.2s; }
         .btn-danger:hover { background: rgba(239,68,68,0.1); }
-
         .container { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
-
         .profile-header { background: linear-gradient(135deg, #1e293b 0%, #0f2744 100%); border: 1px solid #334155; border-radius: 16px; padding: 30px; margin-bottom: 25px; display: flex; align-items: center; gap: 24px; }
         .avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #38bdf8, #0ea5e9); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; color: #0f172a; flex-shrink: 0; }
         .profile-info h1 { font-size: 24px; color: #f1f5f9; margin-bottom: 4px; }
         .profile-info p { color: #94a3b8; font-size: 14px; }
         .profile-badge { margin-top: 8px; display: inline-block; background: rgba(56,189,248,0.1); border: 1px solid #38bdf8; color: #38bdf8; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 25px; }
         .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: center; transition: 0.2s; }
         .stat-card:hover { border-color: #38bdf8; transform: translateY(-2px); }
         .stat-card .icon { font-size: 28px; margin-bottom: 8px; }
         .stat-card .value { font-size: 28px; font-weight: bold; color: #38bdf8; margin-bottom: 4px; }
         .stat-card .label { color: #64748b; font-size: 13px; }
-
         .section { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 25px; margin-bottom: 20px; }
         .section-title { font-size: 16px; font-weight: bold; color: #38bdf8; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
-
-        .key-display { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-        .key-value { color: #94a3b8; font-family: 'Courier New', monospace; font-size: 13px; word-break: break-all; flex: 1; }
-        .key-value.set { color: #22c55e; }
-        .btn-copy { background: #334155; border: none; color: #cbd5e1; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s; white-space: nowrap; }
-        .btn-copy:hover { background: #38bdf8; color: #0f172a; }
-
-        /* IndexNow Setup Form */
-        .setup-form { margin-top: 20px; border-top: 1px solid #334155; padding-top: 20px; }
-        .setup-form .form-group { margin-bottom: 14px; }
-        .setup-form label { display: block; color: #94a3b8; font-size: 13px; margin-bottom: 6px; font-weight: 500; }
-        .setup-form input { width: 100%; background: #0f172a; border: 1px solid #334155; color: #f1f5f9; padding: 10px 14px; border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s; font-family: 'Courier New', monospace; }
-        .setup-form input:focus { border-color: #38bdf8; box-shadow: 0 0 0 2px rgba(56,189,248,0.1); }
-        .btn-save { background: #38bdf8; color: #0f172a; border: none; padding: 10px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s; }
-        .btn-save:hover { background: #0ea5e9; }
-        .save-msg { margin-top: 10px; font-size: 13px; display: none; }
-        .save-msg.success { color: #22c55e; }
-        .save-msg.error { color: #ef4444; }
-
-        /* Setup Guide */
-        .guide-steps { margin-top: 20px; border-top: 1px solid #334155; padding-top: 20px; }
-        .guide-step { display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start; }
-        .step-num { width: 32px; height: 32px; border-radius: 50%; background: rgba(56,189,248,0.15); border: 1px solid #38bdf8; color: #38bdf8; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; flex-shrink: 0; margin-top: 2px; }
-        .step-body h4 { color: #f1f5f9; font-size: 14px; margin-bottom: 6px; }
-        .step-body p { color: #94a3b8; font-size: 13px; line-height: 1.6; }
-        .step-body a { color: #38bdf8; text-decoration: none; }
-        .step-body a:hover { text-decoration: underline; }
-        .code-block { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px 14px; margin-top: 8px; font-family: 'Courier New', monospace; font-size: 12px; color: #22c55e; word-break: break-all; position: relative; }
-        .copy-code-btn { position: absolute; top: 6px; right: 8px; background: #334155; border: none; color: #cbd5e1; padding: 3px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; transition: 0.2s; }
-        .copy-code-btn:hover { background: #38bdf8; color: #0f172a; }
-        .guide-note { background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.3); border-radius: 8px; padding: 12px 16px; margin-top: 16px; color: #fbbf24; font-size: 13px; }
-
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid #1e293b; font-size: 13px; }
-        th { background: #0f172a; color: #38bdf8; font-weight: bold; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-        tr:hover td { background: rgba(56,189,248,0.03); }
-        .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
-        .badge-success { background: rgba(34,197,94,0.1); color: #22c55e; }
-        .badge-pending { background: rgba(234,179,8,0.1); color: #eab308; }
-        .badge-completed { background: rgba(34,197,94,0.1); color: #22c55e; }
-        .url-cell { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #cbd5e1; }
-
         .plan-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #334155; }
         .plan-row:last-child { border-bottom: none; }
         .plan-label { color: #94a3b8; font-size: 14px; }
         .plan-value { color: #f1f5f9; font-weight: bold; font-size: 14px; }
         .btn-upgrade { background: #eab308; color: #0f172a; border: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.2s; text-decoration: none; display: inline-block; }
         .btn-upgrade:hover { background: #ca8a04; }
-
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid #1e293b; font-size: 13px; }
+        th { background: #0f172a; color: #38bdf8; font-weight: bold; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        tr:hover td { background: rgba(56,189,248,0.03); }
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .badge-completed { background: rgba(34,197,94,0.1); color: #22c55e; }
+        .badge-pending { background: rgba(234,179,8,0.1); color: #eab308; }
+        .url-cell { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #cbd5e1; }
         .no-login { text-align: center; padding: 80px 20px; }
         .no-login h2 { color: #38bdf8; font-size: 22px; margin-bottom: 10px; }
         .no-login p { color: #64748b; margin-bottom: 24px; }
-        .btn-login { background: #38bdf8; color: #0f172a; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; transition: 0.2s; }
-        .btn-login:hover { background: #0ea5e9; }
-
+        .btn-login { background: #38bdf8; color: #0f172a; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; }
         .empty-row td { text-align: center; color: #64748b; padding: 30px; }
         .loading { text-align: center; color: #64748b; padding: 30px; }
-
-        /* Status indicator */
-        .key-status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: bold; padding: 4px 10px; border-radius: 20px; margin-left: 10px; }
-        .key-status.ok { background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
-        .key-status.missing { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
     </style>
 </head>
 <body>
@@ -118,7 +72,7 @@
     </div>
 </div>
 
-<div class="container" id="main-content">
+<div class="container">
     <div class="no-login" id="no-login-msg">
         <div style="font-size:60px; margin-bottom:16px;">🔒</div>
         <h2>Login করুন</h2>
@@ -127,7 +81,6 @@
     </div>
 
     <div id="profile-content" style="display:none;">
-        <!-- Profile Header -->
         <div class="profile-header">
             <div class="avatar" id="avatar-text">?</div>
             <div class="profile-info">
@@ -137,7 +90,6 @@
             </div>
         </div>
 
-        <!-- Stats -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="icon">💳</div>
@@ -156,7 +108,6 @@
             </div>
         </div>
 
-        <!-- Account Info -->
         <div class="section">
             <div class="section-title">👤 Account Information</div>
             <div class="plan-row">
@@ -177,122 +128,10 @@
             </div>
             <div class="plan-row" style="border:none; padding-top:16px;">
                 <span class="plan-label">Plan Upgrade করুন</span>
-                <a href="index.html#plans" class="btn-upgrade">🚀 Upgrade Plan</a>
+                <a href="index.html" class="btn-upgrade">🚀 Upgrade Plan</a>
             </div>
         </div>
 
-        <!-- IndexNow Key Setup -->
-        <div class="section">
-            <div class="section-title">
-                🔑 IndexNow Key Setup
-                <span class="key-status missing" id="key-status-badge">⚠ Not Set</span>
-            </div>
-
-            <!-- Current Key Display -->
-            <div style="margin-bottom:12px;">
-                <div style="color:#94a3b8; font-size:13px; margin-bottom:8px;">Your IndexNow Key:</div>
-                <div class="key-display">
-                    <span class="key-value" id="indexnow-key-display">Not Set</span>
-                    <button class="btn-copy" id="copy-key-btn" onclick="copyKey()" style="display:none;">Copy</button>
-                </div>
-            </div>
-            <div style="margin-bottom:20px;">
-                <div style="color:#94a3b8; font-size:13px; margin-bottom:8px;">Site Host:</div>
-                <div class="key-display">
-                    <span class="key-value" id="indexnow-host-display">Not Set</span>
-                </div>
-            </div>
-
-            <!-- Edit Form -->
-            <div class="setup-form">
-                <div style="color:#f1f5f9; font-size:14px; font-weight:bold; margin-bottom:14px;">✏️ Key Update করুন</div>
-                <div class="form-group">
-                    <label>IndexNow Key <span style="color:#64748b;">(আপনার unique key)</span></label>
-                    <input type="text" id="input-key" placeholder="e.g. a1b2c3d4e5f6789012345678abcdef12" />
-                </div>
-                <div class="form-group">
-                    <label>Site Host <span style="color:#64748b;">(আপনার website এর domain)</span></label>
-                    <input type="text" id="input-host" placeholder="e.g. yourdomain.com" />
-                </div>
-                <button class="btn-save" onclick="saveKey()">💾 Save Key</button>
-                <div class="save-msg" id="save-msg"></div>
-            </div>
-
-            <!-- Setup Guide -->
-            <div class="guide-steps">
-                <div style="color:#f1f5f9; font-size:14px; font-weight:bold; margin-bottom:16px;">📖 IndexNow Key কিভাবে পাবেন ও Setup করবেন?</div>
-
-                <div class="guide-step">
-                    <div class="step-num">1</div>
-                    <div class="step-body">
-                        <h4>IndexNow Key তৈরি করুন</h4>
-                        <p>নিচের যেকোনো site এ গিয়ে আপনার IndexNow API Key জেনারেট করুন:</p>
-                        <p style="margin-top:8px;">
-                            • <a href="https://www.bing.com/indexnow" target="_blank">Bing IndexNow</a> — সবচেয়ে সহজ<br>
-                            • <a href="https://search.google.com/search-console" target="_blank">Google Search Console</a><br>
-                            • <a href="https://yandex.com/indexnow" target="_blank">Yandex IndexNow</a>
-                        </p>
-                        <p style="margin-top:8px; color:#64748b;">অথবা যেকোনো 32-128 character এর random hex string তৈরি করুন।</p>
-                    </div>
-                </div>
-
-                <div class="guide-step">
-                    <div class="step-num">2</div>
-                    <div class="step-body">
-                        <h4>Key File আপনার Website এ বসান</h4>
-                        <p>আপনার website এর root folder এ একটি text file রাখতে হবে।<br>
-                        File নাম হবে: <strong style="color:#38bdf8;">{your-key}.txt</strong></p>
-                        <p style="margin-top:6px; color:#94a3b8;">উদাহরণ — যদি আপনার key হয় <code style="color:#22c55e;">abc123xyz</code> তাহলে:</p>
-                        <div class="code-block">
-                            https://yourdomain.com/abc123xyz.txt
-                            <button class="copy-code-btn" onclick="copyCode(this, 'https://yourdomain.com/abc123xyz.txt')">Copy</button>
-                        </div>
-                        <p style="margin-top:8px; color:#94a3b8;">File এর ভেতরে শুধু আপনার key লিখুন:</p>
-                        <div class="code-block">
-                            abc123xyz
-                            <button class="copy-code-btn" onclick="copyCode(this, 'abc123xyz')">Copy</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="guide-step">
-                    <div class="step-num">3</div>
-                    <div class="step-body">
-                        <h4>WordPress ব্যবহারকারীদের জন্য</h4>
-                        <p>WordPress site হলে সবচেয়ে সহজ উপায়:</p>
-                        <p style="margin-top:8px;">
-                            • <strong>Rank Math SEO</strong> Plugin ইন্সটল করুন<br>
-                            • Settings → General → IndexNow এ যান<br>
-                            • Auto-generate key অপশন চালু করুন<br>
-                            • Generated key টি এখানে copy করে paste করুন
-                        </p>
-                    </div>
-                </div>
-
-                <div class="guide-step">
-                    <div class="step-num">4</div>
-                    <div class="step-body">
-                        <h4>উপরের form এ Key ও Host দিন</h4>
-                        <p>
-                            • <strong>IndexNow Key:</strong> আপনার generated key<br>
-                            • <strong>Site Host:</strong> শুধু domain name (https:// ছাড়া)
-                        </p>
-                        <div class="code-block">
-                            Key: a1b2c3d4e5f6789012abcdef<br>
-                            Host: yourdomain.com
-                            <button class="copy-code-btn" onclick="copyCode(this, 'yourdomain.com')">Copy</button>
-                        </div>
-                        <p style="margin-top:8px; color:#94a3b8;">Save করার পর Dashboard থেকে URL submit করতে পারবেন।</p>
-                    </div>
-                </div>
-
-                <div class="guide-note">
-                    ⚠️ <strong>গুরুত্বপূর্ণ:</strong> Key file আপনার website এ না বসালে IndexNow কাজ করবে না। File টি publicly accessible হতে হবে।
-                </div>
-            </div>
-        </div>
-
-        <!-- Submission History -->
         <div class="section">
             <div class="section-title">📋 My Submission History</div>
             <div style="overflow-x:auto;">
@@ -332,80 +171,6 @@
         window.location.href = 'index.html';
     }
 
-    function copyKey() {
-        const key = document.getElementById('indexnow-key-display').textContent;
-        navigator.clipboard.writeText(key).then(() => {
-            const btn = document.getElementById('copy-key-btn');
-            btn.textContent = 'Copied!';
-            setTimeout(() => btn.textContent = 'Copy', 2000);
-        });
-    }
-
-    function copyCode(btn, text) {
-        navigator.clipboard.writeText(text).then(() => {
-            btn.textContent = 'Copied!';
-            setTimeout(() => btn.textContent = 'Copy', 2000);
-        });
-    }
-
-    async function saveKey() {
-        const key = document.getElementById('input-key').value.trim();
-        const host = document.getElementById('input-host').value.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
-        const msg = document.getElementById('save-msg');
-
-        if (!key || !host) {
-            msg.textContent = '⚠ Key ও Host দুটোই দিন।';
-            msg.className = 'save-msg error';
-            msg.style.display = 'block';
-            return;
-        }
-
-        try {
-            const res = await fetch('/api/user/update-key', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: user.email, indexnowKey: key, indexnowHost: host })
-            });
-            const data = await res.json();
-            if (data.success) {
-                msg.textContent = '✅ Key সফলভাবে সেভ হয়েছে!';
-                msg.className = 'save-msg success';
-                msg.style.display = 'block';
-
-                // Update display
-                const keyDisplay = document.getElementById('indexnow-key-display');
-                const hostDisplay = document.getElementById('indexnow-host-display');
-                keyDisplay.textContent = key;
-                keyDisplay.classList.add('set');
-                hostDisplay.textContent = host;
-                hostDisplay.classList.add('set');
-                document.getElementById('copy-key-btn').style.display = 'inline-block';
-
-                // Update status badge
-                const badge = document.getElementById('key-status-badge');
-                badge.textContent = '✓ Active';
-                badge.className = 'key-status ok';
-
-                // Update localStorage
-                user.indexnowKey = key;
-                user.indexnowHost = host;
-                localStorage.setItem('fi_user', JSON.stringify(user));
-
-                // Clear inputs
-                document.getElementById('input-key').value = '';
-                document.getElementById('input-host').value = '';
-            } else {
-                msg.textContent = '❌ ' + data.message;
-                msg.className = 'save-msg error';
-                msg.style.display = 'block';
-            }
-        } catch (err) {
-            msg.textContent = '❌ Server error। আবার চেষ্টা করুন।';
-            msg.className = 'save-msg error';
-            msg.style.display = 'block';
-        }
-    }
-
     async function loadProfile() {
         if (!user) {
             document.getElementById('no-login-msg').style.display = 'block';
@@ -416,8 +181,7 @@
         document.getElementById('no-login-msg').style.display = 'none';
         document.getElementById('profile-content').style.display = 'block';
 
-        const initials = user.name ? user.name.charAt(0).toUpperCase() : '?';
-        document.getElementById('avatar-text').textContent = initials;
+        document.getElementById('avatar-text').textContent = user.name ? user.name.charAt(0).toUpperCase() : '?';
         document.getElementById('user-name').textContent = user.name || 'User';
         document.getElementById('user-email-display').textContent = user.email;
         document.getElementById('info-name').textContent = user.name || '-';
@@ -427,49 +191,15 @@
             const res = await fetch(`/api/user/credit?email=${encodeURIComponent(user.email)}`);
             const data = await res.json();
             if (data.success) {
-                const credit = data.credit;
-                const plan = data.plan || 'Free';
-                const key = data.indexnowKey || '';
-                const host = data.indexnowHost || '';
-
-                document.getElementById('stat-credit').textContent = credit;
-                document.getElementById('info-credit').textContent = credit + ' Credits';
-                document.getElementById('info-plan').textContent = plan;
-                document.getElementById('user-plan-badge').textContent = plan + ' Plan';
-
-                const keyDisplay = document.getElementById('indexnow-key-display');
-                const hostDisplay = document.getElementById('indexnow-host-display');
-                const badge = document.getElementById('key-status-badge');
-
-                if (key) {
-                    keyDisplay.textContent = key;
-                    keyDisplay.classList.add('set');
-                    document.getElementById('copy-key-btn').style.display = 'inline-block';
-                    badge.textContent = '✓ Active';
-                    badge.className = 'key-status ok';
-                    // Pre-fill form for easy editing
-                    document.getElementById('input-key').value = key;
-                } else {
-                    keyDisplay.textContent = 'Not Set — নিচের guide দেখে setup করুন';
-                    badge.textContent = '⚠ Not Set';
-                    badge.className = 'key-status missing';
-                }
-
-                if (host) {
-                    hostDisplay.textContent = host;
-                    hostDisplay.classList.add('set');
-                    document.getElementById('input-host').value = host;
-                } else {
-                    hostDisplay.textContent = 'Not Set';
-                }
-
-                user.credit = credit;
-                user.plan = plan;
+                document.getElementById('stat-credit').textContent = data.credit;
+                document.getElementById('info-credit').textContent = data.credit + ' Credits';
+                document.getElementById('info-plan').textContent = data.plan || 'Free';
+                document.getElementById('user-plan-badge').textContent = (data.plan || 'Free') + ' Plan';
+                user.credit = data.credit;
+                user.plan = data.plan;
                 localStorage.setItem('fi_user', JSON.stringify(user));
             }
-        } catch (err) {
-            console.error('Credit load error:', err);
-        }
+        } catch (err) {}
 
         try {
             const res = await fetch(`/api/submissions?email=${encodeURIComponent(user.email)}`);
@@ -477,41 +207,30 @@
             const tbody = document.getElementById('submission-tbody');
 
             if (data.success && data.data.length > 0) {
-                let totalUrls = 0;
-                let successCount = 0;
-
+                let totalUrls = 0, successCount = 0;
                 tbody.innerHTML = '';
                 data.data.forEach((sub, i) => {
                     const urlCount = Array.isArray(sub.urls) ? sub.urls.length : 1;
                     totalUrls += urlCount;
-
                     if (Array.isArray(sub.results)) {
                         successCount += sub.results.filter(r => r.success).length;
                     } else if (sub.status === 'completed') {
                         successCount += urlCount;
                     }
-
                     const urlsText = Array.isArray(sub.urls)
                         ? (sub.urls.length > 1 ? `${sub.urls[0]} (+${sub.urls.length - 1} more)` : sub.urls[0])
                         : sub.urls;
-
-                    const statusClass = sub.status === 'completed' ? 'badge-completed' : 'badge-pending';
-                    const date = new Date(sub.submittedAt).toLocaleString('en-BD', {
-                        day: '2-digit', month: 'short', year: 'numeric',
-                        hour: '2-digit', minute: '2-digit'
-                    });
-
+                    const date = new Date(sub.submittedAt).toLocaleString('en-BD', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td style="color:#64748b;">${i + 1}</td>
                         <td class="url-cell" title="${Array.isArray(sub.urls) ? sub.urls.join(', ') : sub.urls}">${urlsText}</td>
                         <td style="color:#38bdf8; font-weight:bold;">${urlCount}</td>
                         <td style="color:#94a3b8;">${date}</td>
-                        <td><span class="badge ${statusClass}">${sub.status.toUpperCase()}</span></td>
+                        <td><span class="badge badge-${sub.status}">${sub.status.toUpperCase()}</span></td>
                     `;
                     tbody.appendChild(tr);
                 });
-
                 document.getElementById('stat-total-urls').textContent = totalUrls;
                 document.getElementById('stat-success').textContent = successCount;
             } else {
@@ -520,13 +239,11 @@
                 document.getElementById('stat-success').textContent = '0';
             }
         } catch (err) {
-            document.getElementById('submission-tbody').innerHTML =
-                `<tr class="empty-row"><td colspan="5" style="color:#ef4444;">History load হচ্ছে না।</td></tr>`;
+            document.getElementById('submission-tbody').innerHTML = `<tr class="empty-row"><td colspan="5" style="color:#ef4444;">History load হচ্ছে না।</td></tr>`;
         }
     }
 
     loadProfile();
 </script>
-
 </body>
 </html>
