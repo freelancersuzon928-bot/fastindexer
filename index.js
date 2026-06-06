@@ -38,11 +38,11 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => console.error('❌ MongoDB Error:', err.message));
 
 const userSchema = new mongoose.Schema({
-  email:        { type: String, required: true, unique: true },
-  name:         { type: String, default: 'User' },
-  password:     { type: String, default: '' },
-  credit:       { type: Number, default: 0 },
-  plan:         { type: String, default: 'Free' },
+  email:         { type: String, required: true, unique: true },
+  name:          { type: String, default: 'User' },
+  password:      { type: String, default: '' },
+  credit:        { type: Number, default: 0 },
+  plan:          { type: String, default: 'Free' },
   indexnowKey:  { type: String, default: '' },
   indexnowHost: { type: String, default: '' },
   createdAt:    { type: Date, default: Date.now }
@@ -317,8 +317,28 @@ app.get('/api/user/credit', async (req, res) => {
     if (!email) return res.status(400).json({ success: false, message: 'Email দিন।' });
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ success: false, message: 'User পাওয়া যায়নি।' });
-    res.json({ success: true, credit: user.credit, plan: user.plan });
+    res.json({ success: true, credit: user.credit, plan: user.plan, indexnowKey: user.indexnowKey, indexnowHost: user.indexnowHost });
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+// প্রোফাইল থেকে IndexNow Key এবং Host আপডেট করার নতুন API রাউট
+app.post('/api/user/update-key', async (req, res) => {
+  try {
+    const { email, indexnowKey, indexnowHost } = req.body;
+    if (!email || !indexnowKey || !indexnowHost) {
+      return res.status(400).json({ success: false, message: 'সব তথ্য প্রদান করুন।' });
+    }
+    const cleanHost = indexnowHost.replace(/^https?:\/\//, '').replace(/\/$/, '');
+    const user = await User.findOneAndUpdate(
+      { email },
+      { indexnowKey: indexnowKey.trim(), indexnowHost: cleanHost },
+      { new: true }
+    );
+    if (!user) return res.status(404).json({ success: false, message: 'User পাওয়া যায়নি।' });
+    res.json({ success: true, message: 'IndexNow Key এবং Host সফলভাবে সেভ হয়েছে।' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
 app.get('/api/payment-info', (req, res) => {
@@ -403,17 +423,27 @@ app.post('/api/index-now', async (req, res) => {
 });
 
 // =============================================
-//   User URL Submit
+//   User URL Submit (UPDATED with User-Level Key Validation)
 // =============================================
 app.post('/api/submit', async (req, res) => {
   try {
     const { email, urls } = req.body;
     if (!email || !urls) return res.status(400).json({ success: false, message: 'Email এবং URLs দিন।' });
+    
     const urlArray = Array.isArray(urls) ? urls : urls.split('\n').map(u => u.trim()).filter(Boolean);
     if (urlArray.length === 0) return res.status(400).json({ success: false, message: 'কমপক্ষে একটি URL দিন।' });
 
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ success: false, message: 'User পাওয়া যায়নি।' });
+    
+    // ক্রিশিয়াল সিকিউরিটি চেক: ইউজারের প্রোফাইলে IndexNow Key এবং Host সেভ করা আছে কি না
+    if (!user.indexnowKey || !user.indexnowHost) {
+      return res.status(400).json({ 
+        success: false, 
+        message: '❌ আপনার প্রোফাইলে কোনো IndexNow Key বা Website URL সেভ করা নেই। অনুগ্রহ করে প্রথমে Profile পেজে গিয়ে আপনার সাইট সেটআপ বা ভেরিফাই করুন!' 
+      });
+    }
+
     if (user.credit < urlArray.length) return res.status(400).json({ success: false, message: `Credit কম! আপনার ${user.credit} credit আছে, দরকার ${urlArray.length}।` });
 
     const hostGroups = {};
@@ -427,12 +457,19 @@ app.post('/api/submit', async (req, res) => {
 
     const allResults = [];
     for (const [host, hostUrls] of Object.entries(hostGroups)) {
-      const site = await Site.findOne({ host });
-      if (!site) {
-        hostUrls.forEach(url => allResults.push({ success: false, url, method: 'IndexNow', error: `${host} এর key পাওয়া যায়নি। Admin কে জানান।` }));
+      // চেক করা হচ্ছে সাবমিট করা ইউআরএল-এর হোস্ট এবং ইউজারের প্রোফাইলের হোস্ট মিলছে কি না (সিকিউরিটি লক)
+      if (host.toLowerCase() !== user.indexnowHost.toLowerCase()) {
+        hostUrls.forEach(url => allResults.push({ 
+          success: false, 
+          url, 
+          method: 'IndexNow', 
+          error: `ভুল ডোমেইন! আপনার প্রোফাইলে ${user.indexnowHost} সেভ করা, কিন্তু আপনি ${host} এর লিঙ্ক সাবমিট করছেন।` 
+        }));
         continue;
       }
-      const results = await sendToIndexNow(hostUrls, site.indexnowKey, host);
+      
+      // ইউজারের প্রোফাইল থেকে সরাসরি Key এবং Host নিয়ে IndexNow API-তে পাঠানো হচ্ছে
+      const results = await sendToIndexNow(hostUrls, user.indexnowKey, user.indexnowHost);
       allResults.push(...results);
     }
     unknownUrls.forEach(url => allResults.push({ success: false, url, method: 'IndexNow', error: 'Invalid URL' }));

@@ -196,7 +196,6 @@
 </head>
 <body>
 
-<!-- NAVBAR -->
 <div class="navbar">
     <div class="logo-area">
         <a href="index.html" class="logo-text">🚀 FastIndexer</a>
@@ -212,7 +211,6 @@
     </div>
 </div>
 
-<!-- HERO -->
 <section class="hero">
     <div class="hero-badge">
         <span class="dot"></span>
@@ -222,15 +220,14 @@
         <span class="line1">আপনার URLs Index করুন</span>
         <span class="line2">দ্রুত এবং সহজে!</span>
     </h1>
-    <p>IndexNow API ব্যবহার করে Bing ও Yandex-এ instant index করুন। Google ২৪-৪৮ ঘণ্টার মধ্যে pick করে নেয়।</p>
-    <div class="hero-btns">
+    <p>IndexNow API ব্যবহার করে Bing ও Yandex-এ instant index করুন। Bing ইনডেক্স সম্পন্ন হলে Google সাধারণত ২৪-৪৮ ঘণ্টার মধ্যে সাইট ক্রল করে নেয়।</p>
+    <div class="hero-btns" id="hero-action-btns">
         <a href="signup.html" class="btn-primary">🚀 বিনামূল্যে শুরু করুন</a>
         <a href="#how-it-works" class="btn-outline">কীভাবে কাজ করে?</a>
     </div>
 </section>
 
-<!-- CTA MINI -->
-<div class="cta-mini">
+<div class="cta-mini" id="cta-mini-box">
     <h3>আপনার URLs index করুন 🚀</h3>
     <p>Sign up করুন এবং বিনামূল্যে ৫টি URL submit করুন!</p>
     <div class="cta-mini-btns">
@@ -239,11 +236,10 @@
     </div>
 </div>
 
-<!-- HOW IT WORKS -->
 <section id="how-it-works">
     <div class="section-wrap">
         <div class="section-title">কীভাবে কাজ করে?</div>
-        <div class="section-sub">মাত্র ৩টি সহজ ধাপে আপনার URLs index হয়ে যাবে</div>
+        <div class="section-sub">মাত্র ৩টি সহজ ধাপে আপনার URLs index হয়ে যাবে</div>
         <div class="steps-grid">
             <div class="step-card">
                 <div class="step-num">STEP 01</div>
@@ -260,14 +256,13 @@
             <div class="step-card">
                 <div class="step-num">STEP 03</div>
                 <span class="step-icon">✅</span>
-                <h4>Index হয়ে যাবে!</h4>
-                <p>Bing-এ instant, Google-এ ২৪-৪৮ ঘণ্টার মধ্যে index হয়ে যাবে।</p>
+                <h4>Index হয়ে যাবে!</h4>
+                <p>Bing-এ instant, Google-এ ২৪-৪৮ ঘণ্টার মধ্যে index হয়ে যাবে।</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- FEATURES -->
 <div class="features-bg">
     <div class="section-wrap">
         <div class="section-title">কেন FastIndexer?</div>
@@ -280,7 +275,6 @@
                     <p>Microsoft-approved API দিয়ে instant indexing request পাঠানো হয়।</p>
                 </div>
             </div>
-            <!-- ✅ CHANGED: "Site Verify লাগবে না" → "Site Verify করতে হবে" -->
             <div class="feature-item">
                 <span class="feature-icon">✅</span>
                 <div>
@@ -320,7 +314,6 @@
     </div>
 </div>
 
-<!-- PRICING -->
 <div class="section-wrap" id="pricing">
     <div class="container" style="padding:0;">
         <div class="section-title">Plan বেছে নিন</div>
@@ -331,8 +324,9 @@
                 <div class="price">0 TK</div>
                 <ul>
                     <li>5 URL Indexing</li>
-                    <li>One-time Use</li>
-                    <li>Instant Request</li>
+                    <li>One-time Free Use</li>
+                    <li>Instant Submission</li>
+                    <li>Profile Site Verification</li>
                 </ul>
                 <button class="btn-select">Selected</button>
             </div>
@@ -340,9 +334,10 @@
                 <h3>Starter Pack</h3>
                 <div class="price">199 TK</div>
                 <ul>
-                    <li>50 URL Indexing</li>
-                    <li>Credit System</li>
-                    <li>One-time</li>
+                    <li>50 URL Credits</li>
+                    <li>No Expiry Balance</li>
+                    <li>Instant Request</li>
+                    <li>Priority Processing</li>
                 </ul>
                 <button class="btn-select">Select</button>
             </div>
@@ -350,9 +345,10 @@
                 <h3>6 Months Pro</h3>
                 <div class="price">1,499 TK</div>
                 <ul>
-                    <li>200 URLs/month</li>
-                    <li>Credit System</li>
-                    <li>Valid 6 Months</li>
+                    <li>1200 Total Credits</li>
+                    <li>Valid for 6 Months</li>
+                    <li>Instant API Push</li>
+                    <li>Premium Support</li>
                 </ul>
                 <button class="btn-select">Select</button>
             </div>
@@ -361,18 +357,19 @@
                 <h3>1 Year Pro</h3>
                 <div class="price">2,499 TK</div>
                 <ul>
-                    <li>300 URLs/month</li>
-                    <li>Credit System</li>
-                    <li>Valid 1 Year</li>
+                    <li>3600 Total Credits</li>
+                    <li>Valid for 1 Full Year</li>
+                    <li>Instant API Push</li>
+                    <li>24/7 Priority Support</li>
                 </ul>
                 <button class="btn-select">Select</button>
             </div>
         </div>
 
         <div id="payment-box" class="section">
-            <h3 style="color:#f43f5e; margin-top:0;">💳 Complete Your Payment</h3>
-            <p style="color:var(--muted); font-size:14px; margin-bottom:16px;">Please send the exact amount to one of our personal accounts below:</p>
-            <div class="payment-method">
+            <h3 style="color:#f43f5e; margin-top:0;">💳 Complete Your Activation</h3>
+            <p id="payment-note" style="color:var(--muted); font-size:14px; margin-bottom:16px;">অনুগ্রহ করে নিচে আপনার ইমেইল প্রদান করে ফ্রি অ্যাকাউন্টটি অ্যাক্টিভেট করুন:</p>
+            <div class="payment-method" id="payment-numbers-display" style="display:none;">
                 <div class="method">
                     <strong>bKash (Personal):</strong><br>
                     <span>+8801755178188</span>
@@ -406,7 +403,6 @@
     </div>
 </div>
 
-<!-- FAQ -->
 <div class="section-wrap" style="padding-top:0;">
     <div class="section-title">সাধারণ প্রশ্ন</div>
     <div class="section-sub">যা জানতে চান তার উত্তর এখানেই আছে</div>
@@ -415,7 +411,6 @@
             <div class="faq-q" onclick="toggleFaq(this)">Google-এ index হবে? <span class="arrow">▼</span></div>
             <div class="faq-a">Bing-এ instant index হয়। Bing index হলে Google সাধারণত ২৪-৪৮ ঘণ্টার মধ্যে নিজে থেকে pick করে নেয়।</div>
         </div>
-        <!-- ✅ CHANGED: FAQ answer updated -->
         <div class="faq-item">
             <div class="faq-q" onclick="toggleFaq(this)">Site verify করতে হবে? <span class="arrow">▼</span></div>
             <div class="faq-a">হ্যাঁ, একবার verify করতে হবে — কিন্তু এটা খুবই সহজ! Profile page-এ গিয়ে আপনার site-এর IndexNow key add করুন। WordPress হলে একটি plugin install করলেই হয়, Blogger হলে শুধু একটি meta tag যোগ করতে হবে। একবার করলেই বারবার করতে হবে না — এরপর থেকে যেকোনো URL সহজেই submit করতে পারবেন।</div>
@@ -435,7 +430,6 @@
     </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
     <div class="footer-inner">
         <div class="footer-logo">🚀 FastIndexer</div>
@@ -451,7 +445,6 @@
     </div>
 </footer>
 
-<!-- WHATSAPP -->
 <a href="https://wa.me/8801907763300" target="_blank" class="whatsapp-btn">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
@@ -468,6 +461,13 @@
             <a href="dashboard.html" class="btn-auth" style="border-color:var(--cyan);color:var(--cyan);">Dashboard</a>
             <button class="btn-auth" style="border-color:var(--red);color:var(--red);" onclick="logout()">Logout</button>
         `;
+        // লগইন থাকলে ড্যাশবোর্ড বাটন দেখাবে এবং অতিরিক্ত বক্স হাইড হবে
+        document.getElementById('hero-action-btns').innerHTML = `
+            <a href="dashboard.html" class="btn-primary">🚀 Go to Dashboard</a>
+            <a href="#pricing" class="btn-outline">Plan Upgrade করুন</a>
+        `;
+        document.getElementById('cta-mini-box').style.display = 'none';
+        document.getElementById('user-email').value = user.email;
     }
 
     function logout() {
@@ -476,7 +476,9 @@
     }
 
     // Plan select
-    window.onload = function() { selectPlan('Free', 0, 'Free'); };
+    window.onload = function() { 
+        selectPlan('Free', 0, 'Free'); 
+    };
 
     function selectPlan(planName, price, role) {
         document.querySelectorAll('.card').forEach(c => {
@@ -489,7 +491,16 @@
         document.getElementById('selected-plan-text').innerText = `${planName} (${price} TK)`;
         document.getElementById('chosen-plan').value = role;
         document.getElementById('payment-box').style.display = 'block';
-        document.getElementById('paid-inputs-area').style.display = price > 0 ? 'block' : 'none';
+        
+        if (price > 0) {
+            document.getElementById('paid-inputs-area').style.display = 'block';
+            document.getElementById('payment-numbers-display').style.display = 'flex';
+            document.getElementById('payment-note').innerText = "অনুগ্রহ করে নিচে দেওয়া আমাদের পার্সোনাল অ্যাকাউন্টের যেকোনো একটিতে সঠিক টাকা পাঠিয়ে ফর্মটি পূরণ করুন:";
+        } else {
+            document.getElementById('paid-inputs-area').style.display = 'none';
+            document.getElementById('payment-numbers-display').style.display = 'none';
+            document.getElementById('payment-note').innerText = "অনুগ্রহ করে নিচে আপনার ইমেইল প্রদান করে ফ্রি ট্রায়াল অ্যাকাউন্টটি অ্যাক্টিভেট করুন:";
+        }
     }
 
     // FAQ toggle
@@ -497,7 +508,7 @@
         el.closest('.faq-item').classList.toggle('open');
     }
 
-    // Submit
+    // Submit Activation / Payment
     async function submitIndexing() {
         const plan = document.getElementById('chosen-plan').value;
         const email = document.getElementById('user-email').value.trim();
@@ -524,9 +535,13 @@
             });
 
             if (plan === 'Free') {
-                terminal.innerHTML += `<span class="log-success">[SUCCESS] Free plan activated! 5 credits added.</span><br>`;
-                terminal.innerHTML += `<span class="log-process">[REDIRECT] Login page এ যাচ্ছেন...</span><br>`;
-                setTimeout(() => { window.location.href = "login.html"; }, 2000);
+                terminal.innerHTML += `<span class="log-success">[SUCCESS] Free plan initialized! 5 credits reserved.</span><br>`;
+                terminal.innerHTML += `<span class="log-process">[REDIRECT] পাসওয়ার্ড সেট করতে Sign Up পেজে নিয়ে যাওয়া হচ্ছে...</span><br>`;
+                
+                // ইউজার এক্সপেরিয়েন্স ফিক্স: ইউজারকে সাইন-আপ পেজে ইমেইলসহ রিডাইরেক্ট করা হচ্ছে যাতে সে পাসওয়ার্ড সেট করতে পারে
+                setTimeout(() => { 
+                    window.location.href = `signup.html?email=${encodeURIComponent(email)}`; 
+                }, 2000);
             } else {
                 const response = await fetch('/api/payment/submit', {
                     method: 'POST',
@@ -535,8 +550,8 @@
                 });
                 const data = await response.json();
                 if (data.success) {
-                    terminal.innerHTML += `<span class="log-success">[SUCCESS] Payment request submitted!</span><br>`;
-                    terminal.innerHTML += `<span class="log-process">[INFO] Admin verify করলে আপনার credit যোগ হবে।</span><br>`;
+                    terminal.innerHTML += `<span class="log-success">[SUCCESS] Payment request submitted successfully!</span><br>`;
+                    terminal.innerHTML += `<span class="log-process">[INFO] এডমিন ভেরিফাই করার পর আপনার ইমেইলে কনফার্মেশন পাঠানো হবে এবং ক্রেডিট যোগ হবে।</span><br>`;
                 } else {
                     terminal.innerHTML += `<span class="log-error">[ERROR]: ${data.message}</span>`;
                 }

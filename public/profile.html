@@ -80,12 +80,23 @@
         .alert-box { background: rgba(56,189,248,0.07); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; color: #94a3b8; font-size: 13px; line-height: 1.6; }
         .alert-box b { color: #38bdf8; }
 
-        /* Screenshot style image hint */
-        .img-hint { background: #0f172a; border: 1px dashed #334155; border-radius: 8px; padding: 10px 14px; margin: 8px 0 12px 0; font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 8px; }
-        .img-hint span { color: #38bdf8; font-weight: bold; }
+        /* Dynamic Copy Code Styling */
+        .code-container { display: flex; align-items: center; margin-top: 8px; background: #1e293b; border-radius: 6px; border: 1px solid #334155; padding: 2px 8px; }
+        .code-display { flex: 1; padding: 8px; color: #38bdf8; font-family: monospace; font-size: 13px; overflow-x: auto; white-space: nowrap; }
+        .btn-copy-code { background: #38bdf8; color: #0f172a; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; white-space: nowrap; }
+        .btn-copy-code:hover { background: #0ea5e9; }
 
-        /* Success step highlight */
-        .step-done { background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.2); border-radius: 8px; padding: 10px 14px; margin-top: 4px; font-size: 13px; color: #22c55e; font-weight: bold; }
+        /* Support Box Section */
+        .support-box { background: rgba(234,179,8,0.05); border: 1px dashed rgba(234,179,8,0.3); border-radius: 10px; padding: 18px; text-align: center; margin-top: 20px; }
+        .support-box p { color: #cbd5e1; font-size: 14px; margin-bottom: 12px; }
+        .btn-support { background: #eab308; color: #0f172a; text-decoration: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; font-size: 14px; display: inline-block; transition: 0.2s; }
+        .btn-support:hover { background: #ca8a04; }
+
+        /* FAQ Style Styling */
+        .faq-item { border-bottom: 1px solid #334155; padding: 14px 0; }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-q { font-size: 15px; font-weight: bold; color: #f1f5f9; margin-bottom: 6px; }
+        .faq-a { font-size: 13px; color: #94a3b8; line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -166,12 +177,11 @@
             </div>
         </div>
 
-        <!-- ===== IndexNow Setup Section (UPDATED) ===== -->
         <div class="section">
             <div class="section-title">🔑 IndexNow Key সেটআপ করুন</div>
 
             <div class="alert-box">
-                <b>ℹ️ কেন করতে হবে?</b> IndexNow হলো একটি standard protocol যা দিয়ে আপনার site থেকে search engine-কে জানানো হয় যে নতুন content এসেছে। একবার key verify করলেই বারবার করতে হবে না — এরপর যত URL ইচ্ছা submit করতে পারবেন।
+                <b>ℹ️ কেন করতে হবে?</b> IndexNow হলো একটি standard protocol যা দিয়ে আপনার site থেকে search engine-কে জানানো হয় যে নতুন content এসেছে। আপনার সাইট ভেরিফাই করার জন্য শুধু প্রোফাইলে আপনার সাইটের সঠিক API Key এবং URL দিয়ে সেভ করতে হবে। এরপর কোনো রুট অ্যাক্সেস বা ফাইল আপলোডের ঝামেলা ছাড়াই আপনি আনলিমিটেড ইনডেক্স করতে পারবেন।
             </div>
 
             <div id="current-key-display" class="current-key-box" style="display:none;">
@@ -184,12 +194,11 @@
 
             <label class="input-label">IndexNow Key</label>
             <div class="input-hint">নিচের guide দেখে আপনার site type অনুযায়ী key সংগ্রহ করুন এবং এখানে paste করুন।</div>
-            <input type="text" id="input-key" placeholder="e.g. a1b2c3d4e5f6g7h8">
+            <input type="text" id="input-key" placeholder="e.g. a1b2c3d4e5f6g7h8" oninput="updateDynamicMetaTag()">
 
             <button class="btn-save" onclick="saveKey()">💾 Save করুন</button>
             <div class="save-msg" id="save-msg"></div>
 
-            <!-- ===== GUIDES (UPDATED — no root file upload) ===== -->
             <div style="margin-top: 32px;">
                 <div class="section-title" style="margin-bottom:14px;">📖 আপনার site type বেছে নিন:</div>
                 <div class="guide-tabs">
@@ -198,7 +207,6 @@
                     <div class="guide-tab" onclick="showGuide('others', event)">🌐 অন্য Site</div>
                 </div>
 
-                <!-- ===== WordPress Guide ===== -->
                 <div class="guide-content active" id="guide-wordpress">
                     <div class="guide-step">
                         <div class="step-num">1</div>
@@ -221,87 +229,97 @@
                     <div class="guide-step">
                         <div class="step-num">4</div>
                         <div class="step-text">
-                            উপরে <b>আপনার Website URL</b> এ আপনার site address এবং <b>IndexNow Key</b> এ copy করা key paste করুন। তারপর <b>Save করুন</b> button চাপুন।
+                            উপরে <b>আপনার Website URL</b> বক্সে আপনার সাইটের লিঙ্ক এবং <b>IndexNow Key</b> বক্সে কপি করা কী-টি পেস্ট করে <b>Save করুন</b> বাটন চাপুন।
                         </div>
                     </div>
-                    <div class="step-done">✅ হয়ে গেল! এখন থেকে URL Submit করতে পারবেন।</div>
+                    <div class="step-done">✅ হয়ে গেল! এবার কোনো রুট সিস্টেম ছাড়াই সরাসরি URL Submit করতে পারবেন।</div>
                 </div>
 
-                <!-- ===== Blogger Guide (UPDATED — meta tag only, no root file) ===== -->
                 <div class="guide-content" id="guide-blogger">
                     <div class="guide-step">
                         <div class="step-num">1</div>
                         <div class="step-text">
-                            প্রথমে একটি IndexNow key তৈরি করুন। যেকোনো সহজ word+number মিলিয়ে লিখুন।<br>
-                            উদাহরণ: <code>myblog2024key</code> বা <code>fastindex123abc</code>
-                            <br><br>এই key-টি মনে রাখুন বা copy করে রাখুন।
+                            প্রথমে একটি IndexNow key তৈরি করুন বা যেকোনো random letters ও numbers মিলিয়ে ওপরে ইনপুট দিন (যেমন: <code>fastindex123abc</code>)।
                         </div>
                     </div>
                     <div class="guide-step">
                         <div class="step-num">2</div>
                         <div class="step-text">
-                            Blogger Dashboard-এ যান → <b>Theme</b> → <b>Edit HTML</b> button এ click করুন।
+                            Blogger Dashboard-এ যান → <b>Theme</b> → <b>Edit HTML</b> বাটনে ক্লিক করুন।
                         </div>
                     </div>
                     <div class="guide-step">
                         <div class="step-num">3</div>
                         <div class="step-text">
-                            HTML code এর একদম শুরুতে <code>&lt;head&gt;</code> লেখাটির ঠিক নিচের লাইনে নিচের code টি paste করুন:<br><br>
-                            <code style="display:block; padding:10px; margin-top:6px; background:#1e293b; border-radius:6px; word-break:break-all;">&lt;meta name="indexnow-key" content="আপনার_key_এখানে_লিখুন"/&gt;</code>
-                            <br>
-                            <b>আপনার_key_এখানে_লিখুন</b> এর জায়গায় step 1-এ তৈরি করা key লিখুন।
+                            HTML code এর একদম শুরুতে <code>&lt;head&gt;</code> লেখাটির ঠিক নিচের লাইনে নিচের জেনারেট হওয়া কোডটি পেস্ট করুন:
+                            
+                            <div class="code-container">
+                                <div class="code-display" id="blogger-meta-code">&lt;meta name="indexnow-key" content="your_key_here"/&gt;</div>
+                                <button class="btn-copy-code" onclick="copyMetaCode()">Copy Code</button>
+                            </div>
                         </div>
                     </div>
                     <div class="guide-step">
                         <div class="step-num">4</div>
                         <div class="step-text">
-                            উপরে <b>Save</b> বা disk icon চাপুন — theme save হয়ে যাবে।
+                            Blogger থিমটি <b>Save</b> করুন। এবার আমাদের প্যানেলের ওপরে <b>Website URL</b> এবং <b>IndexNow Key</b> সঠিক তথ্য দিয়ে <b>Save করুন</b> বাটন চাপুন।
                         </div>
                     </div>
-                    <div class="guide-step">
-                        <div class="step-num">5</div>
-                        <div class="step-text">
-                            এখন উপরের form-এ <b>Website URL</b> (আপনার Blogger site address) এবং <b>IndexNow Key</b> (step 1-এর key) দিয়ে <b>Save করুন</b> চাপুন।
-                        </div>
-                    </div>
-                    <div class="step-done">✅ হয়ে গেল! এখন URL Submit করতে পারবেন।</div>
+                    <div class="step-done">✅ সফলভাবে সেটআপ সম্পন্ন! এখন আপনি ফ্রিতে ইনডেক্সিং রিকোয়েস্ট পাঠাতে পারবেন।</div>
                 </div>
 
-                <!-- ===== Others Guide (UPDATED — simple, no root file) ===== -->
                 <div class="guide-content" id="guide-others">
                     <div class="alert-box" style="margin-bottom:16px;">
-                        <b>ℹ️ Wix, Squarespace, Webflow, Custom Site</b> — সব ক্ষেত্রেই একই পদ্ধতি।
+                        <b>ℹ️ Wix, Squarespace, Webflow, Custom Site</b> — সব ক্ষেত্রেই একই মেটা ট্যাগ পদ্ধতি প্রযোজ্য।
                     </div>
                     <div class="guide-step">
                         <div class="step-num">1</div>
                         <div class="step-text">
-                            একটি key তৈরি করুন — যেকোনো letters ও numbers মিলিয়ে লিখুন।<br>
-                            উদাহরণ: <code>mysite2024abc</code>
+                            যেকোনো একটি Key তৈরি করে ওপরের বক্সে বসান।
                         </div>
                     </div>
                     <div class="guide-step">
                         <div class="step-num">2</div>
                         <div class="step-text">
-                            আপনার site-এর <b>HTML head section</b> এ এই meta tag টি যোগ করুন:<br><br>
-                            <code style="display:block; padding:10px; margin-top:6px; background:#1e293b; border-radius:6px; word-break:break-all;">&lt;meta name="indexnow-key" content="আপনার_key"/&gt;</code>
+                            আপনার সাইটের <b>HTML Head Section</b>-এ গিয়ে নিচের মেটা ট্যাগ কোডটি যোগ করুন:
+                            <div class="code-container">
+                                <div class="code-display" id="others-meta-code">&lt;meta name="indexnow-key" content="your_key_here"/&gt;</div>
+                                <button class="btn-copy-code" onclick="copyOthersMetaCode()">Copy Code</button>
+                            </div>
                             <br>
-                            Wix হলে: <b>Settings → Custom Code → Head</b> এ paste করুন।<br>
-                            Webflow হলে: <b>Project Settings → Custom Code → Head Code</b>।<br>
-                            অন্য platform হলে সেখানকার <b>SEO বা Custom Code</b> section দেখুন।
+                            * Wix হলে: <b>Settings → Custom Code → Head</b> এ বসান।<br>
+                            * Webflow হলে: <b>Project Settings → Custom Code → Head Code</b>।
                         </div>
                     </div>
                     <div class="guide-step">
                         <div class="step-num">3</div>
                         <div class="step-text">
-                            Site publish/save করুন। তারপর উপরের form-এ <b>Website URL</b> ও <b>IndexNow Key</b> দিয়ে <b>Save করুন</b> চাপুন।
+                            সাইট পাবলিশ করুন এবং ওপরে <b>Website URL</b> ও <b>Key</b> দিয়ে <b>Save করুন</b> চাপুন।
                         </div>
                     </div>
-                    <div class="step-done">✅ হয়ে গেল! এখন URL Submit করতে পারবেন।</div>
                 </div>
-                <!-- ===== End Guides ===== -->
+                <div class="support-box">
+                    <p>💡 কোনো নিয়ম বুঝতে সমস্যা হচ্ছে বা নিজে সেটআপ করতে পারছেন না?</p>
+                    <a href="https://wa.me/your_number" target="_blank" class="btn-support">💬 সরাসরি সাপোর্টে যোগাযোগ করুন (Free Setup)</a>
+                </div>
             </div>
         </div>
-        <!-- ===== End IndexNow Setup Section ===== -->
+        <div class="section">
+            <div class="section-title">❓ Frequently Asked Questions (FAQ)</div>
+            
+            <div class="faq-item">
+                <div class="faq-q">১. ওয়েবসাইট ভেরিফিকেশন করা কেন বাধ্যতামূলক?</div>
+                <div class="faq-a">সার্চ ইঞ্জিন পলিসি অনুযায়ী, আপনি যে ওয়েবসাইটের লিংক সাবমিট করছেন তা সত্যিই আপনার কি না তা নিশ্চিত করতেই IndexNow Key ভেরিফাই করতে হয়। এটি স্প্যামিং রোধ করে।</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">২. ফ্রি ট্রায়ালে কি IndexNow Key ছাড়া সাবমিট করা যাবে?</div>
+                <div class="faq-a">না, ফ্রি ট্রায়াল বা যেকোনো প্ল্যানে সাবমিট করার আগে প্রোফাইল থেকে অবশ্যই আপনার "IndexNow Key" এবং "Site Host" সেভ করে নিতে হবে। অন্যথায় সিস্টেম রিকোয়েস্ট রিজেক্ট করবে।</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">৩. একবার কী সেভ করার পর কি বারবার করতে হবে?</div>
+                <div class="faq-a">একেবারেই না! একবার আপনার ডোমেইনের সাথে কী ভেরিফাই করে নিলে, পরবর্তীতে আপনি ওই ডোমেইনের যেকোনো ইউআরএল সরাসরি এক ক্লিকে সাবমিট করতে পারবেন।</div>
+            </div>
+        </div>
 
         <div class="section">
             <div class="section-title">📋 My Submission History</div>
@@ -347,6 +365,27 @@
         document.querySelectorAll('.guide-content').forEach(c => c.classList.remove('active'));
         document.getElementById('guide-' + type).classList.add('active');
         if (event && event.target) event.target.classList.add('active');
+    }
+
+    // Dynamic Meta Tag Update Logic
+    function updateDynamicMetaTag() {
+        const keyInput = document.getElementById('input-key').value.trim();
+        const fallbackKey = keyInput || "your_key_here";
+        
+        document.getElementById('blogger-meta-code').textContent = `<meta name="indexnow-key" content="${fallbackKey}"/>`;
+        document.getElementById('others-meta-code').textContent = `<meta name="indexnow-key" content="${fallbackKey}"/>`;
+    }
+
+    function copyMetaCode() {
+        const codeText = document.getElementById('blogger-meta-code').textContent;
+        navigator.clipboard.writeText(codeText);
+        alert('🎯 Blogger Meta Tag copied successfully!');
+    }
+
+    function copyOthersMetaCode() {
+        const codeText = document.getElementById('others-meta-code').textContent;
+        navigator.clipboard.writeText(codeText);
+        alert('🎯 Meta Tag copied successfully!');
     }
 
     async function saveKey() {
@@ -424,6 +463,7 @@
                     showCurrentKey(data.indexnowHost, data.indexnowKey);
                     document.getElementById('input-host').value = 'https://' + data.indexnowHost;
                     document.getElementById('input-key').value = data.indexnowKey;
+                    updateDynamicMetaTag();
                 }
 
                 localStorage.setItem('fi_user', JSON.stringify(user));
