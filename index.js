@@ -1,6 +1,6 @@
 // =============================================
 //     FastIndexer - Backend Server
-//     MongoDB + Credit + Auth System
+//     MongoDB + Credit + Auth System + Resend Email
 // =============================================
 
 require('dotenv').config();
@@ -9,9 +9,12 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const https = require('https');
 const crypto = require('crypto');
+const { Resend } = require('resend');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const resend = new Resend(process.env.RESEND_API_KEY);
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'your@email.com';
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -88,6 +91,127 @@ const PAYMENT_NUMBERS = {
   nagad: '+8801907763300'
 };
 
+// =============================================
+//   EMAIL FUNCTIONS (Resend)
+// =============================================
+
+async function sendWelcomeEmail(userEmail, userName, credit) {
+  try {
+    await resend.emails.send({
+      from: 'FastIndexer <noreply@fastindexer.com>',
+      to: userEmail,
+      subject: '🎉 FastIndexer-এ স্বাগতম! আপনার ' + credit + ' টি Free Credit পেয়েছেন',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9f9f9; padding: 30px;">
+          <div style="background: #1a1a2e; padding: 20px; border-radius: 10px; text-align: center;">
+            <h1 style="color: #00d4ff; margin: 0;">⚡ FastIndexer</h1>
+          </div>
+          <div style="background: white; padding: 30px; border-radius: 10px; margin-top: 15px;">
+            <h2 style="color: #333;">স্বাগতম, ${userName}! 🎉</h2>
+            <p style="color: #555; font-size: 16px;">আপনার FastIndexer অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে।</p>
+            <div style="background: #e8f5e9; border-left: 4px solid #4caf50; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <strong style="color: #2e7d32;">🎁 আপনি পেয়েছেন: ${credit} টি Free Credit!</strong>
+            </div>
+            <p style="color: #555;">এখনই আপনার ওয়েবসাইটের URL গুলো Google-এ index করুন।</p>
+            <a href="https://fastindexer-production.up.railway.app" style="display: inline-block; background: #00d4ff; color: #000; padding: 12px 30px; border-radius: 25px; text-decoration: none; font-weight: bold; margin-top: 10px;">এখনই শুরু করুন →</a>
+          </div>
+          <p style="text-align: center; color: #999; font-size: 12px; margin-top: 20px;">FastIndexer | Dhaka, Bangladesh</p>
+        </div>
+      `
+    });
+    console.log('✅ Welcome email sent to:', userEmail);
+  } catch (err) {
+    console.error('❌ Welcome email error:', err.message);
+  }
+}
+
+async function sendPaymentSubmitEmailToAdmin(paymentData) {
+  try {
+    await resend.emails.send({
+      from: 'FastIndexer <noreply@fastindexer.com>',
+      to: ADMIN_EMAIL,
+      subject: '💰 নতুন Payment Request: ' + paymentData.plan + ' - ' + paymentData.userEmail,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9f9f9; padding: 30px;">
+          <div style="background: #1a1a2e; padding: 20px; border-radius: 10px; text-align: center;">
+            <h1 style="color: #00d4ff; margin: 0;">⚡ FastIndexer Admin</h1>
+          </div>
+          <div style="background: white; padding: 30px; border-radius: 10px; margin-top: 15px;">
+            <h2 style="color: #e65100;">💰 নতুন Payment Request!</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px; color: #777; width: 40%;">User Email</td>
+                <td style="padding: 10px; font-weight: bold; color: #333;">${paymentData.userEmail}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px; color: #777;">Plan</td>
+                <td style="padding: 10px; font-weight: bold; color: #333;">${paymentData.plan}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px; color: #777;">Amount</td>
+                <td style="padding: 10px; font-weight: bold; color: #4caf50;">৳${paymentData.amount}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px; color: #777;">Credit যোগ হবে</td>
+                <td style="padding: 10px; font-weight: bold; color: #333;">${paymentData.creditAdded} Credit</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px; color: #777;">Sender Number</td>
+                <td style="padding: 10px; font-weight: bold; color: #333;">${paymentData.senderNumber}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; color: #777;">Transaction ID</td>
+                <td style="padding: 10px; font-weight: bold; color: #e65100;">${paymentData.txnid}</td>
+              </tr>
+            </table>
+            <div style="background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <strong style="color: #e65100;">⚠️ Admin Panel থেকে verify করে approve করুন।</strong>
+            </div>
+            <a href="https://fastindexer-production.up.railway.app/admin.html" style="display: inline-block; background: #ff9800; color: #000; padding: 12px 30px; border-radius: 25px; text-decoration: none; font-weight: bold;">Admin Panel →</a>
+          </div>
+        </div>
+      `
+    });
+    console.log('✅ Payment alert email sent to admin');
+  } catch (err) {
+    console.error('❌ Payment alert email error:', err.message);
+  }
+}
+
+async function sendPaymentApprovedEmail(userEmail, userName, plan, creditAdded, newCredit) {
+  try {
+    await resend.emails.send({
+      from: 'FastIndexer <noreply@fastindexer.com>',
+      to: userEmail,
+      subject: '✅ Payment Approved! আপনার ' + creditAdded + ' Credit যোগ হয়েছে',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9f9f9; padding: 30px;">
+          <div style="background: #1a1a2e; padding: 20px; border-radius: 10px; text-align: center;">
+            <h1 style="color: #00d4ff; margin: 0;">⚡ FastIndexer</h1>
+          </div>
+          <div style="background: white; padding: 30px; border-radius: 10px; margin-top: 15px;">
+            <h2 style="color: #2e7d32;">✅ Payment Approved!</h2>
+            <p style="color: #555; font-size: 16px;">প্রিয় ${userName},</p>
+            <p style="color: #555;">আপনার পেমেন্ট সফলভাবে verify করা হয়েছে!</p>
+            <div style="background: #e8f5e9; border-left: 4px solid #4caf50; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <p style="margin: 5px 0; color: #2e7d32;"><strong>Plan:</strong> ${plan}</p>
+              <p style="margin: 5px 0; color: #2e7d32;"><strong>Credit যোগ হয়েছে:</strong> ${creditAdded}</p>
+              <p style="margin: 5px 0; color: #2e7d32;"><strong>মোট Credit এখন:</strong> ${newCredit}</p>
+            </div>
+            <a href="https://fastindexer-production.up.railway.app" style="display: inline-block; background: #4caf50; color: white; padding: 12px 30px; border-radius: 25px; text-decoration: none; font-weight: bold; margin-top: 10px;">Dashboard এ যান →</a>
+          </div>
+          <p style="text-align: center; color: #999; font-size: 12px; margin-top: 20px;">FastIndexer | Dhaka, Bangladesh</p>
+        </div>
+      `
+    });
+    console.log('✅ Approval email sent to:', userEmail);
+  } catch (err) {
+    console.error('❌ Approval email error:', err.message);
+  }
+}
+
+// =============================================
+
 function extractHost(url) {
   try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return null; }
 }
@@ -130,6 +254,8 @@ app.post('/api/auth/signup', async (req, res) => {
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ success: false, message: 'এই email দিয়ে আগেই account আছে।' });
     const user = await User.create({ email, name, password: hashPassword(password), credit: 5, plan: 'Free' });
+    // Welcome email পাঠাও
+    sendWelcomeEmail(user.email, user.name, user.credit);
     res.json({ success: true, message: 'Account তৈরি হয়েছে! 5 free credit পেয়েছেন।', user: { email: user.email, name: user.name, credit: user.credit, plan: user.plan } });
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
@@ -206,6 +332,8 @@ app.post('/api/payment/submit', async (req, res) => {
     if (!PACKAGES[plan] || plan === 'Free') return res.status(400).json({ success: false, message: 'বৈধ পেইড প্ল্যান সিলেক্ট করুন।' });
     const pkg = PACKAGES[plan];
     const payment = await Payment.create({ userEmail: email, plan, amount: pkg.price, creditAdded: pkg.credit, senderNumber, txnid, status: 'pending' });
+    // Admin কে alert email পাঠাও
+    sendPaymentSubmitEmailToAdmin({ userEmail: email, plan, amount: pkg.price, creditAdded: pkg.credit, senderNumber, txnid });
     res.json({ success: true, message: 'পেমেন্ট রিকোয়েস্ট পাঠানো হয়েছে।', paymentId: payment._id });
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
@@ -275,7 +403,7 @@ app.post('/api/index-now', async (req, res) => {
 });
 
 // =============================================
-//   User URL Submit — Site collection থেকে key বের করে
+//   User URL Submit
 // =============================================
 app.post('/api/submit', async (req, res) => {
   try {
@@ -288,7 +416,6 @@ app.post('/api/submit', async (req, res) => {
     if (!user) return res.status(404).json({ success: false, message: 'User পাওয়া যায়নি।' });
     if (user.credit < urlArray.length) return res.status(400).json({ success: false, message: `Credit কম! আপনার ${user.credit} credit আছে, দরকার ${urlArray.length}।` });
 
-    // Domain অনুযায়ী group করো
     const hostGroups = {};
     const unknownUrls = [];
     for (const url of urlArray) {
@@ -343,9 +470,15 @@ app.post('/api/admin/approve-payment', async (req, res) => {
     const payment = await Payment.findById(paymentId);
     if (!payment) return res.status(404).json({ success: false, message: 'Payment পাওয়া যায়নি।' });
     if (payment.status === 'approved') return res.status(400).json({ success: false, message: 'আগেই approve হয়েছে।' });
-    await User.findOneAndUpdate({ email: payment.userEmail }, { $inc: { credit: payment.creditAdded }, plan: payment.plan });
+    const user = await User.findOneAndUpdate(
+      { email: payment.userEmail },
+      { $inc: { credit: payment.creditAdded }, plan: payment.plan },
+      { new: true }
+    );
     payment.status = 'approved';
     await payment.save();
+    // User কে approval email পাঠাও
+    if (user) sendPaymentApprovedEmail(user.email, user.name, payment.plan, payment.creditAdded, user.credit);
     res.json({ success: true, message: `${payment.userEmail} কে ${payment.creditAdded} credit দেওয়া হয়েছে!` });
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
