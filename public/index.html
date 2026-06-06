@@ -3,57 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FastIndexer - Universal Google Indexing Tool</title>
+    <title>FastIndexer - Index Your URLs Fast</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 0; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-bottom: 1px solid #334155; }
-        .logo-area { display: flex; align-items: center; gap: 25px; }
-        .logo-text { font-size: 24px; font-weight: bold; color: #38bdf8; text-decoration: none; display: flex; align-items: center; gap: 8px; margin: 0; }
-        .nav-links { display: flex; align-items: center; gap: 20px; }
-        .nav-link { color: #94a3b8; text-decoration: none; font-weight: 500; transition: 0.2s; font-size: 15px; }
-        .nav-link:hover, .nav-link.active { color: #38bdf8; }
-        .auth-buttons { display: flex; gap: 12px; align-items: center; }
-        .btn-auth { background: transparent; color: #cbd5e1; border: 1px solid #475569; padding: 8px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s; text-decoration: none; display: inline-block; }
-        .btn-auth:hover { border-color: #38bdf8; color: #38bdf8; }
-        .btn-signup { background: #38bdf8; color: #0f172a; border: none; }
-        .btn-signup:hover { background: #0ea5e9; color: #0f172a; }
-        h2 { text-align: center; color: #38bdf8; margin-top: 40px; }
-        p.subtitle { text-align: center; color: #94a3b8; margin-bottom: 40px; margin-top: -10px; }
-        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px; }
-        .card { background: #1e293b; border: 2px solid #334155; border-radius: 12px; padding: 20px; text-align: center; transition: 0.3s; position: relative; cursor: pointer; }
-        .card.active, .card:hover { border-color: #38bdf8; transform: translateY(-5px); }
-        .card h3 { margin-top: 0; color: #f1f5f9; }
-        .price { font-size: 24px; font-weight: bold; color: #38bdf8; margin: 15px 0; }
-        .card ul { list-style: none; padding: 0; margin: 15px 0; color: #94a3b8; font-size: 14px; }
-        .card ul li { margin: 8px 0; }
-        .badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #ef4444; color: white; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: bold; }
-        .btn-select { background: #334155; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; }
-        .card.active .btn-select, .btn-select:hover { background: #38bdf8; color: #0f172a; }
-        .section { background: #1e293b; border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid #334155; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #cbd5e1; }
-        input, textarea, select { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: white; box-sizing: border-box; margin-bottom: 15px; font-size: 14px; }
-        input:focus, textarea:focus, select:focus { border-color: #38bdf8; outline: none; }
-        .btn-submit { background: #eab308; color: #0f172a; font-size: 16px; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; width: 100%; transition: 0.2s; margin-top: 10px; }
-        .btn-submit:hover { background: #ca8a04; }
-        .btn-submit:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
-        #payment-box { display: none; background: #1e1b4b; border: 1px solid #4338ca; }
-        .payment-method { display: flex; justify-content: space-around; margin: 15px 0; background: #0f172a; padding: 15px; border-radius: 8px; }
-        .method { text-align: center; font-size: 16px; }
-        .method strong { color: #f43f5e; }
-        .terminal-box { background: #020617; border: 1px solid #334155; font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #38bdf8; padding: 15px; border-radius: 6px; max-height: 250px; overflow-y: auto; margin-top: 20px; box-sizing: border-box; width: 100%; line-height: 1.6; }
-        .log-success { color: #22c55e; }
-        .log-error { color: #ef4444; }
-        .log-process { color: #eab308; }
+        :root {
+            --bg: #0f172a;
+            --bg2: #1e293b;
+            --bg3: #0d1424;
+            --border: #334155;
+            --cyan: #38bdf8;
+            --cyan2: #0ea5e9;
+            --green: #22c55e;
+            --yellow: #eab308;
+            --red: #ef4444;
+            --orange: #f97316;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --purple: #818cf8;
+        }
 
-        /* WhatsApp Support Button */
-        .whatsapp-btn { position: fixed; bottom: 24px; right: 24px; background: #25d366; color: white; border: none; border-radius: 50px; padding: 14px 22px; font-size: 15px; font-weight: bold; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 20px rgba(37,211,102,0.4); z-index: 9999; transition: 0.2s; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Syne', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ───── NAVBAR ───── */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(30,41,59,0.95);
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        .logo-area { display: flex; align-items: center; gap: 25px; }
+        .logo-text {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--cyan);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.5px;
+        }
+        .nav-links { display: flex; align-items: center; gap: 20px; }
+        .nav-link { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.2s; }
+        .nav-link:hover, .nav-link.active { color: var(--cyan); }
+        .auth-buttons { display: flex; gap: 12px; align-items: center; }
+        .btn-auth {
+            background: transparent;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            font-family: 'Syne', sans-serif;
+        }
+        .btn-auth:hover { border-color: var(--cyan); color: var(--cyan); }
+        .btn-signup { background: var(--cyan); color: var(--bg); border: none; }
+        .btn-signup:hover { background: var(--cyan2); color: var(--bg); }
+
+        /* ───── HERO ───── */
+        .hero {
+            position: relative;
+            padding: 90px 20px 80px;
+            text-align: center;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -80px; left: 50%;
+            transform: translateX(-50%);
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(56,189,248,0.1);
+            border: 1px solid rgba(56,189,248,0.3);
+            color: var(--cyan);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 28px;
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+        .hero-badge .dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+        .hero h1 {
+            font-size: clamp(36px, 6vw, 68px);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 22px;
+        }
+        .hero h1 .line1 { display: block; color: var(--text); }
+        .hero h1 .line2 { display: block; color: var(--cyan); }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--muted);
+            max-width: 560px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+        .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+        .btn-primary {
+            background: var(--cyan);
+            color: var(--bg);
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 15px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Syne', sans-serif;
+        }
+        .btn-primary:hover { background: var(--cyan2); transform: translateY(-2px); }
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            text-decoration: none;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Syne', sans-serif;
+        }
+        .btn-outline:hover { border-color: var(--cyan); color: var(--cyan); }
+
+        /* ───── LIVE STATS ───── */
+        .live-counter-section {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .live-counter-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 36px 40px;
+            text-align: center;
+            max-width: 700px;
+            width: 100%;
+        }
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(34,197,94,0.1);
+            border: 1px solid rgba(34,197,94,0.3);
+            color: var(--green);
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            font-family: 'Space Mono', monospace;
+        }
+        .live-badge .dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 1.5s infinite; }
+        .counter-number {
+            font-size: 72px;
+            font-weight: 800;
+            color: var(--cyan);
+            line-height: 1;
+            font-family: 'Space Mono', monospace;
+            letter-spacing: -3px;
+        }
+        .counter-label { color: var(--muted); font-size: 14px; margin-top: 8px; }
+        .counter-date { color: #475569; font-size: 12px; margin-top: 4px; font-family: 'Space Mono', monospace; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .stat-box {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 10px;
+            text-align: center;
+        }
+        .stat-num { font-size: 26px; font-weight: 800; color: var(--cyan); font-family: 'Space Mono', monospace; }
+        .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+        /* ───── CTA MINI ───── */
+        .cta-mini {
+            background: rgba(56,189,248,0.05);
+            border: 1px solid rgba(56,189,248,0.15);
+            border-radius: 12px;
+            padding: 28px;
+            margin: 20px;
+            text-align: center;
+        }
+        .cta-mini h3 { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+        .cta-mini p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+        .cta-mini-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .refresh-note { color: #475569; font-size: 11px; margin-top: 14px; font-family: 'Space Mono', monospace; }
+
+        /* ───── HOW IT WORKS ───── */
+        .section-wrap { max-width: 1000px; margin: 0 auto; padding: 60px 20px; }
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+        .section-sub { text-align: center; color: var(--muted); margin-bottom: 50px; font-size: 15px; }
+
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .step-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px 22px;
+            position: relative;
+            transition: 0.3s;
+        }
+        .step-card:hover { border-color: var(--cyan); transform: translateY(-4px); }
+        .step-num {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--cyan);
+            font-family: 'Space Mono', monospace;
+            margin-bottom: 14px;
+            letter-spacing: 2px;
+        }
+        .step-icon { font-size: 32px; margin-bottom: 12px; display: block; }
+        .step-card h4 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+        .step-card p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+        /* ───── FEATURES ───── */
+        .features-bg { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 20px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+        .feature-item:hover { border-color: var(--cyan); }
+        .feature-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+        .feature-item h5 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+        .feature-item p { color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+        /* ───── PRICING ───── */
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        h2.plan-title { text-align: center; color: var(--cyan); margin-top: 0; margin-bottom: 10px; font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+        p.subtitle { text-align: center; color: var(--muted); margin-bottom: 36px; font-size: 14px; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .card {
+            background: var(--bg2);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 24px 20px;
+            text-align: center;
+            transition: 0.3s;
+            position: relative;
+            cursor: pointer;
+        }
+        .card.active, .card:hover { border-color: var(--cyan); transform: translateY(-5px); box-shadow: 0 8px 30px rgba(56,189,248,0.1); }
+        .card h3 { margin-top: 0; color: #f1f5f9; font-size: 17px; font-weight: 700; }
+        .price { font-size: 28px; font-weight: 800; color: var(--cyan); margin: 15px 0; font-family: 'Space Mono', monospace; }
+        .card ul { list-style: none; padding: 0; margin: 15px 0; color: var(--muted); font-size: 13px; }
+        .card ul li { margin: 8px 0; }
+        .card ul li::before { content: '✓ '; color: var(--green); }
+        .badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--green); color: white; padding: 3px 12px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+        .btn-select { background: var(--border); color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: 700; font-size: 14px; font-family: 'Syne', sans-serif; transition: 0.2s; }
+        .card.active .btn-select, .btn-select:hover { background: var(--cyan); color: var(--bg); }
+
+        /* ───── PAYMENT ───── */
+        .section { background: var(--bg2); border-radius: 12px; padding: 28px; margin-bottom: 25px; border: 1px solid var(--border); }
+        label { display: block; margin-bottom: 8px; font-weight: 700; color: #cbd5e1; font-size: 14px; }
+        input, textarea, select {
+            width: 100%; padding: 12px; background: var(--bg3);
+            border: 1px solid #475569; border-radius: 6px;
+            color: white; box-sizing: border-box; margin-bottom: 15px;
+            font-size: 14px; font-family: 'Syne', sans-serif;
+        }
+        input:focus, textarea:focus, select:focus { border-color: var(--cyan); outline: none; }
+        .btn-submit {
+            background: var(--yellow); color: var(--bg);
+            font-size: 15px; font-weight: 800; border: none;
+            padding: 14px 24px; border-radius: 6px; cursor: pointer;
+            width: 100%; transition: 0.2s; margin-top: 10px;
+            font-family: 'Syne', sans-serif; letter-spacing: 0.3px;
+        }
+        .btn-submit:hover { background: #ca8a04; }
+        .btn-submit:disabled { background: #475569; color: var(--muted); cursor: not-allowed; }
+        #payment-box { display: none; background: #1e1b4b; border: 1px solid #4338ca; }
+        .payment-method { display: flex; justify-content: space-around; margin: 15px 0; background: var(--bg3); padding: 18px; border-radius: 8px; }
+        .method { text-align: center; font-size: 15px; }
+        .method strong { color: #f43f5e; }
+        .terminal-box {
+            background: #020617; border: 1px solid var(--border);
+            font-family: 'Space Mono', monospace; font-size: 12px;
+            color: var(--cyan); padding: 15px; border-radius: 6px;
+            max-height: 200px; overflow-y: auto; margin-top: 20px;
+            width: 100%; line-height: 1.8;
+        }
+        .log-success { color: var(--green); }
+        .log-error { color: var(--red); }
+        .log-process { color: var(--yellow); }
+
+        /* ───── FAQ ───── */
+        .faq-list { display: flex; flex-direction: column; gap: 12px; }
+        .faq-item {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .faq-q {
+            padding: 18px 22px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+        .faq-q:hover { color: var(--cyan); }
+        .faq-q .arrow { font-size: 18px; transition: 0.3s; }
+        .faq-a {
+            padding: 0 22px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+            max-height: 0;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+        .faq-item.open .faq-a { max-height: 200px; padding: 0 22px 18px; }
+        .faq-item.open .arrow { transform: rotate(180deg); }
+
+        /* ───── FOOTER ───── */
+        footer {
+            background: var(--bg2);
+            border-top: 1px solid var(--border);
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+        .footer-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            text-align: center;
+        }
+        .footer-logo { font-size: 20px; font-weight: 800; color: var(--cyan); }
+        .footer-links { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+        .footer-links a { color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 600; transition: 0.2s; }
+        .footer-links a:hover { color: var(--cyan); }
+        .footer-copy { color: #475569; font-size: 12px; font-family: 'Space Mono', monospace; }
+
+        /* ───── WHATSAPP ───── */
+        .whatsapp-btn {
+            position: fixed; bottom: 24px; right: 24px;
+            background: #25d366; color: white; border: none;
+            border-radius: 50px; padding: 14px 22px;
+            font-size: 14px; font-weight: 700; cursor: pointer;
+            text-decoration: none; display: flex; align-items: center;
+            gap: 10px; box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+            z-index: 9999; transition: 0.2s; font-family: 'Syne', sans-serif;
+        }
         .whatsapp-btn:hover { background: #1ebe5d; transform: scale(1.05); }
-        .whatsapp-btn svg { width: 22px; height: 22px; fill: white; }
+        .whatsapp-btn svg { width: 20px; height: 20px; fill: white; }
+
+        /* ───── RESPONSIVE ───── */
+        @media (max-width: 640px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero h1 { letter-spacing: -1px; }
+            .navbar { padding: 12px 16px; }
+            .nav-links { display: none; }
+            .counter-number { font-size: 52px; }
+        }
     </style>
 </head>
 <body>
 
+<!-- NAVBAR -->
 <div class="navbar">
     <div class="logo-area">
         <a href="index.html" class="logo-text">🚀 FastIndexer</a>
@@ -63,102 +429,296 @@
             <a href="status.html" class="nav-link">Submit Status</a>
         </div>
     </div>
-    <div class="auth-buttons">
+    <div class="auth-buttons" id="auth-buttons">
         <a href="login.html" class="btn-auth">Log In</a>
         <a href="signup.html" class="btn-auth btn-signup">Sign Up</a>
     </div>
 </div>
 
-<div class="container">
-    <p class="subtitle" style="margin-top: 20px;">Choose your preferred subscription plan to unlock access to the indexing backend API engine.</p>
-
-    <h2>Select Your Plan</h2>
-    <div class="pricing-grid">
-        <div class="card active" id="plan-free" onclick="selectPlan('Free', 0, 'Free')">
-            <h3>Free Trial</h3>
-            <div class="price">0 TK</div>
-            <ul>
-                <li>5 URL Indexing</li>
-                <li>One-time Use</li>
-                <li>Instant Request</li>
-            </ul>
-            <button class="btn-select">Selected</button>
-        </div>
-        <div class="card" id="plan-starter" onclick="selectPlan('Starter', 199, 'Starter')">
-            <h3>Starter Pack</h3>
-            <div class="price">199 TK</div>
-            <ul>
-                <li>50 URL Indexing</li>
-                <li>Credit System</li>
-                <li>One-time</li>
-            </ul>
-            <button class="btn-select">Select</button>
-        </div>
-        <div class="card" id="plan-6m" onclick="selectPlan('6 Months', 1499, '6 Months')">
-            <h3>6 Months Pro</h3>
-            <div class="price">1,499 TK</div>
-            <ul>
-                <li>200 URLs/month</li>
-                <li>Credit System</li>
-                <li>Valid 6 Months</li>
-            </ul>
-            <button class="btn-select">Select</button>
-        </div>
-        <div class="card" id="plan-1year" onclick="selectPlan('1 Year', 2499, '1 Year')">
-            <div class="badge" style="background:#22c55e;">BEST VALUE</div>
-            <h3>1 Year Pro</h3>
-            <div class="price">2,499 TK</div>
-            <ul>
-                <li>300 URLs/month</li>
-                <li>Credit System</li>
-                <li>Valid 1 Year</li>
-            </ul>
-            <button class="btn-select">Select</button>
-        </div>
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-badge">
+        <span class="dot"></span>
+        IndexNow API Powered
     </div>
+    <h1>
+        <span class="line1">আপনার URLs Index করুন</span>
+        <span class="line2">দ্রুত এবং সহজে!</span>
+    </h1>
+    <p>IndexNow API ব্যবহার করে Bing ও Yandex-এ instant index করুন। Google ২৪-৪৮ ঘণ্টার মধ্যে pick করে নেয়।</p>
+    <div class="hero-btns">
+        <a href="signup.html" class="btn-primary">🚀 বিনামূল্যে শুরু করুন</a>
+        <a href="#how-it-works" class="btn-outline">কীভাবে কাজ করে?</a>
+    </div>
+</section>
 
-    <div id="payment-box" class="section">
-        <h3 style="color: #f43f5e; margin-top:0;">💳 Complete Your Payment</h3>
-        <p>Please send the exact amount to one of our personal accounts below:</p>
-        <div class="payment-method">
-            <div class="method">
-                <strong>bKash (Personal):</strong><br>
-                <span>+8801755178188</span>
+<!-- LIVE COUNTER -->
+<div class="live-counter-section">
+    <div class="live-counter-card">
+        <div class="live-badge"><span class="dot"></span> Live Counter</div>
+        <div class="counter-number" id="total-indexed">—</div>
+        <div class="counter-label">সর্বমোট URL এখন পর্যন্ত index করা হয়েছে</div>
+        <div class="counter-date" id="live-date"></div>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-num" id="today-submitted">—</div>
+                <div class="stat-lbl">আজকের URL Submitted</div>
             </div>
-            <div class="method">
-                <strong style="color:#f97316;">Nagad (Personal):</strong><br>
-                <span>+8801907763300</span>
+            <div class="stat-box">
+                <div class="stat-num" id="today-submission">—</div>
+                <div class="stat-lbl">আজকের Submission</div>
             </div>
-        </div>
-
-        <label>Selected Plan: <span id="selected-plan-text" style="color:#38bdf8; font-weight:bold;">Free Trial (0 TK)</span></label>
-        <input type="hidden" id="chosen-plan" value="Free">
-        <br><br>
-
-        <div id="paid-inputs-area" style="display: none;">
-            <label>Select Payment Method</label>
-            <select id="payment-gateway">
-                <option value="bkash">bKash</option>
-                <option value="nagad">Nagad</option>
-            </select>
-            <label>Your bKash/Nagad Number</label>
-            <input type="text" id="sender-number" placeholder="017XXXXXXXX">
-            <label>Transaction ID (TxnID)</label>
-            <input type="text" id="txnid" placeholder="A1B2C3D4E5">
-        </div>
-
-        <label>Your Email</label>
-        <input type="email" id="user-email" placeholder="your@email.com">
-
-        <button class="btn-submit" id="submit-btn" onclick="submitIndexing()">Verify & Process Activation</button>
-
-        <div class="terminal-box" id="terminal-output">
-            <span style="color: #64748b;">// Server logs and database sync credentials verification outputs...</span>
+            <div class="stat-box">
+                <div class="stat-num" id="total-users">—</div>
+                <div class="stat-lbl">মোট Users</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num" id="online-now">—</div>
+                <div class="stat-lbl">এখন Online</div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- WhatsApp Support Button -->
+<!-- CTA MINI -->
+<div class="cta-mini">
+    <h3>আপনার URLs index করুন 🚀</h3>
+    <p>Sign up করুন এবং বিনামূল্যে ৫টি URL submit করুন!</p>
+    <div class="cta-mini-btns">
+        <a href="signup.html" class="btn-primary">Sign Up করুন</a>
+        <a href="login.html" class="btn-outline">Log In</a>
+    </div>
+    <div class="refresh-note">এই page প্রতি ৩০ সেকেন্ডে auto-refresh হয়।</div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+    <div class="section-wrap">
+        <div class="section-title">কীভাবে কাজ করে?</div>
+        <div class="section-sub">মাত্র ৪টি সহজ ধাপে আপনার URLs index হয়ে যাবে</div>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-num">STEP 01</div>
+                <span class="step-icon">📝</span>
+                <h4>Account তৈরি করুন</h4>
+                <p>বিনামূল্যে Sign Up করুন এবং আপনার dashboard access পান।</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">STEP 02</div>
+                <span class="step-icon">🌐</span>
+                <h4>সাইট Verify করুন</h4>
+                <p>Bing Webmaster Tools-এ আপনার site verify করুন। সহজ instructions দেওয়া আছে।</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">STEP 03</div>
+                <span class="step-icon">🔗</span>
+                <h4>URLs Submit করুন</h4>
+                <p>Index করতে চান এমন URLs গুলো submit করুন — single বা bulk উভয়ই সম্ভব।</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">STEP 04</div>
+                <span class="step-icon">✅</span>
+                <h4>Index হয়ে যাবে!</h4>
+                <p>Bing-এ instant, Google-এ ২৪-৪৮ ঘণ্টার মধ্যে index হয়ে যাবে।</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<div class="features-bg">
+    <div class="section-wrap">
+        <div class="section-title">কেন FastIndexer?</div>
+        <div class="section-sub">আপনার indexing সমস্যার সম্পূর্ণ সমাধান</div>
+        <div class="features-grid">
+            <div class="feature-item">
+                <span class="feature-icon">⚡</span>
+                <div>
+                    <h5>IndexNow API Powered</h5>
+                    <p>Microsoft-approved API দিয়ে instant indexing request পাঠানো হয়।</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🔍</span>
+                <div>
+                    <h5>Bing & Yandex Instant</h5>
+                    <p>Submit করার সাথে সাথে Bing ও Yandex-এ indexing request যায়।</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🌏</span>
+                <div>
+                    <h5>Google ২৪-৪৮ ঘণ্টায়</h5>
+                    <p>Bing index হলে Google সাধারণত ২৪-৪৮ ঘণ্টার মধ্যে pick করে।</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📊</span>
+                <div>
+                    <h5>Real-time Status Track</h5>
+                    <p>প্রতিটি URL-এর submission status live দেখতে পাবেন।</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">💳</span>
+                <div>
+                    <h5>Credit System</h5>
+                    <p>Credit কিনুন এবং যখন দরকার তখন use করুন — কোনো expiry নেই (Starter)।</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🇧🇩</span>
+                <div>
+                    <h5>bKash & Nagad Payment</h5>
+                    <p>বাংলাদেশি ইউজারদের জন্য সহজ local payment সিস্টেম।</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PRICING -->
+<div class="section-wrap" id="pricing">
+    <div class="container" style="padding:0;">
+        <div class="section-title">Plan বেছে নিন</div>
+        <p class="subtitle">আপনার প্রয়োজন অনুযায়ী সঠিক plan select করুন</p>
+
+        <div class="pricing-grid">
+            <div class="card active" id="plan-free" onclick="selectPlan('Free', 0, 'Free')">
+                <h3>Free Trial</h3>
+                <div class="price">0 TK</div>
+                <ul>
+                    <li>5 URL Indexing</li>
+                    <li>One-time Use</li>
+                    <li>Instant Request</li>
+                </ul>
+                <button class="btn-select">Selected</button>
+            </div>
+            <div class="card" id="plan-starter" onclick="selectPlan('Starter', 199, 'Starter')">
+                <h3>Starter Pack</h3>
+                <div class="price">199 TK</div>
+                <ul>
+                    <li>50 URL Indexing</li>
+                    <li>Credit System</li>
+                    <li>One-time</li>
+                </ul>
+                <button class="btn-select">Select</button>
+            </div>
+            <div class="card" id="plan-6m" onclick="selectPlan('6 Months', 1499, '6 Months')">
+                <h3>6 Months Pro</h3>
+                <div class="price">1,499 TK</div>
+                <ul>
+                    <li>200 URLs/month</li>
+                    <li>Credit System</li>
+                    <li>Valid 6 Months</li>
+                </ul>
+                <button class="btn-select">Select</button>
+            </div>
+            <div class="card" id="plan-1year" onclick="selectPlan('1 Year', 2499, '1 Year')">
+                <div class="badge">BEST VALUE</div>
+                <h3>1 Year Pro</h3>
+                <div class="price">2,499 TK</div>
+                <ul>
+                    <li>300 URLs/month</li>
+                    <li>Credit System</li>
+                    <li>Valid 1 Year</li>
+                </ul>
+                <button class="btn-select">Select</button>
+            </div>
+        </div>
+
+        <div id="payment-box" class="section">
+            <h3 style="color:#f43f5e; margin-top:0;">💳 Complete Your Payment</h3>
+            <p style="color:var(--muted); font-size:14px; margin-bottom:16px;">Please send the exact amount to one of our personal accounts below:</p>
+            <div class="payment-method">
+                <div class="method">
+                    <strong>bKash (Personal):</strong><br>
+                    <span>+8801755178188</span>
+                </div>
+                <div class="method">
+                    <strong style="color:#f97316;">Nagad (Personal):</strong><br>
+                    <span>+8801907763300</span>
+                </div>
+            </div>
+            <label>Selected Plan: <span id="selected-plan-text" style="color:var(--cyan); font-weight:800;">Free Trial (0 TK)</span></label>
+            <input type="hidden" id="chosen-plan" value="Free">
+            <br>
+            <div id="paid-inputs-area" style="display:none;">
+                <label>Select Payment Method</label>
+                <select id="payment-gateway">
+                    <option value="bkash">bKash</option>
+                    <option value="nagad">Nagad</option>
+                </select>
+                <label>Your bKash/Nagad Number</label>
+                <input type="text" id="sender-number" placeholder="017XXXXXXXX">
+                <label>Transaction ID (TxnID)</label>
+                <input type="text" id="txnid" placeholder="A1B2C3D4E5">
+            </div>
+            <label>Your Email</label>
+            <input type="email" id="user-email" placeholder="your@email.com">
+            <button class="btn-submit" id="submit-btn" onclick="submitIndexing()">Verify & Process Activation</button>
+            <div class="terminal-box" id="terminal-output">
+                <span style="color:#475569;">// Server logs and database sync credentials verification outputs...</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FAQ -->
+<div class="section-wrap" style="padding-top:0;">
+    <div class="section-title">সাধারণ প্রশ্ন</div>
+    <div class="section-sub">যা জানতে চান তার উত্তর এখানেই আছে</div>
+    <div class="faq-list">
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                Google-এ index হবে? <span class="arrow">▼</span>
+            </div>
+            <div class="faq-a">Bing-এ instant index হয়। Bing index হলে Google সাধারণত ২৪-৪৮ ঘণ্টার মধ্যে নিজে থেকে pick করে নেয়।</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                Site verify কীভাবে করবো? <span class="arrow">▼</span>
+            </div>
+            <div class="faq-a">Dashboard-এ login করলে step-by-step instructions পাবেন। Bing Webmaster Tools-এ সাইট add করতে হবে — সহজ প্রক্রিয়া।</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                Credit শেষ হলে কী হবে? <span class="arrow">▼</span>
+            </div>
+            <div class="faq-a">Credit শেষ হলে URL submit হবে না। আপনাকে নতুন plan কিনতে হবে। Starter plan-এর credit expire হয় না।</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                Payment করার পর কতক্ষণে activate হবে? <span class="arrow">▼</span>
+            </div>
+            <div class="faq-a">Payment verify করার পর সাধারণত ১-৬ ঘণ্টার মধ্যে activate হয়। সমস্যা হলে WhatsApp-এ যোগাযোগ করুন।</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                Free plan-এ কতটা URL index করা যাবে? <span class="arrow">▼</span>
+            </div>
+            <div class="faq-a">Free plan-এ মোট ৫টি URL one-time index করা যাবে। এটি tool পরীক্ষা করার জন্য।</div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-logo">🚀 FastIndexer</div>
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">URL Submit</a>
+            <a href="status.html">Submit Status</a>
+            <a href="login.html">Login</a>
+            <a href="signup.html">Sign Up</a>
+            <a href="https://wa.me/8801907763300" target="_blank">Support</a>
+        </div>
+        <div class="footer-copy">© 2026 FastIndexer · All rights reserved · Made in Bangladesh 🇧🇩</div>
+    </div>
+</footer>
+
+<!-- WHATSAPP -->
 <a href="https://wa.me/8801907763300" target="_blank" class="whatsapp-btn">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
@@ -167,13 +727,13 @@
 </a>
 
 <script>
+    // Auth check
     const user = JSON.parse(localStorage.getItem('fi_user') || 'null');
     if (user) {
-        const authDiv = document.querySelector('.auth-buttons');
-        authDiv.innerHTML = `
-            <a href="profile.html" style="color:#94a3b8; font-size:14px; text-decoration:none;">👤 ${user.name}</a>
-            <a href="dashboard.html" class="btn-auth" style="border-color:#38bdf8; color:#38bdf8;">Dashboard</a>
-            <button class="btn-auth" style="border-color:#ef4444; color:#ef4444;" onclick="logout()">Logout</button>
+        document.getElementById('auth-buttons').innerHTML = `
+            <a href="profile.html" style="color:var(--muted);font-size:14px;text-decoration:none;">👤 ${user.name}</a>
+            <a href="dashboard.html" class="btn-auth" style="border-color:var(--cyan);color:var(--cyan);">Dashboard</a>
+            <button class="btn-auth" style="border-color:var(--red);color:var(--red);" onclick="logout()">Logout</button>
         `;
     }
 
@@ -182,6 +742,30 @@
         window.location.reload();
     }
 
+    // Live date
+    const dateEl = document.getElementById('live-date');
+    if (dateEl) {
+        dateEl.textContent = new Date().toLocaleDateString('en-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    // Load live stats
+    async function loadStats() {
+        try {
+            const res = await fetch('/api/stats');
+            const data = await res.json();
+            document.getElementById('total-indexed').textContent = data.totalIndexed ?? '—';
+            document.getElementById('today-submitted').textContent = data.todaySubmitted ?? '—';
+            document.getElementById('today-submission').textContent = data.todaySubmission ?? '—';
+            document.getElementById('total-users').textContent = data.totalUsers ?? '—';
+            document.getElementById('online-now').textContent = data.onlineNow ?? '—';
+        } catch(e) {
+            // fallback silent
+        }
+    }
+    loadStats();
+    setInterval(loadStats, 30000);
+
+    // Plan select
     window.onload = function() { selectPlan('Free', 0, 'Free'); };
 
     function selectPlan(planName, price, role) {
@@ -189,34 +773,33 @@
             c.classList.remove('active');
             c.querySelector('.btn-select').innerText = 'Select';
         });
-        if(role === 'Free') document.getElementById('plan-free').classList.add('active');
-        if(role === 'Starter') document.getElementById('plan-starter').classList.add('active');
-        if(role === '6 Months') document.getElementById('plan-6m').classList.add('active');
-        if(role === '1 Year') document.getElementById('plan-1year').classList.add('active');
+        const map = { 'Free':'plan-free','Starter':'plan-starter','6 Months':'plan-6m','1 Year':'plan-1year' };
+        document.getElementById(map[role]).classList.add('active');
         document.querySelector('.card.active .btn-select').innerText = 'Selected';
         document.getElementById('selected-plan-text').innerText = `${planName} (${price} TK)`;
         document.getElementById('chosen-plan').value = role;
-        const payBox = document.getElementById('payment-box');
-        const paidInputsArea = document.getElementById('paid-inputs-area');
-        payBox.style.display = 'block';
-        if(price > 0) {
-            paidInputsArea.style.display = 'block';
-        } else {
-            paidInputsArea.style.display = 'none';
-        }
+        document.getElementById('payment-box').style.display = 'block';
+        document.getElementById('paid-inputs-area').style.display = price > 0 ? 'block' : 'none';
     }
 
+    // FAQ toggle
+    function toggleFaq(el) {
+        const item = el.closest('.faq-item');
+        item.classList.toggle('open');
+    }
+
+    // Submit
     async function submitIndexing() {
         const plan = document.getElementById('chosen-plan').value;
         const email = document.getElementById('user-email').value.trim();
-        const gateway = document.getElementById('payment-gateway') ? document.getElementById('payment-gateway').value : '';
-        const senderNumber = document.getElementById('sender-number') ? document.getElementById('sender-number').value.trim() : '';
-        const txnid = document.getElementById('txnid') ? document.getElementById('txnid').value.trim() : '';
+        const gateway = document.getElementById('payment-gateway')?.value || '';
+        const senderNumber = document.getElementById('sender-number')?.value.trim() || '';
+        const txnid = document.getElementById('txnid')?.value.trim() || '';
         const terminal = document.getElementById('terminal-output');
         const submitBtn = document.getElementById('submit-btn');
 
         if (!email) { alert('Please enter your email!'); return; }
-        if(plan !== 'Free' && (!senderNumber || !txnid)) {
+        if (plan !== 'Free' && (!senderNumber || !txnid)) {
             alert('Please fill in your Payment Number and Transaction ID!');
             return;
         }
