@@ -34,8 +34,15 @@
         .log-error { color: #ef4444; }
         .log-process { color: #eab308; }
         .log-info { color: #38bdf8; font-weight: bold; }
-        .info-box { background: rgba(56,189,248,0.05); border: 1px solid rgba(56,189,248,0.2); border-radius: 8px; padding: 12px 16px; margin-bottom: 15px; font-size: 13px; color: #94a3b8; }
+        .info-box { background: rgba(56,189,248,0.05); border: 1px solid rgba(56,189,248,0.2); border-radius: 8px; padding: 12px 16px; margin-bottom: 15px; font-size: 13px; color: #94a3b8; line-height: 1.7; }
         .info-box span { color: #38bdf8; font-weight: bold; }
+        .info-box a { color: #38bdf8; font-weight: bold; text-decoration: underline; }
+        .warn-box { background: rgba(234,179,8,0.07); border: 1px solid rgba(234,179,8,0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 15px; font-size: 13px; color: #fde68a; line-height: 1.7; }
+        .warn-box a { color: #38bdf8; font-weight: bold; text-decoration: underline; }
+        /* Verify status badge */
+        .verify-status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-left: 8px; }
+        .verify-ok { background: rgba(34,197,94,0.1); border: 1px solid #22c55e; color: #22c55e; }
+        .verify-no { background: rgba(239,68,68,0.1); border: 1px solid #ef4444; color: #ef4444; }
     </style>
 </head>
 <body>
@@ -47,6 +54,7 @@
             <a href="index.html" class="nav-link">Home</a>
             <a href="dashboard.html" class="nav-link active">URL Submit</a>
             <a href="status.html" class="nav-link">Submit Status</a>
+            <a href="profile.html" class="nav-link">Profile</a>
         </div>
     </div>
     <div class="user-info">
@@ -62,11 +70,20 @@
     </div>
 
     <div class="section">
-        <h2>🔗 Submit URLs for Indexing</h2>
-        <p style="color:#94a3b8; margin-top:-10px; font-size:14px;">শুধু আপনার URLs দিন — বাকি সব আমরা করবো!</p>
+        <h2>🔗 Submit URLs for Indexing <span class="verify-status" id="verify-badge"></span></h2>
+        <p style="color:#94a3b8; margin-top:-10px; font-size:14px; margin-bottom: 16px;">আপনার verified website এর URLs এখানে submit করুন।</p>
 
-        <div class="info-box">
-            💡 <span>How it works:</span> আপনার URL এর domain দেখে automatically index করা হবে। কোনো key setup লাগবে না!
+        <!-- Verify warning — shown if not verified -->
+        <div class="warn-box" id="not-verified-box" style="display:none;">
+            ⚠️ <strong>আপনার website এখনো verify করা হয়নি!</strong> URL submit করতে আগে
+            <a href="profile.html">Profile</a> পেজে গিয়ে IndexNow Key সেটআপ করুন।
+            একবার করলেই যথেষ্ট — এরপর যেকোনো URL সরাসরি submit করতে পারবেন।
+        </div>
+
+        <!-- Info box — shown if verified -->
+        <div class="info-box" id="verified-box" style="display:none;">
+            ✅ <span>Website Verified!</span> আপনার site: <span id="verified-host-text">-</span> —
+            এখন যেকোনো URL submit করুন। প্রতিটি URL এ ১ credit খরচ হবে।
         </div>
 
         <label>Your Target URLs (One URL per line)</label>
@@ -103,6 +120,24 @@
                 document.getElementById('credit-count').innerText = data.credit;
                 const updated = { ...userData, credit: data.credit };
                 localStorage.setItem('fi_user', JSON.stringify(updated));
+
+                // Verify status check
+                const badge = document.getElementById('verify-badge');
+                const notVerifiedBox = document.getElementById('not-verified-box');
+                const verifiedBox = document.getElementById('verified-box');
+
+                if (data.indexnowKey && data.indexnowHost) {
+                    badge.textContent = '✅ Verified';
+                    badge.className = 'verify-status verify-ok';
+                    verifiedBox.style.display = 'block';
+                    notVerifiedBox.style.display = 'none';
+                    document.getElementById('verified-host-text').textContent = data.indexnowHost;
+                } else {
+                    badge.textContent = '❌ Not Verified';
+                    badge.className = 'verify-status verify-no';
+                    notVerifiedBox.style.display = 'block';
+                    verifiedBox.style.display = 'none';
+                }
             }
         } catch(e) {}
     }
