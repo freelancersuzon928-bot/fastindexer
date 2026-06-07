@@ -4,99 +4,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FastIndexer - My Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #0f172a; --bg2: #1e293b; --bg3: #0d1424;
+            --border: #334155; --cyan: #38bdf8; --cyan2: #0ea5e9;
+            --green: #22c55e; --yellow: #eab308; --red: #ef4444;
+            --text: #f8fafc; --muted: #94a3b8;
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; min-height: 100vh; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-bottom: 1px solid #334155; }
+        body { font-family: 'Syne', sans-serif; background-color: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* NAVBAR */
+        .navbar { display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.97); padding: 15px 30px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
         .logo-area { display: flex; align-items: center; gap: 25px; }
-        .logo-text { font-size: 24px; font-weight: bold; color: #38bdf8; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .logo-text { font-size: 22px; font-weight: 800; color: var(--cyan); text-decoration: none; display: flex; align-items: center; gap: 8px; }
         .nav-links { display: flex; align-items: center; gap: 20px; }
-        .nav-link { color: #94a3b8; text-decoration: none; font-weight: 500; transition: 0.2s; font-size: 15px; }
-        .nav-link:hover, .nav-link.active { color: #38bdf8; }
+        .nav-link { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.2s; }
+        .nav-link:hover, .nav-link.active { color: var(--cyan); }
         .nav-right { display: flex; align-items: center; gap: 12px; }
-        .btn-auth { background: transparent; color: #cbd5e1; border: 1px solid #475569; padding: 8px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s; text-decoration: none; display: inline-block; }
-        .btn-auth:hover { border-color: #38bdf8; color: #38bdf8; }
-        .btn-danger { border-color: #ef4444; color: #ef4444; background: transparent; cursor: pointer; font-size: 14px; font-weight: bold; padding: 8px 18px; border-radius: 6px; border: 1px solid; transition: 0.2s; }
+        .btn-auth { background: transparent; color: #cbd5e1; border: 1px solid #475569; padding: 8px 18px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 13px; transition: 0.2s; text-decoration: none; display: inline-block; font-family: 'Syne', sans-serif; }
+        .btn-auth:hover { border-color: var(--cyan); color: var(--cyan); }
+        .btn-danger { border-color: var(--red); color: var(--red); background: transparent; cursor: pointer; font-size: 13px; font-weight: 700; padding: 8px 18px; border-radius: 6px; border: 1px solid; transition: 0.2s; font-family: 'Syne', sans-serif; }
         .btn-danger:hover { background: rgba(239,68,68,0.1); }
+
+        /* CONTAINER */
         .container { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
-        .profile-header { background: linear-gradient(135deg, #1e293b 0%, #0f2744 100%); border: 1px solid #334155; border-radius: 16px; padding: 30px; margin-bottom: 25px; display: flex; align-items: center; gap: 24px; }
-        .avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #38bdf8, #0ea5e9); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; color: #0f172a; flex-shrink: 0; }
+
+        /* PROFILE HEADER */
+        .profile-header { background: linear-gradient(135deg, #1e293b 0%, #0f2744 100%); border: 1px solid var(--border); border-radius: 16px; padding: 30px; margin-bottom: 25px; display: flex; align-items: center; gap: 24px; }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--cyan2)); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; color: var(--bg); flex-shrink: 0; }
         .profile-info h1 { font-size: 24px; color: #f1f5f9; margin-bottom: 4px; }
-        .profile-info p { color: #94a3b8; font-size: 14px; }
-        .profile-badge { margin-top: 8px; display: inline-block; background: rgba(56,189,248,0.1); border: 1px solid #38bdf8; color: #38bdf8; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .profile-info p { color: var(--muted); font-size: 14px; }
+        .profile-badge { margin-top: 8px; display: inline-block; background: rgba(56,189,248,0.1); border: 1px solid var(--cyan); color: var(--cyan); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+
+        /* STATS */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 25px; }
-        .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: center; transition: 0.2s; }
-        .stat-card:hover { border-color: #38bdf8; transform: translateY(-2px); }
+        .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; transition: 0.2s; }
+        .stat-card:hover { border-color: var(--cyan); transform: translateY(-2px); }
         .stat-card .icon { font-size: 28px; margin-bottom: 8px; }
-        .stat-card .value { font-size: 28px; font-weight: bold; color: #38bdf8; margin-bottom: 4px; }
+        .stat-card .value { font-size: 28px; font-weight: 800; color: var(--cyan); margin-bottom: 4px; font-family: 'Space Mono', monospace; }
         .stat-card .label { color: #64748b; font-size: 13px; }
-        .section { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 25px; margin-bottom: 20px; }
-        .section-title { font-size: 16px; font-weight: bold; color: #38bdf8; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
-        .plan-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #334155; }
+
+        /* SECTION */
+        .section { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 25px; margin-bottom: 20px; }
+        .section-title { font-size: 16px; font-weight: 800; color: var(--cyan); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+        .plan-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
         .plan-row:last-child { border-bottom: none; }
-        .plan-label { color: #94a3b8; font-size: 14px; }
-        .plan-value { color: #f1f5f9; font-weight: bold; font-size: 14px; }
-        .btn-upgrade { background: #eab308; color: #0f172a; border: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.2s; text-decoration: none; display: inline-block; }
+        .plan-label { color: var(--muted); font-size: 14px; }
+        .plan-value { color: #f1f5f9; font-weight: 700; font-size: 14px; }
+        .btn-upgrade { background: var(--yellow); color: var(--bg); border: none; padding: 8px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 13px; transition: 0.2s; text-decoration: none; display: inline-block; font-family: 'Syne', sans-serif; }
         .btn-upgrade:hover { background: #ca8a04; }
+
+        /* TABLE */
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid #1e293b; font-size: 13px; }
-        th { background: #0f172a; color: #38bdf8; font-weight: bold; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid var(--bg); font-size: 13px; }
+        th { background: var(--bg3); color: var(--cyan); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
         tr:hover td { background: rgba(56,189,248,0.03); }
-        .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
-        .badge-completed { background: rgba(34,197,94,0.1); color: #22c55e; }
-        .badge-pending { background: rgba(234,179,8,0.1); color: #eab308; }
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+        .badge-completed { background: rgba(34,197,94,0.1); color: var(--green); }
+        .badge-pending { background: rgba(234,179,8,0.1); color: var(--yellow); }
         .url-cell { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #cbd5e1; }
-        .no-login { text-align: center; padding: 80px 20px; }
-        .no-login h2 { color: #38bdf8; font-size: 22px; margin-bottom: 10px; }
-        .no-login p { color: #64748b; margin-bottom: 24px; }
-        .btn-login { background: #38bdf8; color: #0f172a; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; }
         .empty-row td { text-align: center; color: #64748b; padding: 30px; }
         .loading { text-align: center; color: #64748b; padding: 30px; }
 
-        /* IndexNow Setup Section */
-        input[type="text"], input[type="url"] { width: 100%; padding: 11px 14px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; color: #f8fafc; font-size: 14px; margin-top: 6px; margin-bottom: 4px; transition: 0.2s; }
-        input[type="text"]:focus, input[type="url"]:focus { border-color: #38bdf8; outline: none; }
-        .btn-save { background: #38bdf8; color: #0f172a; border: none; padding: 11px 28px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
-        .btn-save:hover { background: #0ea5e9; }
-        .input-label { color: #cbd5e1; font-size: 14px; font-weight: bold; margin-top: 14px; display: block; }
+        /* NO LOGIN */
+        .no-login { text-align: center; padding: 80px 20px; }
+        .no-login h2 { color: var(--cyan); font-size: 22px; margin-bottom: 10px; }
+        .no-login p { color: #64748b; margin-bottom: 24px; }
+        .btn-login { background: var(--cyan); color: var(--bg); padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; display: inline-block; font-family: 'Syne', sans-serif; }
+
+        /* INPUTS */
+        input[type="text"], input[type="url"] { width: 100%; padding: 11px 14px; background: var(--bg3); border: 1px solid #475569; border-radius: 8px; color: var(--text); font-size: 14px; margin-top: 6px; margin-bottom: 4px; transition: 0.2s; font-family: 'Syne', sans-serif; }
+        input[type="text"]:focus, input[type="url"]:focus { border-color: var(--cyan); outline: none; }
+        .btn-save { background: var(--cyan); color: var(--bg); border: none; padding: 11px 28px; border-radius: 8px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 10px; font-family: 'Syne', sans-serif; }
+        .btn-save:hover { background: var(--cyan2); }
+        .input-label { color: #cbd5e1; font-size: 14px; font-weight: 700; margin-top: 14px; display: block; }
         .input-hint { color: #64748b; font-size: 12px; margin-top: 3px; margin-bottom: 10px; }
-        .save-msg { margin-top: 12px; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: bold; display: none; }
-        .save-msg.success { background: rgba(34,197,94,0.1); border: 1px solid #22c55e; color: #22c55e; }
-        .save-msg.error { background: rgba(239,68,68,0.1); border: 1px solid #ef4444; color: #ef4444; }
-        .current-key-box { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; font-size: 13px; color: #94a3b8; }
-        .current-key-box span { color: #38bdf8; font-weight: bold; }
+        .save-msg { margin-top: 12px; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 700; display: none; }
+        .save-msg.success { background: rgba(34,197,94,0.1); border: 1px solid var(--green); color: var(--green); }
+        .save-msg.error { background: rgba(239,68,68,0.1); border: 1px solid var(--red); color: var(--red); }
+        .current-key-box { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; font-size: 13px; color: var(--muted); }
+        .current-key-box span { color: var(--cyan); font-weight: 700; }
 
-        /* Guide Tabs */
+        /* ALERT BOX */
+        .alert-box { background: rgba(56,189,248,0.07); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 14px 18px; margin-bottom: 16px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+        .alert-box b { color: var(--cyan); }
+        .alert-warn { background: rgba(234,179,8,0.07); border: 1px solid rgba(234,179,8,0.3); border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; color: #fde68a; font-size: 14px; font-weight: 600; line-height: 1.7; }
+
+        /* GUIDE TABS */
         .guide-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
-        .guide-tab { background: #0f172a; border: 1px solid #334155; color: #94a3b8; padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .guide-tab.active, .guide-tab:hover { background: rgba(56,189,248,0.1); border-color: #38bdf8; color: #38bdf8; }
-        .guide-content { display: none; background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; }
+        .guide-tab { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; font-family: 'Syne', sans-serif; }
+        .guide-tab.active, .guide-tab:hover { background: rgba(56,189,248,0.1); border-color: var(--cyan); color: var(--cyan); }
+        .guide-content { display: none; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin-bottom: 20px; }
         .guide-content.active { display: block; }
-        .guide-step { display: flex; gap: 12px; margin-bottom: 16px; align-items: flex-start; }
-        .step-num { background: #38bdf8; color: #0f172a; font-weight: bold; font-size: 13px; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-        .step-text { color: #cbd5e1; font-size: 14px; line-height: 1.7; }
+        .guide-step { display: flex; gap: 14px; margin-bottom: 18px; align-items: flex-start; }
+        .step-num { background: var(--cyan); color: var(--bg); font-weight: 800; font-size: 13px; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+        .step-text { color: #cbd5e1; font-size: 14px; line-height: 1.75; }
         .step-text b { color: #f1f5f9; }
-        .step-text code { background: #1e293b; border: 1px solid #334155; padding: 2px 7px; border-radius: 4px; font-size: 12px; color: #38bdf8; font-family: monospace; }
-        .alert-box { background: rgba(56,189,248,0.07); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; color: #94a3b8; font-size: 13px; line-height: 1.6; }
-        .alert-box b { color: #38bdf8; }
+        .step-text code { background: var(--bg2); border: 1px solid var(--border); padding: 2px 7px; border-radius: 4px; font-size: 12px; color: var(--cyan); font-family: 'Space Mono', monospace; }
+        .step-done { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.3); border-radius: 8px; padding: 12px 16px; color: var(--green); font-size: 14px; font-weight: 700; margin-top: 8px; }
 
-        /* Dynamic Copy Code Styling */
-        .code-container { display: flex; align-items: center; margin-top: 8px; background: #1e293b; border-radius: 6px; border: 1px solid #334155; padding: 2px 8px; }
-        .code-display { flex: 1; padding: 8px; color: #38bdf8; font-family: monospace; font-size: 13px; overflow-x: auto; white-space: nowrap; }
-        .btn-copy-code { background: #38bdf8; color: #0f172a; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; white-space: nowrap; }
-        .btn-copy-code:hover { background: #0ea5e9; }
+        /* CODE COPY */
+        .code-container { display: flex; align-items: center; margin-top: 10px; background: var(--bg2); border-radius: 6px; border: 1px solid var(--border); padding: 2px 8px; }
+        .code-display { flex: 1; padding: 8px; color: var(--cyan); font-family: 'Space Mono', monospace; font-size: 12px; overflow-x: auto; white-space: nowrap; }
+        .btn-copy-code { background: var(--cyan); color: var(--bg); border: none; padding: 6px 14px; border-radius: 4px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; white-space: nowrap; font-family: 'Syne', sans-serif; }
+        .btn-copy-code:hover { background: var(--cyan2); }
 
-        /* Support Box Section */
-        .support-box { background: rgba(234,179,8,0.05); border: 1px dashed rgba(234,179,8,0.3); border-radius: 10px; padding: 18px; text-align: center; margin-top: 20px; }
-        .support-box p { color: #cbd5e1; font-size: 14px; margin-bottom: 12px; }
-        .btn-support { background: #eab308; color: #0f172a; text-decoration: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; font-size: 14px; display: inline-block; transition: 0.2s; }
-        .btn-support:hover { background: #ca8a04; }
+        /* SUPPORT BOX */
+        .support-box { background: rgba(234,179,8,0.05); border: 1px dashed rgba(234,179,8,0.4); border-radius: 12px; padding: 22px; text-align: center; margin-top: 24px; }
+        .support-box p { color: #cbd5e1; font-size: 14px; margin-bottom: 14px; line-height: 1.6; }
+        .btn-support { background: #25d366; color: white; text-decoration: none; padding: 11px 24px; border-radius: 8px; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-support:hover { background: #1ebe5d; transform: scale(1.03); }
 
-        /* FAQ Style Styling */
-        .faq-item { border-bottom: 1px solid #334155; padding: 14px 0; }
+        /* FAQ */
+        .faq-item { border-bottom: 1px solid var(--border); padding: 16px 0; }
         .faq-item:last-child { border-bottom: none; }
-        .faq-q { font-size: 15px; font-weight: bold; color: #f1f5f9; margin-bottom: 6px; }
-        .faq-a { font-size: 13px; color: #94a3b8; line-height: 1.6; }
+        .faq-q { font-size: 14px; font-weight: 700; color: #f1f5f9; margin-bottom: 7px; }
+        .faq-a { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+        /* FREE PLAN BANNER */
+        .free-banner { background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(56,189,248,0.08)); border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; padding: 20px 22px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; }
+        .free-banner .icon { font-size: 36px; flex-shrink: 0; }
+        .free-banner h3 { font-size: 16px; font-weight: 800; color: var(--green); margin-bottom: 4px; }
+        .free-banner p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+        .free-banner a { color: var(--cyan); text-decoration: underline; font-weight: 700; }
+
+        @media (max-width: 640px) {
+            .navbar { padding: 12px 16px; }
+            .nav-links { display: none; }
+            .profile-header { flex-direction: column; text-align: center; }
+        }
     </style>
 </head>
 <body>
@@ -113,11 +151,12 @@
     </div>
     <div class="nav-right" id="nav-right">
         <a href="login.html" class="btn-auth">Log In</a>
-        <a href="signup.html" class="btn-auth" style="background:#38bdf8; color:#0f172a; border:none;">Sign Up</a>
+        <a href="signup.html" class="btn-auth" style="background:var(--cyan); color:var(--bg); border:none;">Sign Up</a>
     </div>
 </div>
 
 <div class="container">
+    <!-- NOT LOGGED IN -->
     <div class="no-login" id="no-login-msg">
         <div style="font-size:60px; margin-bottom:16px;">🔒</div>
         <h2>Login করুন</h2>
@@ -125,7 +164,10 @@
         <a href="login.html" class="btn-login">Log In করুন</a>
     </div>
 
+    <!-- PROFILE CONTENT -->
     <div id="profile-content" style="display:none;">
+
+        <!-- HEADER -->
         <div class="profile-header">
             <div class="avatar" id="avatar-text">?</div>
             <div class="profile-info">
@@ -135,6 +177,7 @@
             </div>
         </div>
 
+        <!-- STATS -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="icon">💳</div>
@@ -153,6 +196,16 @@
             </div>
         </div>
 
+        <!-- FREE PLAN BANNER -->
+        <div class="free-banner" id="free-plan-banner" style="display:none;">
+            <div class="icon">🎁</div>
+            <div>
+                <h3>আপনার Free Plan চলছে — ৫টি URL বিনামূল্যে!</h3>
+                <p>Website verify করুন এবং যেকোনো <b>৫টি URL</b> সম্পূর্ণ বিনামূল্যে index করুন। ৫টি শেষ হলে <a href="index.html#pricing">Paid Plan</a> নিতে হবে।</p>
+            </div>
+        </div>
+
+        <!-- ACCOUNT INFO -->
         <div class="section">
             <div class="section-title">👤 Account Information</div>
             <div class="plan-row">
@@ -169,158 +222,163 @@
             </div>
             <div class="plan-row">
                 <span class="plan-label">Credit Balance</span>
-                <span class="plan-value" style="color:#38bdf8;" id="info-credit">-</span>
+                <span class="plan-value" style="color:var(--cyan);" id="info-credit">-</span>
             </div>
             <div class="plan-row" style="border:none; padding-top:16px;">
                 <span class="plan-label">Plan Upgrade করুন</span>
-                <a href="index.html" class="btn-upgrade">🚀 Upgrade Plan</a>
+                <a href="index.html#pricing" class="btn-upgrade">🚀 Upgrade Plan</a>
             </div>
         </div>
 
+        <!-- INDEXNOW SETUP -->
         <div class="section">
-            <div class="section-title">🔑 IndexNow Key সেটআপ করুন</div>
+            <div class="section-title">🔑 Website Verify করুন (IndexNow Key Setup)</div>
 
-            <div class="alert-box">
-                <b>ℹ️ কেন করতে হবে?</b> IndexNow হলো একটি standard protocol যা দিয়ে আপনার site থেকে search engine-কে জানানো হয় যে নতুন content এসেছে। আপনার সাইট ভেরিফাই করার জন্য শুধু প্রোফাইলে আপনার সাইটের সঠিক API Key এবং URL দিয়ে সেভ করতে হবে। এরপর কোনো রুট অ্যাক্সেস বা ফাইল আপলোডের ঝামেলা ছাড়াই আপনি আনলিমিটেড ইনডেক্স করতে পারবেন।
+            <!-- WHY SECTION -->
+            <div class="alert-warn">
+                ⚠️ <b>URL Submit করার আগে এটি করা আবশ্যক!</b> Website verify না করলে কোনো URL submit হবে না। নিচের গাইড দেখে মাত্র ১-২ মিনিটে সহজেই করে ফেলুন।
             </div>
 
+            <div class="alert-box">
+                <b>ℹ️ কেন করতে হবে?</b> IndexNow হলো Microsoft-এর approved একটি protocol। এটি দিয়ে search engine-কে জানানো হয় আপনার সাইটে নতুন content এসেছে। আপনার site-এ একটি key রাখলেই প্রমাণ হয় যে সাইটটি আপনার — এরপর আর কোনো ঝামেলা ছাড়াই URL submit করতে পারবেন।
+            </div>
+
+            <!-- CURRENT KEY -->
             <div id="current-key-display" class="current-key-box" style="display:none;">
                 ✅ বর্তমান Site: <span id="current-host-text">-</span> &nbsp;|&nbsp; Key: <span id="current-key-text">-</span>
             </div>
 
+            <!-- INPUTS -->
             <label class="input-label">আপনার Website URL</label>
             <div class="input-hint">উদাহরণ: https://yoursite.com অথবা https://yoursite.blogspot.com</div>
             <input type="url" id="input-host" placeholder="https://yoursite.com">
 
             <label class="input-label">IndexNow Key</label>
-            <div class="input-hint">নিচের guide দেখে আপনার site type অনুযায়ী key সংগ্রহ করুন এবং এখানে paste করুন।</div>
+            <div class="input-hint">নিচের গাইড দেখে আপনার site type অনুযায়ী key সংগ্রহ করুন এবং এখানে paste করুন।</div>
             <input type="text" id="input-key" placeholder="e.g. a1b2c3d4e5f6g7h8" oninput="updateDynamicMetaTag()">
 
             <button class="btn-save" onclick="saveKey()">💾 Save করুন</button>
             <div class="save-msg" id="save-msg"></div>
 
-            <div style="margin-top: 32px;">
-                <div class="section-title" style="margin-bottom:14px;">📖 আপনার site type বেছে নিন:</div>
+            <!-- GUIDE -->
+            <div style="margin-top: 34px;">
+                <div class="section-title" style="margin-bottom:14px;">📖 আপনার Site Type বেছে নিন — Step-by-Step Guide:</div>
                 <div class="guide-tabs">
-                    <div class="guide-tab active" onclick="showGuide('wordpress', event)">🟦 WordPress</div>
-                    <div class="guide-tab" onclick="showGuide('blogger', event)">🟠 Blogger</div>
-                    <div class="guide-tab" onclick="showGuide('others', event)">🌐 অন্য Site</div>
+                    <div class="guide-tab active" onclick="showGuide('wordpress', this)">🟦 WordPress</div>
+                    <div class="guide-tab" onclick="showGuide('blogger', this)">🟠 Blogger</div>
+                    <div class="guide-tab" onclick="showGuide('others', this)">🌐 অন্য Site</div>
                 </div>
 
+                <!-- WORDPRESS GUIDE -->
                 <div class="guide-content active" id="guide-wordpress">
                     <div class="guide-step">
                         <div class="step-num">1</div>
-                        <div class="step-text">
-                            WordPress-এ login করুন। বাম মেনু থেকে <b>Plugins → Add New</b> এ যান।
-                        </div>
+                        <div class="step-text">আপনার WordPress Dashboard-এ login করুন। বাম মেনু থেকে <b>Plugins → Add New</b> এ যান।</div>
                     </div>
                     <div class="guide-step">
                         <div class="step-num">2</div>
-                        <div class="step-text">
-                            Search box-এ <code>IndexNow</code> লিখুন। <b>IndexNow (by Microsoft Bing)</b> plugin খুঁজে <b>Install Now</b> চাপুন, তারপর <b>Activate</b> করুন।
-                        </div>
+                        <div class="step-text">Search box-এ <code>IndexNow</code> লিখুন। <b>IndexNow (by Microsoft Bing)</b> plugin খুঁজে <b>Install Now</b> চাপুন, তারপর <b>Activate</b> করুন।</div>
                     </div>
                     <div class="guide-step">
                         <div class="step-num">3</div>
-                        <div class="step-text">
-                            Activate হলে বাম মেনুতে <b>Settings → IndexNow</b> এ যান। সেখানে একটি <b>API Key</b> দেখতে পাবেন — সেটি copy করুন।
-                        </div>
+                        <div class="step-text">Activate হলে বাম মেনুতে <b>Settings → IndexNow</b> এ যান। সেখানে একটি <b>API Key</b> দেখতে পাবেন — সেটি copy করুন।</div>
                     </div>
                     <div class="guide-step">
                         <div class="step-num">4</div>
-                        <div class="step-text">
-                            উপরে <b>আপনার Website URL</b> বক্সে আপনার সাইটের লিঙ্ক এবং <b>IndexNow Key</b> বক্সে কপি করা কী-টি পেস্ট করে <b>Save করুন</b> বাটন চাপুন।
-                        </div>
+                        <div class="step-text">উপরে <b>Website URL</b> বক্সে আপনার সাইটের লিঙ্ক এবং <b>IndexNow Key</b> বক্সে কপি করা key-টি paste করে <b>💾 Save করুন</b> বাটন চাপুন।</div>
                     </div>
-                    <div class="step-done">✅ হয়ে গেল! এবার কোনো রুট সিস্টেম ছাড়াই সরাসরি URL Submit করতে পারবেন।</div>
+                    <div class="step-done">✅ হয়ে গেল! এখন Dashboard থেকে সরাসরি URL Submit করতে পারবেন।</div>
                 </div>
 
+                <!-- BLOGGER GUIDE -->
                 <div class="guide-content" id="guide-blogger">
                     <div class="guide-step">
                         <div class="step-num">1</div>
-                        <div class="step-text">
-                            প্রথমে একটি IndexNow key তৈরি করুন বা যেকোনো random letters ও numbers মিলিয়ে ওপরে ইনপুট দিন (যেমন: <code>fastindex123abc</code>)।
-                        </div>
+                        <div class="step-text">প্রথমে উপরে <b>IndexNow Key</b> বক্সে যেকোনো একটি key লিখুন — যেমন: <code>fastindex123abc</code> (letters ও numbers মিলিয়ে)।</div>
                     </div>
                     <div class="guide-step">
                         <div class="step-num">2</div>
-                        <div class="step-text">
-                            Blogger Dashboard-এ যান → <b>Theme</b> → <b>Edit HTML</b> বাটনে ক্লিক করুন।
+                        <div class="step-text">নিচের Code-টি copy করুন (আপনার key দিয়ে auto-generate হবে):
+                            <div class="code-container">
+                                <div class="code-display" id="blogger-meta-code">&lt;meta name="indexnow-key" content="your_key_here"/&gt;</div>
+                                <button class="btn-copy-code" onclick="copyMetaCode()">📋 Copy</button>
+                            </div>
                         </div>
                     </div>
                     <div class="guide-step">
                         <div class="step-num">3</div>
-                        <div class="step-text">
-                            HTML code এর একদম শুরুতে <code>&lt;head&gt;</code> লেখাটির ঠিক নিচের লাইনে নিচের জেনারেট হওয়া কোডটি পেস্ট করুন:
-                            
-                            <div class="code-container">
-                                <div class="code-display" id="blogger-meta-code">&lt;meta name="indexnow-key" content="your_key_here"/&gt;</div>
-                                <button class="btn-copy-code" onclick="copyMetaCode()">Copy Code</button>
-                            </div>
-                        </div>
+                        <div class="step-text">Blogger Dashboard → <b>Theme → Edit HTML</b> এ যান। HTML-এর <code>&lt;head&gt;</code> লেখার ঠিক নিচে copy করা code-টি paste করুন। তারপর <b>Save</b> করুন।</div>
                     </div>
                     <div class="guide-step">
                         <div class="step-num">4</div>
-                        <div class="step-text">
-                            Blogger থিমটি <b>Save</b> করুন। এবার আমাদের প্যানেলের ওপরে <b>Website URL</b> এবং <b>IndexNow Key</b> সঠিক তথ্য দিয়ে <b>Save করুন</b> বাটন চাপুন।
-                        </div>
+                        <div class="step-text">এবার উপরে <b>Website URL</b> ও <b>IndexNow Key</b> সঠিকভাবে দিয়ে <b>💾 Save করুন</b> চাপুন।</div>
                     </div>
-                    <div class="step-done">✅ সফলভাবে সেটআপ সম্পন্ন! এখন আপনি ফ্রিতে ইনডেক্সিং রিকোয়েস্ট পাঠাতে পারবেন।</div>
+                    <div class="step-done">✅ সফলভাবে সেটআপ সম্পন্ন! এখন URL Submit করতে পারবেন।</div>
                 </div>
 
+                <!-- OTHERS GUIDE -->
                 <div class="guide-content" id="guide-others">
-                    <div class="alert-box" style="margin-bottom:16px;">
-                        <b>ℹ️ Wix, Squarespace, Webflow, Custom Site</b> — সব ক্ষেত্রেই একই মেটা ট্যাগ পদ্ধতি প্রযোজ্য।
+                    <div class="alert-box">
+                        <b>ℹ️ Wix, Squarespace, Webflow, Custom HTML Site</b> — সব ক্ষেত্রেই একই meta tag পদ্ধতি কাজ করবে।
                     </div>
                     <div class="guide-step">
                         <div class="step-num">1</div>
-                        <div class="step-text">
-                            যেকোনো একটি Key তৈরি করে ওপরের বক্সে বসান।
-                        </div>
+                        <div class="step-text">উপরে <b>IndexNow Key</b> বক্সে একটি key লিখুন (যেকোনো letters+numbers, যেমন: <code>mykey2025abc</code>)।</div>
                     </div>
                     <div class="guide-step">
                         <div class="step-num">2</div>
-                        <div class="step-text">
-                            আপনার সাইটের <b>HTML Head Section</b>-এ গিয়ে নিচের মেটা ট্যাগ কোডটি যোগ করুন:
+                        <div class="step-text">নিচের code-টি copy করুন:
                             <div class="code-container">
                                 <div class="code-display" id="others-meta-code">&lt;meta name="indexnow-key" content="your_key_here"/&gt;</div>
-                                <button class="btn-copy-code" onclick="copyOthersMetaCode()">Copy Code</button>
+                                <button class="btn-copy-code" onclick="copyOthersMetaCode()">📋 Copy</button>
                             </div>
                             <br>
-                            * Wix হলে: <b>Settings → Custom Code → Head</b> এ বসান।<br>
-                            * Webflow হলে: <b>Project Settings → Custom Code → Head Code</b>।
+                            এই code-টি আপনার site-এর <b>&lt;head&gt;</b> section-এ যোগ করুন:<br>
+                            • <b>Wix:</b> Settings → Custom Code → Head<br>
+                            • <b>Webflow:</b> Project Settings → Custom Code → Head Code<br>
+                            • <b>Custom HTML:</b> সরাসরি <code>&lt;head&gt;</code> tag-এর ভেতরে paste করুন।
                         </div>
                     </div>
                     <div class="guide-step">
                         <div class="step-num">3</div>
-                        <div class="step-text">
-                            সাইট পাবলিশ করুন এবং ওপরে <b>Website URL</b> ও <b>Key</b> দিয়ে <b>Save করুন</b> চাপুন।
-                        </div>
+                        <div class="step-text">Site publish করুন। তারপর উপরে <b>Website URL</b> ও <b>Key</b> দিয়ে <b>💾 Save করুন</b> চাপুন।</div>
                     </div>
+                    <div class="step-done">✅ Done! এখন যেকোনো URL submit করতে পারবেন।</div>
                 </div>
+
+                <!-- SUPPORT -->
                 <div class="support-box">
-                    <p>💡 কোনো নিয়ম বুঝতে সমস্যা হচ্ছে বা নিজে সেটআপ করতে পারছেন না?</p>
-                    <a href="https://wa.me/your_number" target="_blank" class="btn-support">💬 সরাসরি সাপোর্টে যোগাযোগ করুন (Free Setup)</a>
+                    <p>💡 <b>নিজে সেটআপ করতে সমস্যা হচ্ছে?</b><br>আমরা আপনাকে <b>ফ্রিতে সেটআপ করে দেব!</b> WhatsApp-এ message করুন।</p>
+                    <a href="https://wa.me/8801907763300" target="_blank" class="btn-support">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        WhatsApp: +8801907763300 (Free Setup)
+                    </a>
                 </div>
-            </div>
-        </div>
-        <div class="section">
-            <div class="section-title">❓ Frequently Asked Questions (FAQ)</div>
-            
-            <div class="faq-item">
-                <div class="faq-q">১. ওয়েবসাইট ভেরিফিকেশন করা কেন বাধ্যতামূলক?</div>
-                <div class="faq-a">সার্চ ইঞ্জিন পলিসি অনুযায়ী, আপনি যে ওয়েবসাইটের লিংক সাবমিট করছেন তা সত্যিই আপনার কি না তা নিশ্চিত করতেই IndexNow Key ভেরিফাই করতে হয়। এটি স্প্যামিং রোধ করে।</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-q">২. ফ্রি ট্রায়ালে কি IndexNow Key ছাড়া সাবমিট করা যাবে?</div>
-                <div class="faq-a">না, ফ্রি ট্রায়াল বা যেকোনো প্ল্যানে সাবমিট করার আগে প্রোফাইল থেকে অবশ্যই আপনার "IndexNow Key" এবং "Site Host" সেভ করে নিতে হবে। অন্যথায় সিস্টেম রিকোয়েস্ট রিজেক্ট করবে।</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-q">৩. একবার কী সেভ করার পর কি বারবার করতে হবে?</div>
-                <div class="faq-a">একেবারেই না! একবার আপনার ডোমেইনের সাথে কী ভেরিফাই করে নিলে, পরবর্তীতে আপনি ওই ডোমেইনের যেকোনো ইউআরএল সরাসরি এক ক্লিকে সাবমিট করতে পারবেন।</div>
             </div>
         </div>
 
+        <!-- FAQ -->
+        <div class="section">
+            <div class="section-title">❓ সাধারণ প্রশ্ন (FAQ)</div>
+            <div class="faq-item">
+                <div class="faq-q">১. Website verify করা কি বাধ্যতামূলক?</div>
+                <div class="faq-a">হ্যাঁ, সম্পূর্ণ বাধ্যতামূলক। Search engine policy অনুযায়ী, আপনি যে site-এর URL submit করছেন তা আপনার কিনা তা IndexNow key দিয়ে প্রমাণ করতে হয়। Verify ছাড়া কোনো URL submit হবে না।</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">২. Free plan-এ কতটি URL index করা যাবে?</div>
+                <div class="faq-a">Free plan-এ সর্বোচ্চ ৫টি URL one-time index করা যাবে। Website verify করার পরই ৫টি submit করতে পারবেন। এর বেশি করতে চাইলে Paid Plan নিতে হবে।</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">৩. একবার key save করলে কি বারবার করতে হবে?</div>
+                <div class="faq-a">একেবারেই না! একবার save করলেই যথেষ্ট। পরবর্তীতে আপনি সেই domain-এর যেকোনো URL সরাসরি submit করতে পারবেন।</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">৪. সমস্যা হলে কোথায় সাহায্য পাব?</div>
+                <div class="faq-a">WhatsApp-এ +8801907763300 নম্বরে message করুন। আমরা ফ্রিতে আপনার site setup করে দেব।</div>
+            </div>
+        </div>
+
+        <!-- HISTORY -->
         <div class="section">
             <div class="section-title">📋 My Submission History</div>
             <div style="overflow-x:auto;">
@@ -340,8 +398,9 @@
                 </table>
             </div>
         </div>
-    </div>
-</div>
+
+    </div><!-- /profile-content -->
+</div><!-- /container -->
 
 <script>
     const user = JSON.parse(localStorage.getItem('fi_user') || 'null');
@@ -349,8 +408,8 @@
     const navRight = document.getElementById('nav-right');
     if (user) {
         navRight.innerHTML = `
-            <span style="color:#94a3b8; font-size:14px;">👤 ${user.name}</span>
-            <a href="dashboard.html" class="btn-auth" style="border-color:#38bdf8; color:#38bdf8;">Dashboard</a>
+            <span style="color:var(--muted); font-size:14px;">👤 ${user.name}</span>
+            <a href="dashboard.html" class="btn-auth" style="border-color:var(--cyan); color:var(--cyan);">Dashboard</a>
             <button class="btn-danger" onclick="logout()">Logout</button>
         `;
     }
@@ -360,32 +419,30 @@
         window.location.href = 'index.html';
     }
 
-    function showGuide(type, event) {
+    function showGuide(type, el) {
         document.querySelectorAll('.guide-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.guide-content').forEach(c => c.classList.remove('active'));
         document.getElementById('guide-' + type).classList.add('active');
-        if (event && event.target) event.target.classList.add('active');
+        if (el) el.classList.add('active');
     }
 
-    // Dynamic Meta Tag Update Logic
     function updateDynamicMetaTag() {
         const keyInput = document.getElementById('input-key').value.trim();
         const fallbackKey = keyInput || "your_key_here";
-        
         document.getElementById('blogger-meta-code').textContent = `<meta name="indexnow-key" content="${fallbackKey}"/>`;
         document.getElementById('others-meta-code').textContent = `<meta name="indexnow-key" content="${fallbackKey}"/>`;
     }
 
     function copyMetaCode() {
-        const codeText = document.getElementById('blogger-meta-code').textContent;
-        navigator.clipboard.writeText(codeText);
-        alert('🎯 Blogger Meta Tag copied successfully!');
+        const code = document.getElementById('blogger-meta-code').textContent;
+        navigator.clipboard.writeText(code);
+        alert('✅ Blogger Meta Tag copied!');
     }
 
     function copyOthersMetaCode() {
-        const codeText = document.getElementById('others-meta-code').textContent;
-        navigator.clipboard.writeText(codeText);
-        alert('🎯 Meta Tag copied successfully!');
+        const code = document.getElementById('others-meta-code').textContent;
+        navigator.clipboard.writeText(code);
+        alert('✅ Meta Tag copied!');
     }
 
     async function saveKey() {
@@ -408,7 +465,7 @@
             });
             const data = await res.json();
             if (data.success) {
-                msgEl.textContent = '✅ সফলভাবে Save হয়েছে! এখন URL Submit করতে পারবেন।';
+                msgEl.textContent = '✅ সফলভাবে Save হয়েছে! এখন Dashboard থেকে URL Submit করতে পারবেন।';
                 msgEl.className = 'save-msg success';
                 user.indexnowKey = key;
                 user.indexnowHost = hostRaw.replace(/^https?:\/\//, '').replace(/\/$/, '');
@@ -454,10 +511,17 @@
             if (data.success) {
                 document.getElementById('stat-credit').textContent = data.credit;
                 document.getElementById('info-credit').textContent = data.credit + ' Credits';
-                document.getElementById('info-plan').textContent = data.plan || 'Free';
-                document.getElementById('user-plan-badge').textContent = (data.plan || 'Free') + ' Plan';
+                const plan = data.plan || 'Free';
+                document.getElementById('info-plan').textContent = plan;
+                document.getElementById('user-plan-badge').textContent = plan + ' Plan';
+
+                // Show free plan banner
+                if (plan === 'Free') {
+                    document.getElementById('free-plan-banner').style.display = 'flex';
+                }
+
                 user.credit = data.credit;
-                user.plan = data.plan;
+                user.plan = plan;
 
                 if (data.indexnowKey && data.indexnowHost) {
                     showCurrentKey(data.indexnowHost, data.indexnowKey);
@@ -494,8 +558,8 @@
                     tr.innerHTML = `
                         <td style="color:#64748b;">${i + 1}</td>
                         <td class="url-cell" title="${Array.isArray(sub.urls) ? sub.urls.join(', ') : sub.urls}">${urlsText}</td>
-                        <td style="color:#38bdf8; font-weight:bold;">${urlCount}</td>
-                        <td style="color:#94a3b8;">${date}</td>
+                        <td style="color:var(--cyan); font-weight:700;">${urlCount}</td>
+                        <td style="color:var(--muted);">${date}</td>
                         <td><span class="badge badge-${sub.status}">${sub.status.toUpperCase()}</span></td>
                     `;
                     tbody.appendChild(tr);
@@ -508,7 +572,7 @@
                 document.getElementById('stat-success').textContent = '0';
             }
         } catch (err) {
-            document.getElementById('submission-tbody').innerHTML = `<tr class="empty-row"><td colspan="5" style="color:#ef4444;">History load হচ্ছে না।</td></tr>`;
+            document.getElementById('submission-tbody').innerHTML = `<tr class="empty-row"><td colspan="5" style="color:var(--red);">History load হচ্ছে না।</td></tr>`;
         }
     }
 
