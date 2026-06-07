@@ -220,7 +220,7 @@
         <span class="line1">আপনার URLs Index করুন</span>
         <span class="line2">দ্রুত এবং সহজে!</span>
     </h1>
-    <p>IndexNow API ব্যবহার করে Bing ও Yandex-এ instant index করুন। Bing ইনডেক্স সম্পন্ন হলে Google সাধারণত ২৪-৪৮ ঘণ্টার মধ্যে সাইট ক্রল করে নেয়।</p>
+    <p>IndexNow API ব্যবহার করে Bing ও Yandex-এ instant index করুন। Bing ইনডেক্স সম্পন্ন হলে Google সাধারণত ২৪-৪৮ ঘণ্টার মধ্যে সাইট ক্রল করে নেয়।</p>
     <div class="hero-btns" id="hero-action-btns">
         <a href="signup.html" class="btn-primary">🚀 বিনামূল্যে শুরু করুন</a>
         <a href="#how-it-works" class="btn-outline">কীভাবে কাজ করে?</a>
@@ -239,7 +239,7 @@
 <section id="how-it-works">
     <div class="section-wrap">
         <div class="section-title">কীভাবে কাজ করে?</div>
-        <div class="section-sub">মাত্র ৩টি সহজ ধাপে আপনার URLs index হয়ে যাবে</div>
+        <div class="section-sub">মাত্র ৩টি সহজ ধাপে আপনার URLs index হয়ে যাবে</div>
         <div class="steps-grid">
             <div class="step-card">
                 <div class="step-num">STEP 01</div>
@@ -249,15 +249,21 @@
             </div>
             <div class="step-card">
                 <div class="step-num">STEP 02</div>
-                <span class="step-icon">🔗</span>
-                <h4>URLs Submit করুন</h4>
-                <p>Index করতে চান এমন URLs গুলো সরাসরি submit করুন — Profile থেকে একবার IndexNow key verify করলেই হবে!</p>
+                <span class="step-icon">🔑</span>
+                <h4>Site Verify করুন</h4>
+                <p>Profile থেকে একবার IndexNow key দিয়ে আপনার সাইট verify করুন। মাত্র একবারই করতে হবে!</p>
             </div>
             <div class="step-card">
                 <div class="step-num">STEP 03</div>
+                <span class="step-icon">🔗</span>
+                <h4>URLs Submit করুন</h4>
+                <p>Verify হয়ে গেলে যেকোনো URL সরাসরি submit করুন।</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">STEP 04</div>
                 <span class="step-icon">✅</span>
-                <h4>Index হয়ে যাবে!</h4>
-                <p>Bing-এ instant, Google-এ ২৪-৪৮ ঘণ্টার মধ্যে index হয়ে যাবে।</p>
+                <h4>Index হয়ে যাবে!</h4>
+                <p>Bing-এ instant, Google-এ ২৪-৪৮ ঘণ্টার মধ্যে index হয়ে যাবে।</p>
             </div>
         </div>
     </div>
@@ -276,10 +282,10 @@
                 </div>
             </div>
             <div class="feature-item">
-                <span class="feature-icon">✅</span>
+                <span class="feature-icon">🔑</span>
                 <div>
-                    <h5>Site Verify করতে হবে</h5>
-                    <p>Profile থেকে একবার IndexNow key verify করুন — তারপর যেকোনো URL সহজেই submit করতে পারবেন।</p>
+                    <h5>একবার Site Verify করুন</h5>
+                    <p>Profile থেকে মাত্র একবার IndexNow key verify করুন — এরপর যেকোনো URL অনায়াসে submit করতে পারবেন।</p>
                 </div>
             </div>
             <div class="feature-item">
@@ -453,7 +459,6 @@
 </a>
 
 <script>
-    // Auth check
     const user = JSON.parse(localStorage.getItem('fi_user') || 'null');
     if (user) {
         document.getElementById('auth-buttons').innerHTML = `
@@ -461,7 +466,6 @@
             <a href="dashboard.html" class="btn-auth" style="border-color:var(--cyan);color:var(--cyan);">Dashboard</a>
             <button class="btn-auth" style="border-color:var(--red);color:var(--red);" onclick="logout()">Logout</button>
         `;
-        // লগইন থাকলে ড্যাশবোর্ড বাটন দেখাবে এবং অতিরিক্ত বক্স হাইড হবে
         document.getElementById('hero-action-btns').innerHTML = `
             <a href="dashboard.html" class="btn-primary">🚀 Go to Dashboard</a>
             <a href="#pricing" class="btn-outline">Plan Upgrade করুন</a>
@@ -475,9 +479,8 @@
         window.location.reload();
     }
 
-    // Plan select
-    window.onload = function() { 
-        selectPlan('Free', 0, 'Free'); 
+    window.onload = function() {
+        selectPlan('Free', 0, 'Free');
     };
 
     function selectPlan(planName, price, role) {
@@ -491,24 +494,22 @@
         document.getElementById('selected-plan-text').innerText = `${planName} (${price} TK)`;
         document.getElementById('chosen-plan').value = role;
         document.getElementById('payment-box').style.display = 'block';
-        
+
         if (price > 0) {
             document.getElementById('paid-inputs-area').style.display = 'block';
             document.getElementById('payment-numbers-display').style.display = 'flex';
-            document.getElementById('payment-note').innerText = "অনুগ্রহ করে নিচে দেওয়া আমাদের পার্সোনাল অ্যাকাউন্টের যেকোনো একটিতে সঠিক টাকা পাঠিয়ে ফর্মটি পূরণ করুন:";
+            document.getElementById('payment-note').innerText = "অনুগ্রহ করে নিচে দেওয়া আমাদের পার্সোনাল অ্যাকাউন্টের যেকোনো একটিতে সঠিক টাকা পাঠিয়ে ফর্মটি পূরণ করুন:";
         } else {
             document.getElementById('paid-inputs-area').style.display = 'none';
             document.getElementById('payment-numbers-display').style.display = 'none';
-            document.getElementById('payment-note').innerText = "অনুগ্রহ করে নিচে আপনার ইমেইল প্রদান করে ফ্রি ট্রায়াল অ্যাকাউন্টটি অ্যাক্টিভেট করুন:";
+            document.getElementById('payment-note').innerText = "অনুগ্রহ করে নিচে আপনার ইমেইল প্রদান করে ফ্রি ট্রায়াল অ্যাকাউন্টটি অ্যাক্টিভেট করুন:";
         }
     }
 
-    // FAQ toggle
     function toggleFaq(el) {
         el.closest('.faq-item').classList.toggle('open');
     }
 
-    // Submit Activation / Payment
     async function submitIndexing() {
         const plan = document.getElementById('chosen-plan').value;
         const email = document.getElementById('user-email').value.trim();
@@ -536,11 +537,9 @@
 
             if (plan === 'Free') {
                 terminal.innerHTML += `<span class="log-success">[SUCCESS] Free plan initialized! 5 credits reserved.</span><br>`;
-                terminal.innerHTML += `<span class="log-process">[REDIRECT] পাসওয়ার্ড সেট করতে Sign Up পেজে নিয়ে যাওয়া হচ্ছে...</span><br>`;
-                
-                // ইউজার এক্সপেরিয়েন্স ফিক্স: ইউজারকে সাইন-আপ পেজে ইমেইলসহ রিডাইরেক্ট করা হচ্ছে যাতে সে পাসওয়ার্ড সেট করতে পারে
-                setTimeout(() => { 
-                    window.location.href = `signup.html?email=${encodeURIComponent(email)}`; 
+                terminal.innerHTML += `<span class="log-process">[REDIRECT] পাসওয়ার্ড সেট করতে Sign Up পেজে নিয়ে যাওয়া হচ্ছে...</span><br>`;
+                setTimeout(() => {
+                    window.location.href = `signup.html?email=${encodeURIComponent(email)}`;
                 }, 2000);
             } else {
                 const response = await fetch('/api/payment/submit', {
