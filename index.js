@@ -316,10 +316,14 @@ app.get('/api/public/stats', async (req, res) => {
     const totalUsers = await User.countDocuments();
     const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
     const todaySubmissions = await Submission.countDocuments({ submittedAt: { $gte: todayStart } });
-    // সব সময়ের মোট URL count
+    
+    const todayDocs = await Submission.find({ submittedAt: { $gte: todayStart } }, 'urls');
+    const todayUrls = todayDocs.reduce((sum, doc) => sum + (Array.isArray(doc.urls) ? doc.urls.length : 1), 0);
+    
     const allDocs = await Submission.find({}, 'urls');
     const totalUrls = allDocs.reduce((sum, doc) => sum + (Array.isArray(doc.urls) ? doc.urls.length : 1), 0);
-    res.json({ success: true, todayUrls: totalUrls, todaySubmissions, totalUsers, onlineUsers: onlineUsers.size });
+    
+    res.json({ success: true, todayUrls, totalUrls, todaySubmissions, totalUsers, onlineUsers: onlineUsers.size });
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 

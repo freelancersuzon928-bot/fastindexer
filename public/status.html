@@ -126,7 +126,7 @@
             const res = await fetch('/api/public/stats');
             const data = await res.json();
             if (data.success) {
-                document.getElementById('total-count').textContent = data.todayUrls ?? 0;
+                document.getElementById('total-count').textContent = data.totalUrls ?? 0;
                 document.getElementById('stat-today').textContent = data.todayUrls ?? 0;
                 document.getElementById('stat-submissions').textContent = data.todaySubmissions ?? 0;
                 document.getElementById('stat-users').textContent = data.totalUsers ?? '—';
