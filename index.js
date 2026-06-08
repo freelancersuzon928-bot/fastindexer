@@ -1,6 +1,6 @@
 // =============================================
 //     FastIndexer - Backend Server
-//     MongoDB + Credit + Auth System + Resend Email
+//     MongoDB + Credit + Auth System + Resend Email + Google Indexing API
 // =============================================
 
 require('dotenv').config();
@@ -10,6 +10,8 @@ const mongoose = require('mongoose');
 const https = require('https');
 const crypto = require('crypto');
 const { Resend } = require('resend');
+const { google } = require('googleapis');
+const serviceAccount = require('./service-account.json');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -90,6 +92,38 @@ const PAYMENT_NUMBERS = {
   bkash: '+8801755178188',
   nagad: '+8801907763300'
 };
+
+// =============================================
+//   GOOGLE INDEXING API
+// =============================================
+
+async function sendToGoogleIndexing(urls) {
+  try {
+    const auth = new google.auth.GoogleAuth({
+      credentials: serviceAccount,
+      scopes: ['https://www.googleapis.com/auth/indexing'],
+    });
+    const authClient = await auth.getClient();
+    const indexing = google.indexing({ version: 'v3', auth: authClient });
+
+    const results = await Promise.all(urls.map(async (url) => {
+      try {
+        await indexing.urlNotifications.publish({
+          requestBody: {
+            url: url,
+            type: 'URL_UPDATED',
+          },
+        });
+        return { url, success: true, method: 'Google' };
+      } catch (err) {
+        return { url, success: false, method: 'Google', error: err.message };
+      }
+    }));
+    return results;
+  } catch (err) {
+    return urls.map(url => ({ url, success: false, method: 'Google', error: err.message }));
+  }
+}
 
 // =============================================
 //   EMAIL FUNCTIONS (Resend)
@@ -254,7 +288,6 @@ app.post('/api/auth/signup', async (req, res) => {
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ success: false, message: 'এই email দিয়ে আগেই account আছে।' });
     const user = await User.create({ email, name, password: hashPassword(password), credit: 5, plan: 'Free' });
-    // Welcome email পাঠাও
     sendWelcomeEmail(user.email, user.name, user.credit);
     res.json({ success: true, message: 'Account তৈরি হয়েছে! 5 free credit পেয়েছেন।', user: { email: user.email, name: user.name, credit: user.credit, plan: user.plan } });
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
@@ -283,9 +316,10 @@ app.get('/api/public/stats', async (req, res) => {
     const totalUsers = await User.countDocuments();
     const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
     const todaySubmissions = await Submission.countDocuments({ submittedAt: { $gte: todayStart } });
-    const todayDocs = await Submission.find({ submittedAt: { $gte: todayStart } }, 'urls');
-    const todayUrls = 100 + todayDocs.reduce((sum, doc) => sum + (Array.isArray(doc.urls) ? doc.urls.length : 1), 0);
-    res.json({ success: true, todayUrls, todaySubmissions, totalUsers, onlineUsers: onlineUsers.size });
+    // সব সময়ের মোট URL count
+    const allDocs = await Submission.find({}, 'urls');
+    const totalUrls = allDocs.reduce((sum, doc) => sum + (Array.isArray(doc.urls) ? doc.urls.length : 1), 0);
+    res.json({ success: true, todayUrls: totalUrls, todaySubmissions, totalUsers, onlineUsers: onlineUsers.size });
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
@@ -321,7 +355,6 @@ app.get('/api/user/credit', async (req, res) => {
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-// প্রোফাইল থেকে IndexNow Key এবং Host আপডেট করার নতুন API রাউট
 app.post('/api/user/update-key', async (req, res) => {
   try {
     const { email, indexnowKey, indexnowHost } = req.body;
@@ -335,7 +368,7 @@ app.post('/api/user/update-key', async (req, res) => {
       { new: true }
     );
     if (!user) return res.status(404).json({ success: false, message: 'User পাওয়া যায়নি।' });
-    res.json({ success: true, message: 'IndexNow Key এবং Host সফলভাবে সেভ হয়েছে।' });
+    res.json({ success: true, message: 'IndexNow Key এবং Host সফলভাবে সেভ হয়েছে।' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -352,7 +385,6 @@ app.post('/api/payment/submit', async (req, res) => {
     if (!PACKAGES[plan] || plan === 'Free') return res.status(400).json({ success: false, message: 'বৈধ পেইড প্ল্যান সিলেক্ট করুন।' });
     const pkg = PACKAGES[plan];
     const payment = await Payment.create({ userEmail: email, plan, amount: pkg.price, creditAdded: pkg.credit, senderNumber, txnid, status: 'pending' });
-    // Admin কে alert email পাঠাও
     sendPaymentSubmitEmailToAdmin({ userEmail: email, plan, amount: pkg.price, creditAdded: pkg.credit, senderNumber, txnid });
     res.json({ success: true, message: 'পেমেন্ট রিকোয়েস্ট পাঠানো হয়েছে।', paymentId: payment._id });
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
@@ -423,7 +455,7 @@ app.post('/api/index-now', async (req, res) => {
 });
 
 // =============================================
-//   User URL Submit (UPDATED with User-Level Key Validation)
+//   User URL Submit — IndexNow + Google Indexing API
 // =============================================
 app.post('/api/submit', async (req, res) => {
   try {
@@ -436,11 +468,10 @@ app.post('/api/submit', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ success: false, message: 'User পাওয়া যায়নি।' });
     
-    // ক্রিশিয়াল সিকিউরিটি চেক: ইউজারের প্রোফাইলে IndexNow Key এবং Host সেভ করা আছে কি না
     if (!user.indexnowKey || !user.indexnowHost) {
       return res.status(400).json({ 
         success: false, 
-        message: '❌ আপনার প্রোফাইলে কোনো IndexNow Key বা Website URL সেভ করা নেই। অনুগ্রহ করে প্রথমে Profile পেজে গিয়ে আপনার সাইট সেটআপ বা ভেরিফাই করুন!' 
+        message: '❌ আপনার প্রোফাইলে কোনো IndexNow Key বা Website URL সেভ করা নেই। অনুগ্রহ করে প্রথমে Profile পেজে গিয়ে আপনার সাইট সেটআপ বা ভেরিফাই করুন!' 
       });
     }
 
@@ -457,7 +488,6 @@ app.post('/api/submit', async (req, res) => {
 
     const allResults = [];
     for (const [host, hostUrls] of Object.entries(hostGroups)) {
-      // চেক করা হচ্ছে সাবমিট করা ইউআরএল-এর হোস্ট এবং ইউজারের প্রোফাইলের হোস্ট মিলছে কি না (সিকিউরিটি লক)
       if (host.toLowerCase() !== user.indexnowHost.toLowerCase()) {
         hostUrls.forEach(url => allResults.push({ 
           success: false, 
@@ -468,17 +498,27 @@ app.post('/api/submit', async (req, res) => {
         continue;
       }
       
-      // ইউজারের প্রোফাইল থেকে সরাসরি Key এবং Host নিয়ে IndexNow API-তে পাঠানো হচ্ছে
-      const results = await sendToIndexNow(hostUrls, user.indexnowKey, user.indexnowHost);
-      allResults.push(...results);
+      // IndexNow (Bing/Yandex)
+      const indexNowResults = await sendToIndexNow(hostUrls, user.indexnowKey, user.indexnowHost);
+      allResults.push(...indexNowResults);
+
+      // Google Indexing API
+      const googleResults = await sendToGoogleIndexing(hostUrls);
+      console.log('Google Indexing results:', googleResults);
     }
+
     unknownUrls.forEach(url => allResults.push({ success: false, url, method: 'IndexNow', error: 'Invalid URL' }));
 
     const successCount = allResults.filter(r => r.success).length;
     user.credit -= urlArray.length;
     await user.save();
     await Submission.create({ userEmail: email, plan: user.plan, urls: urlArray, status: 'completed', results: allResults });
-    res.json({ success: true, message: `${urlArray.length}টি URL submit হয়েছে! ${successCount}টি সফল।`, remainingCredit: user.credit, results: allResults });
+    res.json({ 
+      success: true, 
+      message: `${urlArray.length}টি URL submit হয়েছে! IndexNow ও Google উভয়তে পাঠানো হয়েছে।`, 
+      remainingCredit: user.credit, 
+      results: allResults 
+    });
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
@@ -514,7 +554,6 @@ app.post('/api/admin/approve-payment', async (req, res) => {
     );
     payment.status = 'approved';
     await payment.save();
-    // User কে approval email পাঠাও
     if (user) sendPaymentApprovedEmail(user.email, user.name, payment.plan, payment.creditAdded, user.credit);
     res.json({ success: true, message: `${payment.userEmail} কে ${payment.creditAdded} credit দেওয়া হয়েছে!` });
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
